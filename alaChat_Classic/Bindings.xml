@@ -1,0 +1,45 @@
+<Bindings>
+   <Binding name="ALAC_SAY" category="ADDONS" header="ALAC_CHANNELBAR">
+      alaChatChannelBarBindingFunc_ToggleChannel(1);
+   </Binding>
+   <Binding name="ALAC_PARTY" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(2);
+   </Binding>
+   <Binding name="ALAC_RAID" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(3);
+   </Binding>
+   <Binding name="ALAC_RAID_WARING" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(4);
+   </Binding>
+   <Binding name="ALAC_INSTANCE_CHAT" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(5);
+   </Binding>
+   <Binding name="ALAC_GUILD" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(6);
+   </Binding>
+   <Binding name="ALAC_YELL" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(7);
+   </Binding>
+   <Binding name="ALAC_WHISPER" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(8);
+   </Binding>
+   <Binding name="ALAC_OFFICER" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(9);
+   </Binding>
+   <Binding name="ALAC_GENERAL" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(10);
+   </Binding>
+   <Binding name="ALAC_TRADE" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(11);
+   </Binding>
+   <Binding name="ALAC_LOCALDEFENSE" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(12);
+   </Binding>
+   <Binding name="ALAC_LOOKINGFORGROUP" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(13);
+   </Binding>
+   <Binding name="ALAC_CUSTOM" category="ADDONS">
+      alaChatChannelBarBindingFunc_ToggleChannel(14);
+   </Binding>
+
+</Bindings>
