@@ -1,0 +1,19 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <script file="_FilterManager.lua"/>
+    <script file="_Docker.lua"/>
+    <script file="_Setting.lua"/>
+    <script file="general.lua"/>
+    <script file="misc.lua"/>
+    <script file="channeltab.lua"/>
+    <script file="chatfilter.lua"/>
+    <script file="emote.lua"/>
+    <script file="highlight.lua"/>
+    <script file="copy.lua"/>
+    <script file="shortchattype.lua"/>
+    <script file="companion.lua"/>
+    <script file="utils.lua"/>
+
+</Ui>
+
