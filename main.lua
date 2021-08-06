@@ -68,6 +68,7 @@ local __default = {
 	emote = {
 		toggle = true,
 		--
+		IconInEditBox = false,
 		PinStyle = "char",
 	},
 	channeltab = {
@@ -162,7 +163,7 @@ local __default = {
 		ChatFrameToBorder = true,
 		ColoredPlayerName = true,
 		HoverHyperlink = true,
-		ChatHyperlink = true,
+		ChatHyperlink = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC,
 		TabChangeChatType = false,
 		StickyWhisper = ChatTypeInfo["WHISPER"].sticky == 1,
 		StickyBNWhisper = ChatTypeInfo["BN_WHISPER"].sticky == 1,
@@ -181,7 +182,7 @@ local __default = {
 		NewMemberNoticeStr = L.SETTING.companion["def.NewMemberNoticeStr"],
 	},
 };
-if L.Locale == 'zhCN' then
+if L.Locale == 'zhCN' and (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) then
 	__default.chatfilter.StrSet =
 		"HclubTicket:\n航空\n航班\n专机\n直达\n直飞\n安全便捷\n收米\n出米\n托管\n公众号\n大米\n"
 		-- .. "--------\n========\n~~~~~~\n````````\n········\n"		--	++++++++\n

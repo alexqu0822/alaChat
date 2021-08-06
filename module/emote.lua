@@ -9,11 +9,13 @@ local PANEL_HIDE_PERIOD = 1.5;
 local EMOTE_STRING = L.EMOTE;
 local EMOTE_LOCALE_STRING = EMOTE_STRING[L.Locale] or EMOTE_STRING.enUS or select(2, next(EMOTE_STRING));
 
-local gsub = string.gsub;
+local strsub, strlen, gsub = string.sub, string.len, string.gsub;
 local ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat = ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat;
 local GameTooltip = GameTooltip;
 
-local _LB_Event_GLOBAL_MOUSE_UP = select(4, GetBuildInfo()) >= 80300;
+local toc = select(4, GetBuildInfo());
+local isRetail = toc >= 80300;
+local isBCC = toc >= 20500 and toc < 30000;
 
 local __emote = {  };
 local _db = {  };
@@ -99,27 +101,32 @@ local _db = {  };
 		{ "Volunteer",	EMOTE_PATH .. "volunteer.tga", },
 		{ "Wronged",	EMOTE_PATH .. "wronged.tga", },
 	};
-	local T_Key2Path = {  };
+	local T_Key2Msg = {  };
+	local T_Key2Texture = {  };
 	local T_Path2Msg = {  };
-	__emote.T_Key2Path = T_Key2Path;
+	__emote.T_Key2Texture = T_Key2Texture;
 	__emote.T_Path2Msg = T_Path2Msg;
 
 	local function BuildTable()
 		for _, val in next, T_SystemIconTable do
 			local key = val[1];
 			local path = val[2];
-			T_Key2Path[key] = "|T" .. path .. ":0|t";
-			T_Path2Msg[path] = "{" .. key .. "}";
+			local msg = "{" .. key .. "}";
+			T_Key2Msg[key] = msg;
+			T_Key2Texture[key] = "|T" .. path .. ":0|t";
+			T_Path2Msg[path] = msg;
 		end
 		for _, val in next, T_CustomizedIconTable do
 			local key = val[1];
 			local path = val[2];
-			T_Key2Path[key] = "|T" .. path .. ":0|t";
-			T_Path2Msg[path] = "{" .. (EMOTE_LOCALE_STRING[key] or key) .. "}";
+			local msg = "{" .. (EMOTE_LOCALE_STRING[key] or key) .. "}";
+			T_Key2Msg[key] = msg;
+			T_Key2Texture[key] = "|T" .. path .. ":0|t";
+			T_Path2Msg[path] = msg;
 		end
 		for language, tbl in next, EMOTE_STRING do
 			for key, text in next, tbl do
-				T_Key2Path[text] = T_Key2Path[key];
+				T_Key2Texture[text] = T_Key2Texture[key];
 			end
 		end
 	end
@@ -127,13 +134,13 @@ local _db = {  };
 
 -->		MessageFilter
 	local function ChatMessageFilter(self, event, msg, ...)
-		return false, gsub(msg, "{([^}]+)}", T_Key2Path), ...;
+		return false, gsub(msg, "{([^}]+)}", T_Key2Texture), ...;
 	end
 -->
 
 -->		SendFilter
 	local function SendFilter(msg)
-		return gsub(msg, "|T([^:]+):%d+|t", T_Path2Msg);
+		return strsub(gsub(msg, "|T([^:]+):%d+|t", T_Path2Msg), 1, 255);
 	end
 
 	local __SendChatMessage = nil;
@@ -218,10 +225,22 @@ local _db = {  };
 		end
 		GameTooltip:Hide();
 	end
-	function PanelOnEvent(self, event)
-		self:SetScript("OnUpdate", nil);
-		self:SetScript("OnEvent", nil);
-		self:Hide();
+	if isRetail then
+		function PanelOnEvent(self, event)
+			if self.__flag == "show" then
+				self.__flag = nil;
+			else
+				self:SetScript("OnUpdate", nil);
+				self:SetScript("OnEvent", nil);
+				self:Hide();
+			end
+		end
+	else
+		function PanelOnEvent(self, event)
+			self:SetScript("OnUpdate", nil);
+			self:SetScript("OnEvent", nil);
+			self:Hide();
+		end
 	end
 	function PanelOnUpdate(self, elapsed)
 		self.CountingDownTimer = self.CountingDownTimer - elapsed;
@@ -242,6 +261,7 @@ local _db = {  };
 		self.CountingDownTimer = PANEL_HIDE_PERIOD + 1.0;
 		-- self:SetScript("OnUpdate", PanelOnUpdate);
 		self:SetScript("OnEvent", PanelOnEvent);
+		self.__flag = "show";
 	end
 	local function PanelOnHide(self)
 		self:SetScript("OnUpdate", nil);
@@ -259,11 +279,15 @@ local _db = {  };
 	end
 	function IconOnClick(self)
 		local editBox = ChatEdit_ChooseBoxForSend();
-		if not editBox:HasFocus() then
-			ChatEdit_ActivateChat(editBox);
+		local i = _db.IconInEditBox and self.texture or self.msg;
+		local orig = editBox:GetText();
+		if orig == nil or strlen(orig) + strlen(i) <= 255 then
+			if not editBox:HasFocus() then
+				ChatEdit_ActivateChat(editBox);
+			end
+			editBox:Insert(i);
+			self.Panel:Hide();
 		end
-		editBox:Insert(self.texture);
-		self.Panel:Hide();
 	end
 	--
 	local function CreateIcon(Panel, key, path, px, py)
@@ -274,7 +298,8 @@ local _db = {  };
 		Icon:SetHeight(23);
 		Icon.key = key;
 		Icon.tip = EMOTE_LOCALE_STRING[key] or key;
-		Icon.texture = T_Key2Path[key];
+		Icon.texture = T_Key2Texture[key];
+		Icon.msg = T_Key2Msg[key];
 		Icon:SetNormalTexture(path);
 		Icon:SetHighlightTexture([[Interface\Buttons\UI-Common-MouseHilight]]);
 		-- Icon:GetHighlightTexture():SetBlendMode("ADD");
@@ -322,14 +347,15 @@ local _db = {  };
 		Panel:SetScript("OnLeave", PanelOnLeave);
 		Panel:SetScript("OnShow", PanelOnShow);
 		Panel:SetScript("OnHide", PanelOnHide);
-		if _LB_Event_GLOBAL_MOUSE_UP then
+		if isRetail then
 			Panel:RegisterEvent("GLOBAL_MOUSE_UP");
-		else
-			-- Panel:RegisterEvent("CURSOR_UPDATE");
+		elseif isBCC then
 			Panel:RegisterEvent("PLAYER_STARTED_LOOKING");
 			-- Panel:RegisterEvent("PLAYER_STOPPED_LOOKING");
 			Panel:RegisterEvent("PLAYER_STARTED_TURNING");
 			-- Panel:RegisterEvent("PLAYER_STOPPED_TURNING");
+		else
+			Panel:RegisterEvent("CURSOR_UPDATE");
 		end
 
 		local IconList = {  };
@@ -412,8 +438,9 @@ local _db = {  };
 		end
 	end
 	function __emote.__setting()
-		__private:AddSetting("MISC", { "emote", "toggle", 'boolean', });
+		__private:AddSetting("MISC", { "emote", "toggle", 'boolean', }, nil, nil, TEXTURE_PATH .. "emote_normal");
 		--
+		__private:AddSetting("MISC", { "emote", "IconInEditBox", 'boolean', }, 1);
 		__private:AddSetting("MISC", { "emote", "PinStyle", 'list', { "char", "char.blz", }, }, 1);
 	end
 

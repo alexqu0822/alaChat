@@ -238,6 +238,7 @@ L.SETTING = {
 	emote = {
 		toggle = "打開聊天表情",
 		--
+		IconInEditBox = "在聊天輸入框中顯示圖標",
 		PinStyle = "聊天切換條按鈕風格",
 		--
 		["char"] = "圖片",
@@ -256,7 +257,7 @@ L.SETTING = {
 		color = "設置著色",
 		format = "設置格式",
 		ShowMatchedOnly = "只顯示包含關鍵詞的聊天 `每次登錄或重載插件都會自動關閉",
-		["ShowMatchedOnly.CHANNEL"] = "過濾 |cffffc0c0頻道聊天",
+		["ShowMatchedOnly.CHANNEL"] = "過濾 |cffffc0c0[頻道]",
 		["ShowMatchedOnly.SAY-YELL"] = "過濾 |cffffffff[說]|r、|cffff4040[喊]|r",
 		["ShowMatchedOnly.NORMAL"] = "過濾所有其它消息類型(|cffff80ff悄悄話|r、|cff40ff40公會|r、|cffaaaaff隊伍|r、|cffff7f00團隊|r等)",
 		KeepShowMatchedOnly = "禁止自動關閉【|cffff0000你記得住你點過這個嗎？|r】",
@@ -297,10 +298,10 @@ L.SETTING = {
 		ChatFrameToBorder = "允許將聊天框拖動到緊靠游戲邊緣",
 		ColoredPlayerName = "按職業著色聊天框中的玩家名",
 		HoverHyperlink = "鼠標指向時顯示聊天物品信息",
-		ChatHyperlink = "在不支持超鏈接的頻道中使用物品/法術鏈接",
+		ChatHyperlink = "在不支持超鏈接的頻道中使用|cff1eff00[物品]|r/|cff71d5ff[法術]|r鏈接",
 		TabChangeChatType = "TAB鍵切換輸入框頻道",
-		StickyWhisper = "聊天框保持上一次的私聊狀態",
-		StickyBNWhisper = "聊天框保持上一次的戰網聊天狀態",
+		StickyWhisper = "聊天框保持上一次的|cffff80ff私聊|r狀態",
+		StickyBNWhisper = "聊天框保持上一次的|cff00fff6戰網聊天|r狀態",
 		StickyChannel = "聊天框保持上一次的頻道聊天狀態",
 		ArrowKey = "聊天框激活時使用方向鍵移動光標（而不是控制角色移動）",
 		ArrowHistory = "使用上下箭頭來自動輸入歷史消息（不用按ALT）",
@@ -344,6 +345,7 @@ L.STATREPORT = {
 	tank = "沙包",
 	heal = "補師",
 	SHAPESHIFTFORMFIRST = "先變熊或者貓",
+	["163UI"] = "有愛屬性通報: ",
 };
 
 L.TIP = {

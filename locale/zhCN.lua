@@ -238,6 +238,7 @@ L.SETTING = {
 	emote = {
 		toggle = "开启聊天表情",
 		--
+		IconInEditBox = "在聊天输入框中显示图标",
 		PinStyle = "聊天切换条按钮风格",
 		--
 		["char"] = "图片",
@@ -256,7 +257,7 @@ L.SETTING = {
 		color = "设置颜色",
 		format = "设置格式",
 		ShowMatchedOnly = "只显示包含关键词的聊天 `每次登陆或重载插件都会自动关闭",
-		["ShowMatchedOnly.CHANNEL"] = "过滤 |cffffc0c0频道聊天|r",
+		["ShowMatchedOnly.CHANNEL"] = "过滤 |cffffc0c0[频道]|r",
 		["ShowMatchedOnly.SAY-YELL"] = "过滤 |cffffffff[说]|r、|cffff4040[喊]|r",
 		["ShowMatchedOnly.NORMAL"] = "过滤 所有其他信息类型(|cffff80ff[悄悄话]|r、|cff40ff40[公会]|r、|cffaaaaff[队伍]|r、|cffff7f00[团队]|r等)",
 		KeepShowMatchedOnly = "禁止自动关闭【|cffff0000！！！记性差不要用这个！！！|r】",
@@ -297,11 +298,11 @@ L.SETTING = {
 		ChatFrameToBorder = "允许将聊天框拖动到紧靠边缘",
 		ColoredPlayerName = "按职业着色聊天框中玩家名字",
 		HoverHyperlink = "显示聊天框中鼠标指向物品提示",
-		ChatHyperlink = "在不支持超链接的频道中使用物品/法术链接",
+		ChatHyperlink = "在不支持超链接的频道中使用|cff1eff00[物品]|r/|cff71d5ff[法术]|r链接",
 		TabChangeChatType = "TAB键切换频道",
-		StickyWhisper = "聊天框保持上次的私聊状态",
-		StickyBNWhisper = "聊天框保持上次的战网聊天状态",
-		StickyChannel = "聊天框保持上次的公共频道聊天状态",
+		StickyWhisper = "聊天框保持上次的|cffff80ff私聊|r状态",
+		StickyBNWhisper = "聊天框保持上次的|cff00fff6战网聊天|r状态",
+		StickyChannel = "聊天框保持上次的|cffffc0c0公共频道聊天|r状态",
 		ArrowKey = "聊天框激活时使用方向键移动光标 (而不是控制角色移动)",
 		ArrowHistory = "使用上下箭头自动输入历史消息 (不需要ALT键)",
 	},
@@ -344,6 +345,7 @@ L.STATREPORT = {
 	tank = "坦克",
 	heal = "治疗",
 	SHAPESHIFTFORMFIRST = "先变熊或变豹",
+	["163UI"] = "有爱属性通报: ",
 };
 
 L.TIP = {

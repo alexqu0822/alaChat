@@ -540,10 +540,10 @@ local _GUILD = GetGuildInfo('player');
 					else
 						nameApp = gsub(nameApp, name, format(__PLFStr_L, name, level, ""));
 					end
-					return "|Hplayer:" .. fullName .. ":" .. lineId .. ":" .. cType .. "|h" .. nameApp .. "|h";
+					return "|Hplayer:" .. fullName .. ":" .. (lineId or 0) .. ":" .. (cType or 0) .. ":" .. (cTarget or "") .. "|h" .. nameApp .. "|h";
 				elseif _db.ShowSubGroup and _tSubGroup[name] ~= nil then
 					nameApp = gsub(nameApp, name, format(__PLFStr_I, name, "", _tSubGroup[name]));
-					return "|Hplayer:" .. fullName .. ":" .. lineId .. ":" .. cType .. "|h" .. nameApp .. "|h";
+					return "|Hplayer:" .. fullName .. ":" .. (lineId or 0) .. ":" .. (cType or 0) .. ":" .. (cTarget or "") .. "|h" .. nameApp .. "|h";
 				else
 					return __GetPlayerLink(fullName, nameApp, lineId, cType, cTarget, ...);
 				end

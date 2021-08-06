@@ -61,7 +61,8 @@ local _pHistory = 0;
 			if strmatch(body, "^:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d$") then
 				body = gsub(strsub(body, 1, -2), ":[0:]+$", "");
 			end
-			return text .. "#" .. (ColorTable[color] or "-1") .. "i" .. body .. "#";
+			local _, _, quality = GetItemInfo(pat);
+			return text .. "#" .. (quality or ColorTable[color] or "-1") .. "i" .. body .. "#";
 		elseif Type == "spell" then
 			return text .. "#0s" .. body .. "#";
 		else
@@ -69,7 +70,7 @@ local _pHistory = 0;
 		end
 	end
 	local function SendFilter(msg)
-		return gsub(msg, "((|cff%x%x%x%x%x%x)|H([a-z]+)(:[:0-9]+)|h(%[[^|]+%])|h|r)", SendFilterReplacer);
+		return gsub(msg, "((|cff%x%x%x%x%x%x)|H([a-z]+)(:[:0-9%-]+)|h(%[[^|]+%])|h|r)", SendFilterReplacer);
 	end
 
 	local __SendChatMessage = nil;
@@ -259,15 +260,9 @@ local _pHistory = 0;
 	local function Init()
 		B_Initialized = true;
 	end
-	local B_InitializedChatHyperLink = false;
-	local function InitChatHyperLink()
-		B_InitializedChatHyperLink = true;
-		__SendChatMessage = _G.SendChatMessage;
-		_G.SendChatMessage = HyperlinkSendChatMessage;
-		-- __BNSendWhisper = _G.BNSendWhisper;
-		-- _G.BNSendWhisper = HyperlinkBNSendWhisper;
-		-- __BNSendConversationMessage = _G.BNSendConversationMessage;
-		-- _G.BNSendConversationMessage = HyperlinkBNSendConversationMessage;
+	local B_InitializedHistory = false;
+	local function InitHistory()
+		B_InitializedHistory = true;
 		local __chatFrames = __private.__chatFrames;
 		for index = 1, NUM_CHAT_WINDOWS do
 			local eb = __chatFrames[index].editBox;
@@ -279,6 +274,16 @@ local _pHistory = 0;
 				end
 			end
 		end
+	end
+	local B_InitializedChatHyperLink = false;
+	local function InitChatHyperLink()
+		B_InitializedChatHyperLink = true;
+		__SendChatMessage = _G.SendChatMessage;
+		_G.SendChatMessage = HyperlinkSendChatMessage;
+		-- __BNSendWhisper = _G.BNSendWhisper;
+		-- _G.BNSendWhisper = HyperlinkBNSendWhisper;
+		-- __BNSendConversationMessage = _G.BNSendConversationMessage;
+		-- _G.BNSendConversationMessage = HyperlinkBNSendConversationMessage;
 		UpdateCache();
 	end
 -->
@@ -329,13 +334,13 @@ local _pHistory = 0;
 	end
 	function __misc.ChatHyperlink(value, loading)
 		if value then
-			__private:AddMessageFilter("CHAT_MSG_CHANNEL", "ChatHyperlink", ChatMessageFilter);
+			__private:AddMessageFilter("CHAT_MSG_CHANNEL", "chathyperlink", ChatMessageFilter);
 			if not B_InitializedChatHyperLink then
 				InitChatHyperLink();
 			end
 		elseif not loading then
 			if B_InitializedChatHyperLink then
-				__private:DelMessageFilter("CHAT_MSG_CHANNEL", "ChatHyperlink");
+				__private:DelMessageFilter("CHAT_MSG_CHANNEL", "chathyperlink");
 			end
 		end
 	end
@@ -391,6 +396,9 @@ local _pHistory = 0;
 	end
 	function __misc.__init(db, loading)
 		_db = db;
+		if not B_InitializedHistory then
+			InitHistory();
+		end
 	end
 
 	function __misc.__callback(which, value, loading)
@@ -402,7 +410,9 @@ local _pHistory = 0;
 		__private:AddSetting("MISC", { "misc", "ChatFrameToBorder", 'boolean', });
 		__private:AddSetting("MISC", { "misc", "ColoredPlayerName", 'boolean', });
 		__private:AddSetting("MISC", { "misc", "HoverHyperlink", 'boolean', nil, nil, nil, true, });
-		__private:AddSetting("MISC", { "misc", "ChatHyperlink", 'boolean', });
+		if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+			__private:AddSetting("MISC", { "misc", "ChatHyperlink", 'boolean', });
+		end
 		__private:AddSetting("MISC", { "misc", "TabChangeChatType", 'boolean', });
 		__private:AddSetting("MISC", { "misc", "StickyWhisper", 'boolean', });
 		__private:AddSetting("MISC", { "misc", "StickyBNWhisper", 'boolean', });

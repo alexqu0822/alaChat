@@ -238,6 +238,7 @@ L.SETTING = {
 	emote = {
 		toggle = "Emote icon in chat",
 		--
+		IconInEditBox = "Show emote icon in chat input box",
 		PinStyle = "Button style",
 		--
 		["char"] = "Icon",
@@ -256,7 +257,7 @@ L.SETTING = {
 		color = "Color",
 		format = "Format",
 		ShowMatchedOnly = "Block not matching message `Auto closed each time entering world or reloading",
-		["ShowMatchedOnly.CHANNEL"] = "Block |cffffc0c0channel",
+		["ShowMatchedOnly.CHANNEL"] = "Block |cffffc0c0[channel]|r",
 		["ShowMatchedOnly.SAY-YELL"] = "Block |cffffffff[say]|r、|cffff4040[yell]|r",
 		["ShowMatchedOnly.NORMAL"] = "Block any other. (|cffff80ff[whisper]|r, |cff40ff40[guild]|r, |cffaaaaff[party]|r, |cffff7f00[raid]|r etc)",
 		KeepShowMatchedOnly = "Diabled auto-closed. `|cffff0000Do you have a good memory ?|r",
@@ -299,9 +300,9 @@ L.SETTING = {
 		HoverHyperlink = "Show tooltip when hovering hyperlink in chat frame",
 		ChatHyperlink = "Use hyperlink in General and LookingForGroup",
 		TabChangeChatType = "Change chat type by clicking tab",
-		StickyWhisper = "Sticky whisper `Keep the editbox in whisper after sending message",
-		StickyBNWhisper = "Sticky BNWhisper `Keep the editbox in bn whisper after sending message",
-		StickyChannel = "Sticky channel `Keep the editbox in channel after sending message",
+		StickyWhisper = "Sticky whisper `Keep the editbox in |cffff80ffwhisper|r after sending message",
+		StickyBNWhisper = "Sticky BNWhisper `Keep the editbox in |cff00fff6bn whisper|r after sending message",
+		StickyChannel = "Sticky channel `Keep the editbox in |cffffc0c0channel|r after sending message",
 		ArrowKey = "When editbox activated, use arrows to move cursor insted of control character",
 		ArrowHistory = "Use UP and DOWN to resend history msg (instead of alt + arrow)",
 	},
@@ -344,6 +345,7 @@ L.STATREPORT = {
 	tank = "Tank",
 	heal = "Healder",
 	SHAPESHIFTFORMFIRST = "Use it in cat or bear form",
+	["163UI"] = "Stat Report: ",
 };
 
 L.TIP = {

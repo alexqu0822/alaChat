@@ -12,6 +12,7 @@ local min, max = math.min, math.max, math;
 local CreateFrame = CreateFrame;
 
 local TEXTURE_PATH = __private.TEXTURE_PATH;
+local SettingUIColWidth = 180;
 local SettingUILineHeight = 24;
 local SettingUIFont = SystemFont_Shadow_Med1:GetFont();
 local SettingUIFontSize = min(select(2, SystemFont_Shadow_Med1:GetFont()) + 1, 15);
@@ -79,7 +80,7 @@ local _SettingNodes = {  };
 			return true;
 		end
 	end
-	function __private:AddSetting(category, meta, tab, col)
+	function __private:AddSetting(category, meta, tab, col, icon)
 		category = category or "GENERAL";
 		meta.category = category;
 		local module = meta[1];
@@ -95,7 +96,7 @@ local _SettingNodes = {  };
 		end
 		local CategoryTable = _CategoryList[category] or __private:CreateCategory(SettingUI, category);
 		CategoryTable.Setting[#CategoryTable.Setting + 1] = meta;
-		__private:CreateSetting(CategoryTable.Panel, module, key, Type, meta[4], meta[7], tab, col);
+		__private:CreateSetting(CategoryTable.Panel, module, key, Type, meta[4], meta[7], tab, col, icon);
 	end
 -->	Tab	<--
 	local function Tab_OnClick(Tab)
@@ -154,153 +155,159 @@ local _SettingNodes = {  };
 		return CategoryTable;
 	end
 -->	Setting Node	<--
-	--	number
-	local function Slider_OnValueChanged(self, val, userInput)
-		if userInput then
-			val = SetDB(self.module, self.key, val, false);
-			self:SetStr(val);
-		end
-	end
-	--	boolean
-	local function Check_OnClick(self, button)
-		SetDB(self.module, self.key, self:GetChecked(), false);
-	end
-	--	editor
-	local function EditorCallOutButton_OnClick(self)
-		SettingUI.Editor.To = self;
-		SettingUI.Editor:Show();
-		SettingUI.EditorEditBox:SetText(__db[self.module][self.key]);
-		SettingUI.EditorInformation:SetText(self.extra);
-	end
-	--	color
-	local function ColorCallOutButton_OnClick(self)
-		if ColorPickerFrame:IsShown() then
-			ColorPickerFrame:Hide();
-		else
-			local module = self.module;
-			local key = self.key;
-			local orig = __db[module][key];
-			ColorPickerFrame.func = nil;
-			ColorPickerFrame.cancelFunc = nil;
-			ColorPickerFrame:SetColorRGB(unpack(__db[module][key]));
-			ColorPickerFrame.func = function()
-				SetDB(module, key, { ColorPickerFrame:GetColorRGB() }, false);
+	-->	node method
+		--	number
+		local function Slider_OnValueChanged(self, val, userInput)
+			if userInput then
+				val = SetDB(self.module, self.key, val, false);
+				self:SetStr(val);
 			end
-			ColorPickerFrame.cancelFunc = function()
-				SetDB(module, key, orig, false);
-			end
-			ColorPickerFrame.opacityFunc = nil;
-			ColorPickerFrame:ClearAllPoints();
-			ColorPickerFrame:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 12, 12);
-			ColorPickerFrame:Show();
 		end
-	end
-	local function ColorPicker_Pick(module, key, value)
-		SetDB(module, key, value, false);
-	end
-	--	list
-	local function ListButton_Handler(self, module, key, val, drop, editbox)
-		SetDB(module, key, val, false);
-		drop:SetVal(val);
-	end
-	local function ListDrop_OnClick(self)
-		ALADROP(self, "BOTTOMLEFT", self.meta, false);
-	end
-	local function InputListEditBox_OnEnterPressed(self)
-		local value = self:GetText();
-		local valid, err = pcall(date, value);
-		if valid then
-			SetDB(self.module, self.key, value, false);
-			self.parent:SetVal(__db[self.module][self.key]);
+		--	boolean
+		local function Check_OnClick(self, button)
+			SetDB(self.module, self.key, self:GetChecked(), false);
+		end
+		--	editor
+		local function EditorCallOutButton_OnClick(self)
+			SettingUI.Editor.To = self;
+			SettingUI.Editor:Show();
+			SettingUI.EditorEditBox:SetText(__db[self.module][self.key]);
+			SettingUI.EditorInformation:SetText(self.extra);
+		end
+		--	color
+		local function ColorCallOutButton_OnClick(self)
+			if ColorPickerFrame:IsShown() then
+				ColorPickerFrame:Hide();
+			else
+				local module = self.module;
+				local key = self.key;
+				local orig = __db[module][key];
+				ColorPickerFrame.func = nil;
+				ColorPickerFrame.cancelFunc = nil;
+				ColorPickerFrame:SetColorRGB(unpack(__db[module][key]));
+				ColorPickerFrame.func = function()
+					SetDB(module, key, { ColorPickerFrame:GetColorRGB() }, false);
+				end
+				ColorPickerFrame.cancelFunc = function()
+					SetDB(module, key, orig, false);
+				end
+				ColorPickerFrame.opacityFunc = nil;
+				ColorPickerFrame:ClearAllPoints();
+				ColorPickerFrame:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 12, 12);
+				ColorPickerFrame:Show();
+			end
+		end
+		local function ColorPicker_Pick(module, key, value)
+			SetDB(module, key, value, false);
+		end
+		--	list
+		local function ListButton_Handler(self, module, key, val, drop, editbox)
+			SetDB(module, key, val, false);
+			drop:SetVal(val);
+		end
+		local function ListDrop_OnClick(self)
+			ALADROP(self, "BOTTOMLEFT", self.meta, false);
+		end
+		local function InputListEditBox_OnEnterPressed(self)
+			local value = self:GetText();
+			local valid, err = pcall(date, value);
+			if valid then
+				SetDB(self.module, self.key, value, false);
+				self.parent:SetVal(__db[self.module][self.key]);
+				self:ClearFocus();
+				self.okay:Hide();
+				self.discard:Hide();
+			else
+				self.err:SetText(err);
+				self.err:SetVertexColor(1.0, 0.0, 0.0, 1.0);
+			end
+		end
+		local function InputListEditBox_OnEscapePressed(self)
 			self:ClearFocus();
 			self.okay:Hide();
 			self.discard:Hide();
-		else
-			self.err:SetText(err);
-			self.err:SetVertexColor(1.0, 0.0, 0.0, 1.0);
+			self.parent:SetVal(__db[self.module][self.key]);
 		end
-	end
-	local function InputListEditBox_OnEscapePressed(self)
-		self:ClearFocus();
-		self.okay:Hide();
-		self.discard:Hide();
-		self.parent:SetVal(__db[self.module][self.key]);
-	end
-	local function InputListEditBox_OnTextChanged(self, userInput)
-		if userInput then
-			self.okay:Show();
-			self.discard:Show();
-			self.err:SetText("");
+		local function InputListEditBox_OnTextChanged(self, userInput)
+			if userInput then
+				self.okay:Show();
+				self.discard:Show();
+				self.err:SetText("");
+			end
 		end
-	end
-	local function InputListEditBoxOkay_OnClick(self)
-		InputListEditBox_OnEnterPressed(self.editbox);
-	end
-	local function InputListEditBoxDiscard_OnClick(self)
-		InputListEditBox_OnEscapePressed(self.editbox);
-	end
-	--	radio
-	local function ListCheck_OnClick(self, button)
-		SetDB(self.module, self.key, self.val, false);
-	end
-	--
-	local function SetButtonColorTexture(button)
-		local NT = button:CreateTexture(nil, "ARTWORK");
-		local PT = button:CreateTexture(nil, "ARTWORK");
-		local HT = button:CreateTexture(nil, "HIGHLIGHT");
-		button:SetNormalTexture(NT);
-		button:SetPushedTexture(PT);
-		button:SetHighlightTexture(HT);
-		NT:SetColorTexture(0.25, 0.25, 0.25, 0.75);
-		PT:SetColorTexture(0.25, 0.5, 0.75, 0.75);
-		HT:SetColorTexture(0.0, 0.25, 0.5, 0.5);
-		HT:SetBlendMode("ADD");
-	end
-	local function SetCheckButtonTexture(check)
-		check:SetNormalTexture(SettingUICheckNormalTexture);
-		check:SetPushedTexture(SettingUICheckCheckedTexture);
-		check:SetHighlightTexture(SettingUICheckNormalTexture);
-		check:SetCheckedTexture(SettingUICheckCheckedTexture);
-		check:GetNormalTexture():SetVertexColor(1.0, 1.0, 1.0, 0.5);
-		check:GetPushedTexture():SetVertexColor(1.0, 1.0, 1.0, 0.25);
-		check:GetHighlightTexture():SetVertexColor(1.0, 1.0, 1.0, 0.5);
-		check:GetCheckedTexture():SetVertexColor(0.0, 0.5, 1.0, 0.75);
-	end
-	local function SetBackdrop(_F, inset, dr, dg, db, da, width, rr, rg, rb, ra)	--	inset > 0 : inner	--	inset < 0 : outter
-		local ofs = width + inset;
-		local Backdrop = _F:CreateTexture(nil, "BACKGROUND");
-		Backdrop:SetPoint("BOTTOMLEFT", _F, "BOTTOMLEFT", ofs, ofs);
-		Backdrop:SetPoint("TOPRIGHT", _F, "TOPRIGHT", -ofs, -ofs);
-		Backdrop:SetColorTexture(dr or 0.0, dg or 0.0, db or 0.0, da or 1.0);
-		local LBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
-		local TBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
-		local RBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
-		local BBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
-		if width ~= nil then
-			rr, rg, rb, ra = rr or 1.0, rg or 1.0, rb or 1.0, ra or 0.5;
-			LBorder:SetWidth(width);
-			TBorder:SetHeight(width);
-			RBorder:SetWidth(width);
-			BBorder:SetHeight(width);
-			LBorder:SetColorTexture(rr, rg, rb, ra);
-			TBorder:SetColorTexture(rr, rg, rb, ra);
-			RBorder:SetColorTexture(rr, rg, rb, ra);
-			BBorder:SetColorTexture(rr, rg, rb, ra);
-			LBorder:SetPoint("TOPRIGHT", _F, "TOPLEFT", ofs, -ofs);
-			LBorder:SetPoint("BOTTOMRIGHT", _F, "BOTTOMLEFT", ofs, inset);
-			TBorder:SetPoint("BOTTOMRIGHT", _F, "TOPRIGHT", -ofs, -ofs);
-			TBorder:SetPoint("BOTTOMLEFT", _F, "TOPLEFT", inset, -ofs);
-			RBorder:SetPoint("BOTTOMLEFT", _F, "BOTTOMRIGHT", -ofs, ofs);
-			RBorder:SetPoint("TOPLEFT", _F, "TOPRIGHT", -ofs, -inset);
-			BBorder:SetPoint("TOPLEFT", _F, "BOTTOMLEFT", ofs, ofs);
-			BBorder:SetPoint("TOPRIGHT", _F, "BOTTOMRIGHT", -inset, ofs);
+		local function InputListEditBoxOkay_OnClick(self)
+			InputListEditBox_OnEnterPressed(self.editbox);
 		end
-	end
-	function __private:CreateSetting(Panel, module, key, Type, extra, exhibit, tab, col)
-		col = col or 1;
+		local function InputListEditBoxDiscard_OnClick(self)
+			InputListEditBox_OnEscapePressed(self.editbox);
+		end
+		--	radio
+		local function ListCheck_OnClick(self, button)
+			SetDB(self.module, self.key, self.val, false);
+		end
+	-->
+		local function SetButtonColorTexture(button)
+			local NT = button:CreateTexture(nil, "ARTWORK");
+			local PT = button:CreateTexture(nil, "ARTWORK");
+			local HT = button:CreateTexture(nil, "HIGHLIGHT");
+			NT:SetAllPoints();
+			PT:SetAllPoints();
+			HT:SetAllPoints();
+			button:SetNormalTexture(NT);
+			button:SetPushedTexture(PT);
+			button:SetHighlightTexture(HT);
+			NT:SetColorTexture(0.25, 0.25, 0.25, 0.75);
+			PT:SetColorTexture(0.25, 0.5, 0.75, 0.75);
+			HT:SetColorTexture(0.0, 0.25, 0.5, 0.5);
+			HT:SetBlendMode("ADD");
+		end
+		local function SetCheckButtonTexture(check)
+			check:SetNormalTexture(SettingUICheckNormalTexture);
+			check:SetPushedTexture(SettingUICheckCheckedTexture);
+			check:SetHighlightTexture(SettingUICheckNormalTexture);
+			check:SetCheckedTexture(SettingUICheckCheckedTexture);
+			check:GetNormalTexture():SetVertexColor(1.0, 1.0, 1.0, 0.5);
+			check:GetPushedTexture():SetVertexColor(1.0, 1.0, 1.0, 0.25);
+			check:GetHighlightTexture():SetVertexColor(1.0, 1.0, 1.0, 0.5);
+			check:GetCheckedTexture():SetVertexColor(0.0, 0.5, 1.0, 0.75);
+		end
+		local function SetBackdrop(_F, inset, dr, dg, db, da, width, rr, rg, rb, ra)	--	inset > 0 : inner	--	inset < 0 : outter
+			local ofs = width + inset;
+			local Backdrop = _F:CreateTexture(nil, "BACKGROUND");
+			Backdrop:SetPoint("BOTTOMLEFT", _F, "BOTTOMLEFT", ofs, ofs);
+			Backdrop:SetPoint("TOPRIGHT", _F, "TOPRIGHT", -ofs, -ofs);
+			Backdrop:SetColorTexture(dr or 0.0, dg or 0.0, db or 0.0, da or 1.0);
+			local LBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
+			local TBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
+			local RBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
+			local BBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
+			if width ~= nil then
+				rr, rg, rb, ra = rr or 1.0, rg or 1.0, rb or 1.0, ra or 0.5;
+				LBorder:SetWidth(width);
+				TBorder:SetHeight(width);
+				RBorder:SetWidth(width);
+				BBorder:SetHeight(width);
+				LBorder:SetColorTexture(rr, rg, rb, ra);
+				TBorder:SetColorTexture(rr, rg, rb, ra);
+				RBorder:SetColorTexture(rr, rg, rb, ra);
+				BBorder:SetColorTexture(rr, rg, rb, ra);
+				LBorder:SetPoint("TOPRIGHT", _F, "TOPLEFT", ofs, -ofs);
+				LBorder:SetPoint("BOTTOMRIGHT", _F, "BOTTOMLEFT", ofs, inset);
+				TBorder:SetPoint("BOTTOMRIGHT", _F, "TOPRIGHT", -ofs, -ofs);
+				TBorder:SetPoint("BOTTOMLEFT", _F, "TOPLEFT", inset, -ofs);
+				RBorder:SetPoint("BOTTOMLEFT", _F, "BOTTOMRIGHT", -ofs, ofs);
+				RBorder:SetPoint("TOPLEFT", _F, "TOPRIGHT", -ofs, -inset);
+				BBorder:SetPoint("TOPLEFT", _F, "BOTTOMLEFT", ofs, ofs);
+				BBorder:SetPoint("TOPRIGHT", _F, "BOTTOMRIGHT", -inset, ofs);
+			end
+		end
+	-->
+	function __private:CreateSetting(Panel, module, key, Type, extra, exhibit, tab, col, icon)
 		tab = tab or 0;
+		col = col or 1;
 		local LSETTINGMODULE = L.SETTING[module];
 		_SettingNodes[module] = _SettingNodes[module] or {  };
+		local anchor = nil;
 		if Type == 'number' then
 			local head = Panel:CreateTexture(nil, "ARTWORK");
 			head:SetSize(16, 10);
@@ -373,8 +380,9 @@ local _SettingNodes = {  };
 				self.head:SetPoint(...);
 			end
 			_SettingNodes[module][key] = slider;
-			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * 160, -22 - Panel.pos[col] * SettingUILineHeight);
+			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * SettingUIColWidth, -22 - Panel.pos[col] * SettingUILineHeight);
 			Panel.pos[col] = Panel.pos[col] + 2;
+			anchor = head;
 		elseif Type == 'boolean' then
 			local check = CreateFrame('CHECKBUTTON', nil, Panel);
 			check:SetSize(16, 16);
@@ -392,8 +400,9 @@ local _SettingNodes = {  };
 			label:SetText(gsub(LSETTINGMODULE[key], "%%[a-z]", ""));
 			label:SetPoint("LEFT", check, "CENTER", 16, 0);
 			_SettingNodes[module][key] = check;
-			check:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * 160, -22 - Panel.pos[col] * SettingUILineHeight);
+			check:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * SettingUIColWidth, -22 - Panel.pos[col] * SettingUILineHeight);
 			Panel.pos[col] = Panel.pos[col] + 1;
+			anchor = check;
 		elseif Type == 'editor' then
 			local head = Panel:CreateTexture(nil, "ARTWORK");
 			head:SetSize(16, 10);
@@ -417,8 +426,9 @@ local _SettingNodes = {  };
 			end
 			button.__indirect = true;
 			_SettingNodes[module][key] = button;
-			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * 160, -22 - Panel.pos[col] * SettingUILineHeight);
+			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * SettingUIColWidth, -22 - Panel.pos[col] * SettingUILineHeight);
 			Panel.pos[col] = Panel.pos[col] + 1;
+			anchor = head;
 		elseif Type == 'color' then
 			local head = Panel:CreateTexture(nil, "ARTWORK");
 			head:SetSize(16, 10);
@@ -441,8 +451,9 @@ local _SettingNodes = {  };
 			end
 			button.__indirect = true;
 			_SettingNodes[module][key] = button;
-			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * 160, -22 - Panel.pos[col] * SettingUILineHeight);
+			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * SettingUIColWidth, -22 - Panel.pos[col] * SettingUILineHeight);
 			Panel.pos[col] = Panel.pos[col] + 1;
+			anchor = head;
 		elseif Type == 'list' or Type == 'input-list' then
 			local head = Panel:CreateTexture(nil, "ARTWORK");
 			head:SetSize(16, 10);
@@ -552,8 +563,9 @@ local _SettingNodes = {  };
 				self.head:SetPoint(...);
 			end
 			_SettingNodes[module][key] = drop;
-			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * 160, -22 - Panel.pos[col] * SettingUILineHeight);
+			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * SettingUIColWidth, -22 - Panel.pos[col] * SettingUILineHeight);
 			Panel.pos[col] = Panel.pos[col] + (Type == 'input-list' and 3 or 2);
+			anchor = head;
 		elseif Type == 'radio' then
 			local head = Panel:CreateTexture(nil, "ARTWORK");
 			head:SetSize(16, 10);
@@ -595,12 +607,33 @@ local _SettingNodes = {  };
 			end
 			list.__indirect = false;
 			_SettingNodes[module][key] = list;
-			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * 160, -22 - Panel.pos[col] * SettingUILineHeight);
+			head:SetPoint("CENTER", Panel, "TOPLEFT", 32 + tab * SettingUILineHeight + (col - 1) * SettingUIColWidth, -22 - Panel.pos[col] * SettingUILineHeight);
 			Panel.pos[col] = Panel.pos[col] + 2;
+			anchor = head;
 		else
 			return;
 		end
 		SettingUI:SetHeight(min(max(SettingUI:GetHeight(), 32 + 12 + Panel.pos[col] * SettingUILineHeight + 12 + 6), 1024));
+		if icon ~= nil then
+			local i = Panel:CreateTexture(nil, "ARTWORK");
+			i:SetSize(20, 20);
+			i:SetPoint("RIGHT", anchor, "CENTER", -12, 0);
+			if type(icon) == 'table' then
+				if icon[1] ~= nil then
+					i:SetTexture(icon[1]);
+					if icon[2] ~= nil then
+						i:SetTexCoord(unpack(icon[2]));
+					end
+					if icon[3] ~= nil then
+						i:SetVertexColor(unpack(icon[3]));
+					end
+				elseif icon[3] ~= nil then
+					i:SetColorTexture(unpack(icon[3]));
+				end
+			else
+				i:SetTexture(icon);
+			end
+		end
 	end
 	function __private:AlignSetting(category, ofs)
 		local CategoryTable = _CategoryList[category];

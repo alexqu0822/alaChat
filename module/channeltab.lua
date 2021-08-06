@@ -787,10 +787,7 @@ local _ExecuteAutoJoin = true;
 		CheckChatPin();
 		CheckChannelPin(GetChannelList());
 	end
-	local _Event = nil;
-	local function AutoJoinWorldOnEvent(self, event)
-		alaChatSV.PLAYER_LOGOUT = true;
-	end
+	local CHANNEL_PASSWORD_REQUEST = nil;
 	local function AutoJoinTicker()
 		if ChannelHasJoinButton.BF_WORLD == nil then
 			if _ExecuteAutoJoin then
@@ -805,16 +802,21 @@ local _ExecuteAutoJoin = true;
 				_ExecuteAutoJoin = true;
 				C_Timer.After(1.0, AutoJoinTicker);
 			end
-			-- if _Event == nil then
-			-- 	_Event = CreateFrame('FRAME');
-			-- 	_Event:SetScript("OnEvent", AutoJoinWorldOnEvent);
-			-- end
-			-- _Event:RegisterEvent("PLAYER_LOGOUT");
+			if CHANNEL_PASSWORD_REQUEST == nil then
+				CHANNEL_PASSWORD_REQUEST = CreateFrame('FRAME');
+				CHANNEL_PASSWORD_REQUEST:SetScript("OnEvent", function(self, event, channel)
+					if channel == "大脚世界频道" then
+						_ExecuteAutoJoin = false;
+						DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00>|ralachat: 世界频道有密码，停止自动加入。");
+					end
+				end);
+			end
+			CHANNEL_PASSWORD_REQUEST:RegisterEvent("CHANNEL_PASSWORD_REQUEST");
 		else
 			_ExecuteAutoJoin = false;
-			-- if _Event ~= nil then
-			-- 	_Event:UnregisterEvent("PLAYER_LOGOUT");
-			-- end
+			if CHANNEL_PASSWORD_REQUEST ~= nil then
+				CHANNEL_PASSWORD_REQUEST:UnregisterEvent("CHANNEL_PASSWORD_REQUEST");
+			end
 		end
 	end
 -->
