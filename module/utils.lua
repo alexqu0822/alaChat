@@ -9,7 +9,7 @@ local __utils = {  };
 local _db = {  };
 
 local __pins = {  };
-local _prefix = select(2, GetAddOnInfo("!!!163UI!!!")) and L.STATREPORT["163UI"] or "";
+local _prefix = __private.__is163 and L.STATREPORT["163UI"] or "";
 
 -->		Method
 	--	StatReprot

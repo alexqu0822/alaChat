@@ -34,6 +34,7 @@ __private.__module = __module;
 __private.__dev = {  };
 
 __private.__isdev = select(2, GetAddOnInfo("!!!!!DebugMe")) ~= nil;
+__private.__is163 = select(2, GetAddOnInfo("!!!163UI!!!")) ~= nil;
 
 __private.TEXTURE_PATH = [[Interface\AddOns\]] .. __addon .. [[\Media\Texture\]];
 
@@ -193,6 +194,14 @@ if L.Locale == 'zhCN' and (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or WOW_PROJECT_
 	;
 	__default.chatfilter.NameSet = "#加基森\n#冬泉谷\n#玛拉顿\n#斯坦索姆\n#航空\n#航班\n#飞机\n#专机\n#直达\n#直飞\n";
 end
+if __private.__is163 then
+	for _, v in next, __default do
+		if v.PinStyle ~= nil then
+			v.PinStyle = "char.blz";
+		end
+	end
+	__default.channeltab.UseColor = false;
+end
 
 local __db = __default;
 
@@ -223,30 +232,48 @@ local __db = __default;
 			end
 		end
 	end
-	local function InitModule(when)
-		for index = 1, #__modulelist do
-			local key = __modulelist[index];
-			local module = __module[key];
-			if module.__initat == when then
-				if module.__callback ~= nil then
-					xpcall(module.__callback, geterrorhandler(), "__init", __db[key], true);
-					local db = __db[key];
-					if db == nil or db.toggle == true then
-						xpcall(module.__callback, geterrorhandler(), "toggle", true, true);
-					elseif db.toggle == false then
-						xpcall(module.__callback, geterrorhandler(), "toggle", false, true);
-					end
-					if db ~= nil then
-						for k, v in next, db do
-							if k ~= "toggle" then
-								xpcall(module.__callback, geterrorhandler(), k, v, true);
-							end
-						end
-					end
-					xpcall(module.__callback, geterrorhandler(), "__setting");
+	local function InitSingleModule(key, module)
+		xpcall(module.__callback, geterrorhandler(), "__init", __db[key], true);
+		local db = __db[key];
+		if db == nil or db.toggle == true then
+			xpcall(module.__callback, geterrorhandler(), "toggle", true, true);
+		elseif db.toggle == false then
+			xpcall(module.__callback, geterrorhandler(), "toggle", false, true);
+		end
+		if db ~= nil then
+			for k, v in next, db do
+				if k ~= "toggle" then
+					xpcall(module.__callback, geterrorhandler(), k, v, true);
 				end
 			end
 		end
+		xpcall(module.__callback, geterrorhandler(), "__setting");
+	end
+	local function InitModules(when)
+		local hasOne = false;
+		for index = 1, #__modulelist do
+			local key = __modulelist[index];
+			local module = __module[key];
+			if module.__initialized == nil and module.__initat == when then
+				if module.__callback ~= nil then
+					if module.__initafter == nil or module.__initafter() then
+						InitSingleModule(key, module);
+					else
+						local function func()
+							if module.__initafter() then
+								InitSingleModule(key, module);
+							else
+								C_Timer.After(1.0, func);
+							end
+						end
+						C_Timer.After(1.0, func);
+					end
+				end
+				module.__initialized = true;
+				hasOne = true;
+			end
+		end
+		return hasOne;
 	end
 	local function DisableOldVersion()
 		if _G.GLOBAL_CORE_SAVED ~= nil then
@@ -456,32 +483,32 @@ local _Event = CreateFrame('FRAME');
 _Event:RegisterEvent("ADDON_LOADED");
 -- _Event:RegisterEvent("PLAYER_ENTERING_WORLD");
 _Event:RegisterEvent("LOADING_SCREEN_DISABLED");
+_Event:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 _Event:SetScript("OnEvent", function(self, event, param)
 	if event == "ADDON_LOADED" then
 		if param == __addon then
 			self:UnregisterEvent("ADDON_LOADED");
 			InitDB();
 			__private:InitSettingUI(__db, __default, __modulelist, __module);
-			InitModule();
-		end
-		for index = 1, #__modulelist do
-			local key = __modulelist[index];
-			local module = __module[key];
-			if module.__initat ~= nil then
-				pcall(_Event.RegisterEvent, _Event, module.__initat);
-				_TriggeredEvents[module.__initat] = false;
+			InitModules();
+			for index = 1, #__modulelist do
+				local key = __modulelist[index];
+				local module = __module[key];
+				if module.__initat ~= nil then
+					pcall(_Event.RegisterEvent, _Event, module.__initat);
+					_TriggeredEvents[module.__initat] = false;
+				end
 			end
 		end
 	else
 		self:UnregisterEvent(event);
-		InitModule(event);
+		InitModules(event);
 		_TriggeredEvents[event] = true;
 		if event == "LOADING_SCREEN_DISABLED" then
 			C_Timer.After(8, function()
 				for event, triggered in next, _TriggeredEvents do
 					if triggered ~= true then
-						InitModule(event);
-						if __private.__isdev then
+						if InitModules(event) and __private.__isdev then
 							print("|cff00ff00Manal Trigger " .. tostring(event));
 						end
 					end

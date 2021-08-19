@@ -62,7 +62,7 @@ if L.Locale ~= nil and L.Locale ~= "" then
 	return;
 end
 L.Locale = "enUS";
-L.ExactLocale = false;--GetLocale() == "enUS";
+L.ExactLocale = GetLocale() == "enUS";
 
 L.TABSHORT = {
 	SAY = "S",

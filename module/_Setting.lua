@@ -829,6 +829,7 @@ local _SettingNodes = {  };
 		__private:CreateCategory(SettingUI, "GENERAL").Tab:Click();
 		--
 		SettingUIFreeContainer = CreateFrame('FRAME', "ALACHAT_SETTING_UI_C", UIParent);
+		SettingUIFreeContainer:SetFrameStrata("DIALOG");
 		SettingUIFreeContainer:SetPoint("CENTER");
 		SettingUIFreeContainer:EnableMouse(true);
 		SettingUIFreeContainer:SetMovable(true);

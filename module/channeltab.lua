@@ -87,7 +87,7 @@ local _ExecuteAutoJoin = true;
 		LOCAL_DEFENSE = -3,
 		LOOK_FOR_GROUP = -2,
 	};
-	local HashBFWORLD = nil;
+	local HashBFWORLD = {  };
 	local function BuildTable()
 		if L.ExactLocale then
 			CHANNELLIST = {
@@ -98,7 +98,6 @@ local _ExecuteAutoJoin = true;
 			};
 			tinsert(ChannelHasJoinButton, 3, "LOCAL_DEFENSE");
 			if L.Locale == "zhCN" or L.Locale == "zhTW" then
-				HashBFWORLD = {  };
 				CHANNELLIST.BF_WORLD = "大脚世界频道";
 				CHANNELHASH["大脚世界频道"] = "BF_WORLD";
 				HashBFWORLD["大脚世界频道"] = 0;
@@ -165,25 +164,27 @@ local _ExecuteAutoJoin = true;
 					return matrix[len1][len2];
 				end
 			end
-			for which, fuzzy in next, FuzzyName do
-				local best = 1;
-				if list[1] ~= fuzzy then
-					local co = LevenshteinDistance(list[1], fuzzy);
-					for index = 2, #list do
-						local c = list[index];
-						if c == fuzzy then
-							best = index;
-							break;
-						else
-							local co2 = LevenshteinDistance(list[index], fuzzy);
-							if co2 < co then
-								co = co2;
+			if list[1] ~= nil then
+				for which, fuzzy in next, FuzzyName do
+					local best = 1;
+					if list[1] ~= fuzzy then
+						local co = LevenshteinDistance(list[1], fuzzy);
+						for index = 2, #list do
+							local c = list[index];
+							if c == fuzzy then
 								best = index;
+								break;
+							else
+								local co2 = LevenshteinDistance(list[index], fuzzy);
+								if co2 < co then
+									co = co2;
+									best = index;
+								end
 							end
 						end
 					end
+					CHANNELLIST[which] = list[best];
 				end
-				CHANNELLIST[which] = list[best];
 			end
 		end
 		for key, channelName in next, CHANNELLIST do
@@ -1148,5 +1149,8 @@ local _ExecuteAutoJoin = true;
 	end
 
 	__channeltab.__initat = "LOADING_SCREEN_DISABLED";
+	__channeltab.__initafter = function() return EnumerateServerChannels() ~= nil end;
+	--	"LOADING_SCREEN_DISABLED";
+	--	"ZONE_CHANGED_NEW_AREA", "AREA_POIS_UPDATED", "CHANNEL_UI_UPDATE"
 	__private.__module["channeltab"] = __channeltab;
 -->

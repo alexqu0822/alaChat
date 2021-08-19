@@ -6,9 +6,10 @@ local TEXTURE_PATH = __private.TEXTURE_PATH;
 local PIN_ORDER_OFFSET = 97;
 
 local time = time;
-local strbyte, strsub, strsplit, strtrim, strfind, strmatch, gsub = string.byte, string.sub, string.split, string.trim, string.find, string.match, string.gsub;
+local strbyte, strsub, strsplit, strtrim, strfind, strmatch, format, gsub = string.byte, string.sub, string.split, string.trim, string.find, string.match, string.format, string.gsub;
 local IsAltKeyDown = IsAltKeyDown;
 local Ambiguate = Ambiguate;
+local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
 
 local __chatfilter = {  };
 local _db = {  };
@@ -107,18 +108,18 @@ local PLAYER = UnitName('player');
 		end
 		return false;
 	end
-	local function ChatMessageFilter(self, event, msg, sender, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, arg12, arg13, arg14, ...)
+	local function ChatMessageFilter(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, arg12, arg13, arg14, ...)
 		if _db._TemporaryDisabled then
 			return false;
 		end
-		sender = Ambiguate(sender, 'none');
+		local sender = Ambiguate(arg2, 'none');
 		if sender == PLAYER then
 			return false;
 		end
 		if _tNameHash[sender] then
 			return true;
 		end
-		msg = strtrim(msg);
+		local msg = strtrim(arg1);
 		local cache = _tMSGCache[msg];
 		if cache ~= nil then
 			if cache[3] or cache[6] then
@@ -140,7 +141,19 @@ local PLAYER = UnitName('player');
 			for index = 1, _nNamePatList do
 				if strmatch(sender, _tNamePatList[index]) ~= nil then
 					_tNameHash[sender] = true;
-					if __private.__isdev then print("BL", sender, msg); end
+					if __private.__isdev then
+						local class, classFile, race, raceFile, sex = GetPlayerInfoByGUID(arg12);
+						if classFile ~= nil then
+							local color = RAID_CLASS_COLORS[classFile];
+							if color ~= nil then
+								print("BL " .. GetPlayerLink(arg2, format("[|cff%.2x%.2x%.2x%s|r] ", color.r * 255, color.g * 255, color.b * 255, sender), line) .. msg);
+							else
+								print("BL " .. GetPlayerLink(arg2, "[" .. sender .. "] ", line) .. msg);
+							end
+						else
+							print("BL " .. GetPlayerLink(arg2, "[" .. sender .. "] ", line) .. msg);
+						end
+					end
 					return true;
 				end
 			end
@@ -148,7 +161,19 @@ local PLAYER = UnitName('player');
 		if _nStrPatList > 0 then
 			for index = 1, _nStrPatList do
 				if strmatch(msg, _tStrPatList[index]) ~= nil then
-					if __private.__isdev then print(msg, "[[" .. _tStrPatList[index] .. "]]"); end
+					if __private.__isdev then
+						local class, classFile, race, raceFile, sex = GetPlayerInfoByGUID(arg12);
+						if classFile ~= nil then
+							local color = RAID_CLASS_COLORS[classFile];
+							if color ~= nil then
+								print("KW " .. GetPlayerLink(arg2, format("[|cff%.2x%.2x%.2x%s|r]", color.r * 255, color.g * 255, color.b * 255, sender), line) .. "[[|cffff3f00" .. _tStrPatList[index] .. "|r]] " .. msg);
+							else
+								print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. _tStrPatList[index] .. "|r]] " .. msg);
+							end
+						else
+							print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. _tStrPatList[index] .. "|r]] " .. msg);
+						end
+					end
 					_tMSGCache[msg] = { time(), line, true, sender, };
 					return true;
 				end
