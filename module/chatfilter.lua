@@ -18,8 +18,10 @@ local __STRSET = "";
 local __NAMESET = "";
 local _nStrPatList = 0;
 local _tStrPatList = {  };
+local _tStrPatDisplay = {  };
 local _nNamePatList = 0;
 local _tNamePatList = {  };
+local _tNamePatDisplay = {  };
 local _tNameHash = {  };
 local _tMSGCache = {  };	--	[msg] = { time, line, filtered, sender, actually_displayed_msg, repeated_filtered, }
 local _tSenderCache = {  };
@@ -162,16 +164,18 @@ local PLAYER = UnitName('player');
 			for index = 1, _nStrPatList do
 				if strmatch(msg, _tStrPatList[index]) ~= nil then
 					if __private.__isdev then
+						local str = _tStrPatList[index];
+						str = _tStrPatDisplay[str] or str;
 						local class, classFile, race, raceFile, sex = GetPlayerInfoByGUID(arg12);
 						if classFile ~= nil then
 							local color = RAID_CLASS_COLORS[classFile];
 							if color ~= nil then
-								print("KW " .. GetPlayerLink(arg2, format("[|cff%.2x%.2x%.2x%s|r]", color.r * 255, color.g * 255, color.b * 255, sender), line) .. "[[|cffff3f00" .. _tStrPatList[index] .. "|r]] " .. msg);
+								print("KW " .. GetPlayerLink(arg2, format("[|cff%.2x%.2x%.2x%s|r]", color.r * 255, color.g * 255, color.b * 255, sender), line) .. "[[|cffff3f00" .. str .. "|r]] " .. msg);
 							else
-								print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. _tStrPatList[index] .. "|r]] " .. msg);
+								print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. str .. "|r]] " .. msg);
 							end
 						else
-							print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. _tStrPatList[index] .. "|r]] " .. msg);
+							print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. str .. "|r]] " .. msg);
 						end
 					end
 					_tMSGCache[msg] = { time(), line, true, sender, };
@@ -217,16 +221,15 @@ local PLAYER = UnitName('player');
 		return gsub(str, "%a", NoCaseRep);
 	end
 	local function InitStrPatList()
-		local SSET = _db.StrSet;
-		if SSET ~= nil then
-			SSET = gsub(gsub(gsub(SSET, "^[\t\n ]+", ""), "[\t\n ]+$", ""), "\n\n", "\n");
-			SSET = gsub(SSET, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1");
-			if _db.CaseInsensitive then
-				SSET = NoCase(SSET);
-			end
+		local StrSet = _db.StrSet;
+		if StrSet ~= nil then
+			StrSet = gsub(gsub(gsub(StrSet, "^[\t\n ]+", ""), "[\t\n ]+$", ""), "\n\n", "\n");
+			StrSet = gsub(StrSet, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1");
+			local SSET =  _db.CaseInsensitive and NoCase(StrSet) or StrSet;
 			if __STRSET ~= SSET then
 				__STRSET = SSET;
 				local list = { strsplit("\n", SSET) };
+				local display = { strsplit("\n", StrSet) };
 				_nStrPatList = 0;
 				_tStrPatList = {  };
 				for index = 1, #list do
@@ -235,6 +238,7 @@ local PLAYER = UnitName('player');
 						_nStrPatList = _nStrPatList + 1;
 						_tStrPatList[_nStrPatList] = str;
 						_tStrPatList[str] = true;
+						_tStrPatDisplay[str] = strtrim(display[index]);
 					end
 				end
 				if _nStrPatList > 0 then
@@ -259,16 +263,15 @@ local PLAYER = UnitName('player');
 		end
 	end
 	local function InitNamePatList()
-		local NSET = _db.NameSet;
-		if NSET ~= nil then
-			NSET = gsub(gsub(gsub(NSET, "^[\t\n ]+", ""), "[\t\n ]+$", ""), "\n\n", "\n");
-			NSET = gsub(NSET, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1");
-			if not _db.CaseInsensitive then
-				NSET = NoCase(NSET);
-			end
+		local NameSet = _db.NameSet;
+		if NameSet ~= nil then
+			NameSet = gsub(gsub(gsub(NameSet, "^[\t\n ]+", ""), "[\t\n ]+$", ""), "\n\n", "\n");
+			NameSet = gsub(NameSet, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1");
+			local NSET = _db.CaseInsensitive and NoCase(NameSet) or NameSet;
 			if __NAMESET ~= NSET then
 				__NAMESET = NSET;
 				local list = { strsplit("\n", NSET) };
+				local display = { strsplit("\n", NameSet) };
 				_nNamePatList = 0;
 				_tNamePatList = {  };
 				_tNameHash = {  };
@@ -280,9 +283,11 @@ local PLAYER = UnitName('player');
 							if str ~= "" and _tNamePatList[str] == nil then
 								_nNamePatList = _nNamePatList + 1;
 								_tNamePatList[_nNamePatList] = str;
+								_tNamePatDisplay[str] = gsub(display[index], "[#*]", "");
 							end
 						else
 							_tNameHash[str] = true;
+							_tNamePatDisplay[str] = display[index];
 						end
 					end
 				end

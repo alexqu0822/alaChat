@@ -70,19 +70,23 @@ local _GUILD = GetGuildInfo('player');
 			pinfo = {
 				GUID ~= "" and GUID or nil,
 				class ~= "" and class or nil,
-				level,
+				level or 0,
 				now,
 				src,
 			};
 			_tPlayerInfo[name] = pinfo;
-			-- print("|cff00ff00++++|r", name, pinfo[2], pinfo[3]);
+			-- if __private.__isdev then
+				-- print("|cff00ff00++++|r", name, pinfo[2], pinfo[3]);
+			-- end
 		else
 			pinfo[1] = GUID ~= "" and GUID or pinfo[1];
 			pinfo[2] = class ~= "" and class or pinfo[2];
 			pinfo[3] = level ~= 0 and level or pinfo[3];
 			pinfo[4] = now;
 			pinfo[5] = src;
-			-- print("|cffffff00****|r", name, pinfo[2], pinfo[3]);
+			-- if __private.__isdev then
+				-- print("|cffffff00****|r", name, pinfo[2], pinfo[3]);
+			-- end
 		end
 	end
 --		level and subGroup
@@ -238,7 +242,7 @@ local _GUILD = GetGuildInfo('player');
 				local name, rank, subGroup, level, classStr, class, zone, online, dead, role, isML, combatRole = GetRaidRosterInfo(index);
 				if name ~= nil and name ~= "" then
 					name = Ambiguate(name, 'none');
-					AddPlayerInfo(name, GUID, class, (level == nil or level == 0) and UnitLevel(name) or level, 'group', now);
+					AddPlayerInfo(name, UnitGUID(name), class, (level == nil or level == 0) and UnitLevel(name) or level, 'group', now);
 					_tSubGroup[name] = subGroup;
 				end
 			end
@@ -477,10 +481,12 @@ local _GUILD = GetGuildInfo('player');
 			ScheduleDelayUpdate('who');
 		elseif event == "PLAYER_GUILD_UPDATE" then
 			if IsInGuild() then
-				_isInGuild = true;
-				__EventHandler:RegisterEvent("CHAT_MSG_SYSTEM");
-				_GUILD = GetGuildInfo('player');
-				ScheduleDelayUpdate('guild');
+				if not _isInGuild then
+					_isInGuild = true;
+					__EventHandler:RegisterEvent("CHAT_MSG_SYSTEM");
+					_GUILD = GetGuildInfo('player');
+					ScheduleDelayUpdate('guild');
+				end
 			else
 				_isInGuild = false;
 				__EventHandler:UnregisterEvent("CHAT_MSG_SYSTEM");
