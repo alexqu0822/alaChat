@@ -370,3 +370,5 @@ L.DETAILEDTIP = {
 	-- roll = "ROLL",
 	-- ReadyCheck = "就位确认",
 };
+
+L["Find profiles of alaChat_Classic. Do you want to upgrade it and overwrite current setting?"] = "Find profiles of alaChat_Classic. Do you want to upgrade it and overwrite current setting?";

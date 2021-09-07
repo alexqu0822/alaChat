@@ -289,18 +289,26 @@ local __db = __default;
 			end
 		end
 	end
-	local function OldVersionCompatible(__db)
+	local function OldVersionCompatible(__db, enquiry)
 		if select(2, GetAddOnInfo("alaChat_Classic")) ~= nil then
 			local version = GetAddOnMetadata("alaChat_Classic", "Version");
 			if __private.__isdev then print("ACC Version", version); end
 			if version >= "205r.210711" then
 				EnableAddOn("alaChat_Classic");
 				LoadAddOn("alaChat_Classic");
-				if alaBaseData ~= nil then
-					__db.docker.UserPlacedPosition = alaBaseData.pos;
+				local base = _G.alaBaseData;
+				local old = _G.alaChatConfig;
+				if enquiry and old ~= nil then
+					__db.__upgraded = true;
+					C_Timer.After(4.0, function()
+						StaticPopup_Show("ALACHAT_UPGRADE", nil, nil, {  });
+					end);
+					return;
+				end
+				if base ~= nil then
+					__db.docker.UserPlacedPosition = base.pos;
 					_G.alaBaseData = nil;
 				end
-				local old = _G.alaChatConfig;
 				if old ~= nil then
 					__db.docker.Position = old["position"] == "BELOW_EDITBOX" and "below.editbox" or "above.editbox";	--	"BELOW_EDITBOX", "ABOVE_EDITOBX", "ABOVE_CHATFRAME"
 					if old["channelBarStyle"] == "CIRCLE" then			--	"CHAR", "CIRCLE", "SQUARE"
@@ -433,7 +441,24 @@ local __db = __default;
 				SaveAddOns();
 			end
 		end
+		__db.__upgraded = true;
 	end
+	StaticPopupDialogs['ALACHAT_UPGRADE'] = {
+		preferredIndex = 3,
+		text = L["Find profiles of alaChat_Classic. Do you want to upgrade it and overwrite current setting?"],
+		button1 = YES,
+		button2 = NO,
+		OnAccept = function(self, data)
+			OldVersionCompatible(__db);
+			_G.alaBaseData = nil;
+			_G.alaChatConfig = nil;
+			ReloadUI();
+		end,
+		hideOnEscape = 1,
+		timeout = 0,
+		exclusive = 1,
+		whileDead = 1,
+	};
 	local function InitDB()
 		__db = _G.alaChatSV;
 		if __db == nil then
@@ -451,24 +476,21 @@ local __db = __default;
 			CopyTable(__db, __default);
 			alaChatSV = __db;
 			OldVersionCompatible(__db);
-			DisableOldVersion();
-		elseif __db.__version == nil or __db.__version < 210711.04 then
-			if L.Locale == 'zhCN' then
-				__db.chatfilter.StrSet = __db.chatfilter.StrSet ~= nil and gsub(__db.chatfilter.StrSet, "\n拉人\n", "\n") or "";
+		else
+			if __db.__upgraded ~= true then
+				OldVersionCompatible(__db, true);
 			end
-			__db.channeltab._bfworldcf = {  };
-			DisableOldVersion();
-		elseif __db.__version < 210718.01 then
-			DisableOldVersion();
-			__db.channeltab._bfworldcf = {  };
-		elseif __db.__version < 210718.02 then
-			__db.channeltab.AutoAddChannelToDefaultChatFrame = false;
-			__db.channeltab._bfworldcf = {  };
-			DisableOldVersion();
-		elseif __db.__version < 210726.01 then
-			__db.channeltab._bfworldcf = {  };
-			DisableOldVersion();
+			if __db.__version == nil or __db.__version < 210711.04 then
+				if L.Locale == 'zhCN' then
+					__db.chatfilter.StrSet = __db.chatfilter.StrSet ~= nil and gsub(__db.chatfilter.StrSet, "\n拉人\n", "\n") or "";
+				end
+			end
+			if __db.__version < 210726.01 then
+				__db.channeltab.AutoAddChannelToDefaultChatFrame = false;
+				__db.channeltab._bfworldcf = {  };
+			end
 		end
+		DisableOldVersion();
 		__db.__version = 210726.01;
 		CheckDB(__db, __default);
 		if not __db.highlight.KeepShowMatchedOnly then

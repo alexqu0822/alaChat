@@ -370,3 +370,5 @@ L.DETAILEDTIP = {
 	-- roll = "ROLL",
 	-- ReadyCheck = "就位确认",
 };
+
+L["Find profiles of alaChat_Classic. Do you want to upgrade it and overwrite current setting?"] = "发现alaChat_Classic旧版本的设置，是否使用它覆盖当前设置？";
