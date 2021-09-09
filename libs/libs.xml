@@ -3,5 +3,9 @@
 
     <include file = "ala\main.xml" />
 
+    <script file = "LibStub\LibStub.lua" />
+    <script file = "CallbackHandler-1.0\CallbackHandler-1.0.lua" />
+    <include file = "LibSharedMedia-3.0\lib.xml" />
+
 </Ui>
 

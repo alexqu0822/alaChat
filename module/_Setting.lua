@@ -206,7 +206,24 @@ local _SettingNodes = {  };
 			drop:SetVal(val);
 		end
 		local function ListDrop_OnClick(self)
-			ALADROP(self, "BOTTOMLEFT", self.meta, false);
+			if self.__list == nil then
+				ALADROP(self, "BOTTOMLEFT", self.meta, false);
+			else
+				local meta = self.meta;
+				local __list, __onshowbuttons, __onhidebuttons = self.__list();
+				local __para = self.__para;
+				local elements = meta.elements;
+				wipe(elements);
+				for name, val in next, __list do
+					elements[#elements + 1] = {
+						text = name,
+						para = { __para[1], __para[2], val, __para[4], };
+					};
+				end
+				meta.__onshowbuttons = __onshowbuttons;
+				meta.__onhidebuttons = __onhidebuttons;
+				ALADROP(self, "BOTTOMLEFT", meta, false);
+			end
 		end
 		local function InputListEditBox_OnEnterPressed(self)
 			local value = self:GetText();
@@ -472,11 +489,17 @@ local _SettingNodes = {  };
 			drop:SetHighlightTexture(TEXTURE_PATH .. "ArrowDown");
 			drop:GetHighlightTexture():SetVertexColor(0.0, 0.5, 1.0, 0.25);
 			local elements = {  };
-			for index = 1, #extra do
-				elements[index] = {
-					text = LSETTINGMODULE[extra[index]] or extra[index];
-					para = { module, key, extra[index], drop, };
-				};
+			if type(extra) == 'table' then
+				for index = 1, #extra do
+					elements[index] = {
+						text = LSETTINGMODULE[extra[index]] or extra[index];
+						para = { module, key, extra[index], drop, };
+					};
+				end
+			elseif type(extra) == 'function' then
+				drop.__list = extra;
+				drop.__para = { module, key, nil, drop, };
+				extra();
 			end
 			drop.meta = {
 				handler = ListButton_Handler,

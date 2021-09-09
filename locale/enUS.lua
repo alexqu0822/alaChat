@@ -295,6 +295,8 @@ L.SETTING = {
 		["w"] = "short-name (G)",
 	},
 	misc = {
+		Font = "Font",
+		FontFlag = "Outline",
 		ChatFrameToBorder = "Allow dragging chatframe close to edge of the game window",
 		ColoredPlayerName = "Color players' name in chat",
 		HoverHyperlink = "Show tooltip when hovering hyperlink in chat frame",
@@ -305,6 +307,10 @@ L.SETTING = {
 		StickyChannel = "Sticky channel `Keep the editbox in |cffffc0c0channel|r after sending message",
 		ArrowKey = "When editbox activated, use arrows to move cursor insted of control character",
 		ArrowHistory = "Use UP and DOWN to resend history msg (instead of alt + arrow)",
+		--
+		["none"] = "No outline",
+		["OUTLINE"] = "Thin outline",
+		["THICKOUTLINE"] = "Thick outline",
 	},
 	utils = {
 		StatReport = "Stat report",

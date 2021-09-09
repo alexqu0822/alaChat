@@ -295,6 +295,8 @@ L.SETTING = {
 		["w"] = "短名 (综)",
 	},
 	misc = {
+		Font = "字体",
+		FontFlag = "阴影",
 		ChatFrameToBorder = "允许将聊天框拖动到紧靠边缘",
 		ColoredPlayerName = "按职业着色聊天框中玩家名字",
 		HoverHyperlink = "显示聊天框中鼠标指向物品提示",
@@ -305,6 +307,10 @@ L.SETTING = {
 		StickyChannel = "聊天框保持上次的|cffffc0c0公共频道聊天|r状态",
 		ArrowKey = "聊天框激活时使用方向键移动光标 (而不是控制角色移动)",
 		ArrowHistory = "使用上下箭头自动输入历史消息 (不需要ALT键)",
+		--
+		["none"] = "无阴影",
+		["OUTLINE"] = "薄阴影",
+		["THICKOUTLINE"] = "厚阴影",
 	},
 	utils = {
 		StatReport = "属性报告",

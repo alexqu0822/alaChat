@@ -161,6 +161,8 @@ local __default = {
 		ReadyCheck = true,
 	},
 	misc = {
+		Font = ChatFontNormal:GetFont(),
+		FontFlag = "none",
 		ChatFrameToBorder = true,
 		ColoredPlayerName = true,
 		HoverHyperlink = true,

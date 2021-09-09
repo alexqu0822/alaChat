@@ -295,6 +295,8 @@ L.SETTING = {
 		["w"] = "短名 (綜)",
 	},
 	misc = {
+		Font = "字體",
+		FontFlag = "陰影",
 		ChatFrameToBorder = "允許將聊天框拖動到緊靠游戲邊緣",
 		ColoredPlayerName = "按職業著色聊天框中的玩家名",
 		HoverHyperlink = "鼠標指向時顯示聊天物品信息",
@@ -305,6 +307,10 @@ L.SETTING = {
 		StickyChannel = "聊天框保持上一次的頻道聊天狀態",
 		ArrowKey = "聊天框激活時使用方向鍵移動光標（而不是控制角色移動）",
 		ArrowHistory = "使用上下箭頭來自動輸入歷史消息（不用按ALT）",
+		--
+		["none"] = "無陰影",
+		["OUTLINE"] = "薄陰影",
+		["THICKOUTLINE"] = "厚陰影",
 	},
 	utils = {
 		StatReport = "屬性報告",

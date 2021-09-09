@@ -2,14 +2,17 @@
 local __addon, __private = ...;
 local L = __private.L;
 
+local next = next;
 local select = select;
 local strtrim, strsplit, strupper, strsub, strmatch, gsub = string.trim, string.split, string.upper, string.sub, string.match, string.gsub;
+local wipe = table.wipe;
 local tostring = tostring;
 local GetChannelName = GetChannelName;
 local IsInGroup, IsInRaid = IsInGroup, IsInRaid;
 local GameTooltip = GameTooltip;
 local ChatTypeInfo = ChatTypeInfo;
 local LE_PARTY_CATEGORY_HOME, LE_PARTY_CATEGORY_INSTANCE = LE_PARTY_CATEGORY_HOME, LE_PARTY_CATEGORY_INSTANCE;
+local LSM = LibStub("LibSharedMedia-3.0");
 
 local __misc = {  };
 local _db = {  };
@@ -289,6 +292,23 @@ local _pHistory = 0;
 -->
 
 -->		Module
+	function __misc.Font(value, loading)
+		local ChatFrames = __private.__chatFrames;
+		for _, F in next, ChatFrames do
+			local _, size, flag = F:GetFont();
+			F:SetFont(value, size, flag);
+		end
+	end
+	function __misc.FontFlag(value, loading)
+		if value == "none" then
+			value = nil;
+		end
+		local ChatFrames = __private.__chatFrames;
+		for _, F in next, ChatFrames do
+			local font, size, _ = F:GetFont();
+			F:SetFont(font, size, value);
+		end
+	end
 	local _ChatFrame2SetClampRectInsets = nil;
 	function __misc.ChatFrameToBorder(value, loading)
 		if value then
@@ -406,7 +426,25 @@ local _pHistory = 0;
 			return __misc[which](value, loading);
 		end
 	end
+	local function FontSetButton(button, ele)
+		local Text = button.Text;
+		local _, size, flag = Text:GetFont();
+		Text:SetFont(ele.para[1], size, flag);
+	end
+	local function FontGetMeta()
+		local __list = LSM:HashTable("font");
+		local LMODULE = L.SETTING.misc;
+		if LMODULE ~= nil then
+			for name, val in next, __list do
+				LMODULE[val] = name;
+			end
+		end
+		return __list, FontSetButton;
+	end
 	function __misc.__setting()
+		__private:AlignSetting("MISC");
+		__private:AddSetting("MISC", { "misc", "Font", 'list', FontGetMeta, });
+		__private:AddSetting("MISC", { "misc", "FontFlag", 'list', { "none", "OUTLINE", "THICKOUTLINE", }, }, 2, 2);
 		__private:AddSetting("MISC", { "misc", "ChatFrameToBorder", 'boolean', });
 		__private:AddSetting("MISC", { "misc", "ColoredPlayerName", 'boolean', });
 		__private:AddSetting("MISC", { "misc", "HoverHyperlink", 'boolean', nil, nil, nil, true, });
