@@ -9,6 +9,7 @@ local C_Timer_After = C_Timer.After;
 local Ambiguate = Ambiguate;
 local UnitIsPlayer = UnitIsPlayer;
 local UnitGUID, UnitName, UnitClassBase, UnitLevel, UnitFactionGroup = UnitGUID, UnitName, UnitClassBase, UnitLevel, UnitFactionGroup;
+local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
 local IsInGuild, GetGuildInfo, GuildRoster = IsInGuild, GetGuildInfo, C_GuildInfo ~= nil and C_GuildInfo.GuildRoster or GuildRoster;
 local GetNumGuildMembers, GetGuildRosterInfo = GetNumGuildMembers, GetGuildRosterInfo;
 local GetNumFriends = C_FriendList ~= nil and C_FriendList.GetNumFriends or GetNumFriends;
@@ -76,7 +77,7 @@ local _GUILD = GetGuildInfo('player');
 			};
 			_tPlayerInfo[name] = pinfo;
 			-- if __private.__isdev then
-				-- print("|cff00ff00++++|r", name, pinfo[2], pinfo[3]);
+			-- 	print("|cff00ff00++++|r", name, pinfo[2], pinfo[3]);
 			-- end
 		else
 			pinfo[1] = GUID ~= "" and GUID or pinfo[1];
@@ -85,7 +86,7 @@ local _GUILD = GetGuildInfo('player');
 			pinfo[4] = now;
 			pinfo[5] = src;
 			-- if __private.__isdev then
-				-- print("|cffffff00****|r", name, pinfo[2], pinfo[3]);
+			-- 	print("|cffffff00****|r", name, pinfo[2], pinfo[3]);
 			-- end
 		end
 	end
@@ -206,8 +207,8 @@ local _GUILD = GetGuildInfo('player');
 			for index = 1, GetNumGuildMembers() do
 				local name, rankStr, rank, level, classStr, zoneStr, _, _, _, _, class, _, _, _, _, _, GUID = GetGuildRosterInfo(index);
 				if name ~= nil and name ~= "" then
-					name = Ambiguate(name, 'none');
-					AddPlayerInfo(name, GUID, class, level, 'guild', now);
+					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					AddPlayerInfo(fullName, GUID, class, level, 'guild', now);
 					if _tGuildPreQueue[name] ~= nil then
 						_tGuildPreQueue[name] = nil;
 						OnRosterInfo(name, class, level, rank, classStr, zoneStr, rankStr, GUID);
@@ -229,8 +230,8 @@ local _GUILD = GetGuildInfo('player');
 				if info.connected then
 					local name = info.name;
 					if name ~= nil and name ~= "" then
-						name = Ambiguate(name, 'none');
-						AddPlayerInfo(name, info.guid, LOCALIZED_CLASS_NAMES_HASH[info.className], info.level, 'friend', now);
+						local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+						AddPlayerInfo(fullName, info.guid, LOCALIZED_CLASS_NAMES_HASH[info.className], info.level, 'friend', now);
 					end
 				end
 			end
@@ -241,9 +242,9 @@ local _GUILD = GetGuildInfo('player');
 			for index = 1, GetNumGroupMembers() do
 				local name, rank, subGroup, level, classStr, class, zone, online, dead, role, isML, combatRole = GetRaidRosterInfo(index);
 				if name ~= nil and name ~= "" then
-					name = Ambiguate(name, 'none');
-					AddPlayerInfo(name, UnitGUID(name), class, (level == nil or level == 0) and UnitLevel(name) or level, 'group', now);
-					_tSubGroup[name] = subGroup;
+					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					AddPlayerInfo(fullName, UnitGUID(name), class, (level == nil or level == 0) and UnitLevel(name) or level, 'group', now);
+					_tSubGroup[fullName] = subGroup;
 				end
 			end
 		end,
@@ -253,17 +254,17 @@ local _GUILD = GetGuildInfo('player');
 				local info = GetWhoInfo(index);
 				local name = info.fullName;
 				if name ~= nil and name ~= "" then
-					name = Ambiguate(name, 'none');
-					AddPlayerInfo(name, nil, info.filename, info.level, 'who', now);
+					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					AddPlayerInfo(fullName, nil, info.filename, info.level, 'who', now);
 				end
 			end
 		end,
 		unit = function(unit)
-			if UnitIsPlayer(unit) and UnitFactionGroup(unit) == _PFACTION then
-				local name = UnitName(unit);
+			if UnitIsPlayer(unit) then
+				local name, realm = UnitName(unit);
 				if name ~= nil and name ~= "" then
-					name = Ambiguate(name, 'none');
-					AddPlayerInfo(name, UnitGUID(unit), UnitClassBase(unit), UnitLevel(unit), 'unit', time());
+					local fullName = name .. "-" .. (realm ~= nil and realm ~= "" and realm or _PREALM);
+					AddPlayerInfo(fullName, UnitGUID(unit), UnitClassBase(unit), UnitLevel(unit), 'unit', time());
 				end
 			end
 		end,
@@ -284,7 +285,7 @@ local _GUILD = GetGuildInfo('player');
 							if realm ~= nil and realm ~= "" and realm ~= _PREALM then
 								AddPlayerInfo(name .. "-" .. realm, info.playerGuid, LOCALIZED_CLASS_NAMES_HASH[info.className], info.characterLevel, 'battlenet', now);
 							else
-								AddPlayerInfo(name, info.playerGuid, LOCALIZED_CLASS_NAMES_HASH[info.className], info.characterLevel, 'battlenet', now);
+								AddPlayerInfo(name .. "-" .. _PREALM, info.playerGuid, LOCALIZED_CLASS_NAMES_HASH[info.className], info.characterLevel, 'battlenet', now);
 							end
 						end
 					end
@@ -305,7 +306,7 @@ local _GUILD = GetGuildInfo('player');
 							if realm ~= nil and realm ~= "" and realm ~= _PREALM then
 								AddPlayerInfo(name .. "-" .. realm, GUID, LOCALIZED_CLASS_NAMES_HASH[classStr], tonumber(level), 'battlenet', now);
 							else
-								AddPlayerInfo(name, GUID, LOCALIZED_CLASS_NAMES_HASH[classStr], tonumber(level), 'battlenet', now);
+								AddPlayerInfo(name .. "-" .. _PREALM, GUID, LOCALIZED_CLASS_NAMES_HASH[classStr], tonumber(level), 'battlenet', now);
 							end
 						end
 					end
@@ -339,7 +340,9 @@ local _GUILD = GetGuildInfo('player');
 			B_isDelayUpdateInSchdule = true;
 			C_Timer_After(0.1, DelayUpdateHandler);
 		end
+		method.unit('player');
 		method.unit('target');
+		method.unit('focus');
 		method.unit('mouseover');
 	end
 	--		GUILD
@@ -378,77 +381,83 @@ local _GUILD = GetGuildInfo('player');
 	local _PATWHO = nil;
 	local _PATWHOG = nil;
 	local _tLineCache = {  };
-	local function ProcessMessage(msg, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, ...)
+	local function ProcessSystemMessage(msg, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, ...)
 		if _tLineCache[line] ~= nil then
 			return;
 		end
 		_tLineCache[line] = true;
-		local name = nil;
-		--	join
-		if _ERR_GUILD_JOIN_S ~= ERR_GUILD_JOIN_S then
-			_ERR_GUILD_JOIN_S = ERR_GUILD_JOIN_S;
-			_PATJOIN = gsub(_ERR_GUILD_JOIN_S, "%%s", "(.+)");
-		end
-		name = strmatch(msg, _PATJOIN);
-		if name ~= nil then
-			name = Ambiguate(name, 'none');
-			if name ~= _PLAYER then
-				if _tGuildMsgQueue[name] == nil then
-					_tGuildPreQueue[name] = 2;
+		if _db.WelToGuild then
+			local name = nil;
+			--	join
+			if _ERR_GUILD_JOIN_S ~= ERR_GUILD_JOIN_S then
+				_ERR_GUILD_JOIN_S = ERR_GUILD_JOIN_S;
+				_PATJOIN = gsub(_ERR_GUILD_JOIN_S, "%%s", "(.+)");
+			end
+			name = strmatch(msg, _PATJOIN);
+			if name ~= nil then
+				name = Ambiguate(name, 'none');
+				if name ~= _PLAYER then
+					if _tGuildMsgQueue[name] == nil then
+						_tGuildPreQueue[name] = 2;
+					end
 				end
+				return true;
 			end
-			return true;
-		end
-		--	leave
-		if _ERR_GUILD_LEAVE_S ~= ERR_GUILD_LEAVE_S then
-			_ERR_GUILD_LEAVE_S = ERR_GUILD_LEAVE_S;
-			_PATLEAVE = gsub(_ERR_GUILD_LEAVE_S, "%%s", "(.+)");
-		end
-		name = strmatch(msg, _PATLEAVE);
-		if name ~= nil then
-			name = Ambiguate(name, 'none');
-			_tGuildMsgQueue[name] = nil;
-			_tGuildPreQueue[name] = nil;
-			return;
-		end
-		--	kicked
-		if _ERR_GUILD_REMOVE_SS ~= ERR_GUILD_REMOVE_SS then
-			_ERR_GUILD_REMOVE_SS = _ERR_GUILD_REMOVE_SS;
-			_PATREMOVED = gsub(ERR_GUILD_REMOVE_SS, "%%s", "(.+)");
-		end
-		name = strmatch(msg, _PATREMOVED);
-		if name ~= nil then
-			name = Ambiguate(name, 'none');
-			_tGuildMsgQueue[name] = nil;
-			_tGuildPreQueue[name] = nil;
-			return;
-		end
-		--	who
-		if _WHO_LIST_GUILD_FORMAT ~= WHO_LIST_GUILD_FORMAT then
-			_WHO_LIST_GUILD_FORMAT = WHO_LIST_GUILD_FORMAT;
-			_PATWHOG = gsub(gsub(_WHO_LIST_GUILD_FORMAT, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1"), "%%%%[ds]", "(.+)");
-		end
-		local name, nameApp, level, race, classStr, guild, area = strmatch(msg, _PATWHOG);
-		if name ~= nil then
-			level = tonumber(level);
-			local class = LOCALIZED_CLASS_NAMES_HASH[classStr];
-			if level ~= nil and class ~= nil then
-				AddPlayerInfo(Ambiguate(name, 'none'), nil, class, level, 'who', time());
+			--	leave
+			if _ERR_GUILD_LEAVE_S ~= ERR_GUILD_LEAVE_S then
+				_ERR_GUILD_LEAVE_S = ERR_GUILD_LEAVE_S;
+				_PATLEAVE = gsub(_ERR_GUILD_LEAVE_S, "%%s", "(.+)");
 			end
-			return;
-		end
-		if _WHO_LIST_FORMAT ~= WHO_LIST_FORMAT then
-			_WHO_LIST_FORMAT = WHO_LIST_FORMAT;
-			_PATWHO = gsub(gsub(_WHO_LIST_FORMAT, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1"), "%%%%[ds]", "(.+)");
-		end
-		local name, nameApp, level, race, classStr, area = strmatch(msg, _PATWHO);
-		if name ~= nil then
-			level = tonumber(level);
-			local class = LOCALIZED_CLASS_NAMES_HASH[classStr];
-			if level ~= nil and class ~= nil then
-				AddPlayerInfo(Ambiguate(name, 'none'), nil, class, level, 'who', time());
+			name = strmatch(msg, _PATLEAVE);
+			if name ~= nil then
+				name = Ambiguate(name, 'none');
+				_tGuildMsgQueue[name] = nil;
+				_tGuildPreQueue[name] = nil;
+				return;
 			end
-			return;
+			--	kicked
+			if _ERR_GUILD_REMOVE_SS ~= ERR_GUILD_REMOVE_SS then
+				_ERR_GUILD_REMOVE_SS = _ERR_GUILD_REMOVE_SS;
+				_PATREMOVED = gsub(ERR_GUILD_REMOVE_SS, "%%s", "(.+)");
+			end
+			name = strmatch(msg, _PATREMOVED);
+			if name ~= nil then
+				name = Ambiguate(name, 'none');
+				_tGuildMsgQueue[name] = nil;
+				_tGuildPreQueue[name] = nil;
+				return;
+			end
+		end
+		if _db.ShowLevel then
+			--	who
+			if _WHO_LIST_GUILD_FORMAT ~= WHO_LIST_GUILD_FORMAT then
+				_WHO_LIST_GUILD_FORMAT = WHO_LIST_GUILD_FORMAT;
+				_PATWHOG = gsub(gsub(_WHO_LIST_GUILD_FORMAT, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1"), "%%%%[ds]", "(.+)");
+			end
+			local name, nameApp, level, race, classStr, guild, area = strmatch(msg, _PATWHOG);
+			if name ~= nil then
+				level = tonumber(level);
+				local class = LOCALIZED_CLASS_NAMES_HASH[classStr];
+				if level ~= nil and class ~= nil then
+					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					AddPlayerInfo(fullName, nil, class, level, 'who', time());
+				end
+				return;
+			end
+			if _WHO_LIST_FORMAT ~= WHO_LIST_FORMAT then
+				_WHO_LIST_FORMAT = WHO_LIST_FORMAT;
+				_PATWHO = gsub(gsub(_WHO_LIST_FORMAT, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1"), "%%%%[ds]", "(.+)");
+			end
+			local name, nameApp, level, race, classStr, area = strmatch(msg, _PATWHO);
+			if name ~= nil then
+				level = tonumber(level);
+				local class = LOCALIZED_CLASS_NAMES_HASH[classStr];
+				if level ~= nil and class ~= nil then
+					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					AddPlayerInfo(fullName, nil, class, level, 'who', time());
+				end
+				return;
+			end
 		end
 	end
 	--
@@ -467,7 +476,7 @@ local _GUILD = GetGuildInfo('player');
 		elseif event == "NAME_PLATE_UNIT_ADDED" then
 			method.unit(...);
 		elseif event == "CHAT_MSG_SYSTEM" then
-			if ProcessMessage(...) and not B_isGuildProcessRunning then
+			if ProcessSystemMessage(...) and not B_isGuildProcessRunning then
 				B_isGuildProcessRunning = true;
 				GuildProcessHandler();
 			end
@@ -483,13 +492,11 @@ local _GUILD = GetGuildInfo('player');
 			if IsInGuild() then
 				if not _isInGuild then
 					_isInGuild = true;
-					__EventHandler:RegisterEvent("CHAT_MSG_SYSTEM");
 					_GUILD = GetGuildInfo('player');
 					ScheduleDelayUpdate('guild');
 				end
 			else
 				_isInGuild = false;
-				__EventHandler:UnregisterEvent("CHAT_MSG_SYSTEM");
 			end
 		elseif event == "GUILD_ROSTER_UPDATE" then
 			if _isInGuild then
@@ -502,11 +509,9 @@ local _GUILD = GetGuildInfo('player');
 			-- print(event);
 			if IsInGuild() then
 				_isInGuild = true;
-				__EventHandler:RegisterEvent("CHAT_MSG_SYSTEM");
 				_GUILD = GetGuildInfo('player');
 			else
 				_isInGuild = false;
-				__EventHandler:UnregisterEvent("CHAT_MSG_SYSTEM");
 			end
 			self:UnregisterEvent(event);
 		end
@@ -526,7 +531,8 @@ local _GUILD = GetGuildInfo('player');
 			__GetPlayerLink = _G.GetPlayerLink;
 			function _G.GetPlayerLink(fullName, nameApp, lineId, cType, cTarget, ...)
 				local name = Ambiguate(fullName, 'none');
-				local info = _tPlayerInfo[name];
+				fullName = strfind(fullName, "-") == nil and (fullName .. "-" .. _PREALM) or fullName;
+				local info = _tPlayerInfo[fullName];
 				if _db.ShowLevel and info ~= nil and info[3] > 0 then
 					local level = nil;
 					local diff = _PLEVEL - info[3];
@@ -541,14 +547,14 @@ local _GUILD = GetGuildInfo('player');
 					else
 						level = "|cffff0000" .. info[3] .. "|r";
 					end
-					if _db.ShowSubGroup and _tSubGroup[name] ~= nil then
-						nameApp = gsub(nameApp, name, format(__PLFStr_LI, name, level, _tSubGroup[name]));
+					if _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
+						nameApp = gsub(nameApp, name, format(__PLFStr_LI, name, level, _tSubGroup[fullName]));
 					else
 						nameApp = gsub(nameApp, name, format(__PLFStr_L, name, level, ""));
 					end
 					return "|Hplayer:" .. fullName .. ":" .. (lineId or 0) .. ":" .. (cType or 0) .. ":" .. (cTarget or "") .. "|h" .. nameApp .. "|h";
-				elseif _db.ShowSubGroup and _tSubGroup[name] ~= nil then
-					nameApp = gsub(nameApp, name, format(__PLFStr_I, name, "", _tSubGroup[name]));
+				elseif _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
+					nameApp = gsub(nameApp, name, format(__PLFStr_I, name, "", _tSubGroup[fullName]));
 					return "|Hplayer:" .. fullName .. ":" .. (lineId or 0) .. ":" .. (cType or 0) .. ":" .. (cTarget or "") .. "|h" .. nameApp .. "|h";
 				else
 					return __GetPlayerLink(fullName, nameApp, lineId, cType, cTarget, ...);
@@ -565,20 +571,20 @@ local _GUILD = GetGuildInfo('player');
 				__EventHandler:RegisterEvent("UNIT_LEVEL");
 				__EventHandler:RegisterEvent("TRADE_SHOW");
 				__EventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED");
+				__EventHandler:RegisterEvent("CHAT_MSG_SYSTEM");
 				__EventHandler:RegisterEvent("FRIENDLIST_UPDATE");
 				__EventHandler:RegisterEvent("GROUP_ROSTER_UPDATE");
 				__EventHandler:RegisterEvent("BN_CONNECTED");
 				__EventHandler:RegisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
 				__EventHandler:RegisterEvent("BN_FRIEND_INFO_CHANGED");
+				__EventHandler:RegisterEvent("WHO_LIST_UPDATE");
 				__EventHandler:RegisterUnitEvent("PLAYER_GUILD_UPDATE", 'player');
 				__EventHandler:RegisterEvent("GUILD_ROSTER_UPDATE");
 				if IsInGuild() then
 					_isInGuild = true;
-					__EventHandler:RegisterEvent("CHAT_MSG_SYSTEM");
 					_GUILD = GetGuildInfo('player');
 				else
 					_isInGuild = false;
-					__EventHandler:UnregisterEvent("CHAT_MSG_SYSTEM");
 				end
 				__EventHandler:RegisterEvent("PLAYER_LEVEL_CHANGED");
 			else
@@ -595,7 +601,6 @@ local _GUILD = GetGuildInfo('player');
 				GuildProcessHandler();
 			end
 			ScheduleDelayUpdateAll();
-			method.unit('player');
 		elseif _db.WelToGuild or _db.ShowSubGroup then
 			if __EventHandler ~= nil then
 				__EventHandler:UnregisterEvent("UPDATE_MOUSEOVER_UNIT");
@@ -606,6 +611,7 @@ local _GUILD = GetGuildInfo('player');
 				__EventHandler:UnregisterEvent("BN_CONNECTED");
 				__EventHandler:UnregisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
 				__EventHandler:UnregisterEvent("BN_FRIEND_INFO_CHANGED");
+				__EventHandler:UnregisterEvent("WHO_LIST_UPDATE");
 				__EventHandler:UnregisterEvent("PLAYER_LEVEL_CHANGED");
 			end
 			if _db.WelToGuild then
@@ -676,6 +682,7 @@ local _GUILD = GetGuildInfo('player');
 				__EventHandler:UnregisterEvent("BN_CONNECTED");
 				__EventHandler:UnregisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
 				__EventHandler:UnregisterEvent("BN_FRIEND_INFO_CHANGED");
+				__EventHandler:UnregisterEvent("WHO_LIST_UPDATE");
 				__EventHandler:UnregisterEvent("PLAYER_GUILD_UPDATE");
 				__EventHandler:UnregisterEvent("GUILD_ROSTER_UPDATE");
 				__EventHandler:UnregisterEvent("CHAT_MSG_SYSTEM");
@@ -758,6 +765,58 @@ local _GUILD = GetGuildInfo('player');
 				for name, info in next, _tPlayerInfo do
 					if info[3] < maxLv and info[4] < expired then
 						_tPlayerInfo[name] = nil;
+					end
+				end
+				if _tPlayerInfo['*'] == nil then
+					local old = _tPlayerInfo;
+					_tPlayerInfo = {
+						['*'] = 1.0,
+					};
+					local _, R, _ = strsplit("-", UnitGUID('player'));
+					for _name, _info in next, old do
+						local GUID = _info[1];
+						if GUID ~= nil then
+							local _, r, _ = strsplit("-", GUID);
+							if R == r then
+								if strfind(_name, "-") == nil then
+									_tPlayerInfo[_name .. "-" .. _PREALM] = _info;
+								else
+									_tPlayerInfo[_name] = _info;
+								end
+								old[_name] = nil;
+							else
+								local _, class, _, race, gender, name, realm = GetPlayerInfoByGUID(GUID);
+								if name ~= nil and name ~= "" and realm ~= nil and realm ~= "" then
+									_tPlayerInfo[name .. "-" .. realm] = _info;
+									old[_name] = nil;
+								end
+							end
+						else
+							old[_name] = nil;
+						end
+					end
+					if next(old) ~= nil then
+						local Ticker = nil;
+						local function func()
+							for _name, _info in next, old do
+								local GUID = _info[1];
+								local _, class, _, race, gender, name, realm = GetPlayerInfoByGUID(GUID);
+								if name ~= nil and name ~= "" and realm ~= nil and realm ~= "" then
+									local fullName = name .. "-" .. realm;
+									if _tPlayerInfo[fullName] ~= nil then
+										_tPlayerInfo[name .. "-" .. realm] = _info;
+									end
+									old[_name] = nil;
+								end
+							end
+							if next(old) == nil then
+								print("|cffff0000alachat db upgraded|r")
+								Ticker:Cancel();
+							end
+						end
+						Ticker = C_Timer.NewTicker(2.0, func);
+					else
+						print("|cffff0000alachat db upgraded|r")
 					end
 				end
 			else
