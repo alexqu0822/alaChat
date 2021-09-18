@@ -47,11 +47,12 @@ end
 local _tSubGroup = {  };
 
 local _PLAYER = UnitName('player');
+local _PREALM = GetRealmName();
+local _FULLPLAYER = _PLAYER .. "-" .. _PREALM;
 local _PCLASS = UnitClassBase('player');
 local _PRACE = UnitRace('player');
 local _PFACTION = UnitFactionGroup('player');
 local _PLEVEL = UnitLevel('player');
-local _PREALM = GetRealmName();
 local _GUILD = GetGuildInfo('player');
 
 --[=[
@@ -65,8 +66,8 @@ local _GUILD = GetGuildInfo('player');
 	ERR_GUILD_REMOVE_SELF == "你被开除出公会"
 --]=]
 -->		Method
-	local function AddPlayerInfo(name, GUID, class, level, src, now)
-		local pinfo = _tPlayerInfo[name];
+	local function AddPlayerInfo(fullName, GUID, class, level, src, now)
+		local pinfo = _tPlayerInfo[fullName];
 		if pinfo == nil then
 			pinfo = {
 				GUID ~= "" and GUID or nil,
@@ -75,9 +76,9 @@ local _GUILD = GetGuildInfo('player');
 				now,
 				src,
 			};
-			_tPlayerInfo[name] = pinfo;
+			_tPlayerInfo[fullName] = pinfo;
 			-- if __private.__isdev then
-			-- 	print("|cff00ff00++++|r", name, pinfo[2], pinfo[3]);
+			-- 	print("|cff00ff00++++|r", fullName, pinfo[2], pinfo[3]);
 			-- end
 		else
 			pinfo[1] = GUID ~= "" and GUID or pinfo[1];
@@ -86,7 +87,7 @@ local _GUILD = GetGuildInfo('player');
 			pinfo[4] = now;
 			pinfo[5] = src;
 			-- if __private.__isdev then
-			-- 	print("|cffffff00****|r", name, pinfo[2], pinfo[3]);
+			-- 	print("|cffffff00****|r", fullName, pinfo[2], pinfo[3]);
 			-- end
 		end
 	end
@@ -185,7 +186,8 @@ local _GUILD = GetGuildInfo('player');
 		end
 	end
 	--
-	local function OnRosterInfo(name, class, level, rank, classStr, zoneStr, rankStr, GUID)
+	local function OnRosterInfo(fullName, class, level, rank, classStr, zoneStr, rankStr, GUID)
+		local name = Ambiguate(fullName, 'none');
 		if _db.NewMemberNotice then
 			SendChatMessage(format(__NoticeStr, _GUILD, name, classStr, level, zoneStr), "GUILD");
 		end
@@ -193,7 +195,7 @@ local _GUILD = GetGuildInfo('player');
 			local v = _tWelStrList[random(1, _nWelStrList)];
 			local msg = format(v, _GUILD, name, classStr, level, zoneStr);
 			if _db.WelToGuildDelay then
-				_tGuildMsgQueue[name] = { time() + 1.0 + random(2.0, 6.0), msg, };
+				_tGuildMsgQueue[fullName] = { time() + 1.0 + random(2.0, 6.0), msg, };
 			else
 				SendChatMessage(msg, "GUILD");
 			end
@@ -215,11 +217,11 @@ local _GUILD = GetGuildInfo('player');
 					end
 				end
 			end
-			for name, val in next, _tGuildPreQueue do
+			for fullName, val in next, _tGuildPreQueue do
 				if val > 1 then
-					_tGuildPreQueue[name] = val - 1;
+					_tGuildPreQueue[fullName] = val - 1;
 				else
-					_tGuildPreQueue[name] = nil;
+					_tGuildPreQueue[fullName] = nil;
 				end
 			end
 		end,
@@ -357,9 +359,9 @@ local _GUILD = GetGuildInfo('player');
 		if _isInGuild then
 			if _db.WelToGuild and next(_tGuildMsgQueue) ~= nil then
 				local now = time();
-				for name, val in next, _tGuildMsgQueue do
+				for fullName, val in next, _tGuildMsgQueue do
 					if now >= val[1] then
-						_tGuildMsgQueue[name] = nil;
+						_tGuildMsgQueue[fullName] = nil;
 						SendChatMessage(val[2], "GUILD");
 					end
 				end
@@ -395,10 +397,10 @@ local _GUILD = GetGuildInfo('player');
 			end
 			name = strmatch(msg, _PATJOIN);
 			if name ~= nil then
-				name = Ambiguate(name, 'none');
-				if name ~= _PLAYER then
-					if _tGuildMsgQueue[name] == nil then
-						_tGuildPreQueue[name] = 2;
+				local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+				if fullName ~= _FULLPLAYER then
+					if _tGuildMsgQueue[fullName] == nil then
+						_tGuildPreQueue[fullName] = 2;
 					end
 				end
 				return true;
@@ -410,9 +412,9 @@ local _GUILD = GetGuildInfo('player');
 			end
 			name = strmatch(msg, _PATLEAVE);
 			if name ~= nil then
-				name = Ambiguate(name, 'none');
-				_tGuildMsgQueue[name] = nil;
-				_tGuildPreQueue[name] = nil;
+				local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+				_tGuildMsgQueue[fullName] = nil;
+				_tGuildPreQueue[fullName] = nil;
 				return;
 			end
 			--	kicked
@@ -422,9 +424,9 @@ local _GUILD = GetGuildInfo('player');
 			end
 			name = strmatch(msg, _PATREMOVED);
 			if name ~= nil then
-				name = Ambiguate(name, 'none');
-				_tGuildMsgQueue[name] = nil;
-				_tGuildPreQueue[name] = nil;
+				local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+				_tGuildMsgQueue[fullName] = nil;
+				_tGuildPreQueue[fullName] = nil;
 				return;
 			end
 		end
@@ -762,16 +764,17 @@ local _GUILD = GetGuildInfo('player');
 				_tPlayerInfo = _db._tPlayerInfo;
 				local expired = time() + 3600;
 				local maxLv = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and 70 or 60;
-				for name, info in next, _tPlayerInfo do
+				for fullName, info in next, _tPlayerInfo do
 					if info[3] < maxLv and info[4] < expired then
-						_tPlayerInfo[name] = nil;
+						_tPlayerInfo[fullName] = nil;
 					end
 				end
 				if _tPlayerInfo['*'] == nil then
 					local old = _tPlayerInfo;
 					_tPlayerInfo = {
-						['*'] = 1.0,
+						['*'] = { 1.0, "ALA", 65535, 4294967295, },
 					};
+					_db._tPlayerInfo = _tPlayerInfo;
 					local _, R, _ = strsplit("-", UnitGUID('player'));
 					for _name, _info in next, old do
 						local GUID = _info[1];
