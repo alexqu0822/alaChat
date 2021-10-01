@@ -503,12 +503,12 @@ local __db = __default;
 -->
 
 local _TriggeredEvents = {  };
-local _Event = CreateFrame('FRAME');
-_Event:RegisterEvent("ADDON_LOADED");
--- _Event:RegisterEvent("PLAYER_ENTERING_WORLD");
-_Event:RegisterEvent("LOADING_SCREEN_DISABLED");
-_Event:RegisterEvent("ZONE_CHANGED_NEW_AREA");
-_Event:SetScript("OnEvent", function(self, event, param)
+local _Driver = CreateFrame('FRAME');
+_Driver:RegisterEvent("ADDON_LOADED");
+-- _Driver:RegisterEvent("PLAYER_ENTERING_WORLD");
+_Driver:RegisterEvent("LOADING_SCREEN_DISABLED");
+_Driver:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+_Driver:SetScript("OnEvent", function(self, event, param)
 	if event == "ADDON_LOADED" then
 		if param == __addon then
 			self:UnregisterEvent("ADDON_LOADED");
@@ -519,7 +519,7 @@ _Event:SetScript("OnEvent", function(self, event, param)
 				local key = __modulelist[index];
 				local module = __module[key];
 				if module.__initat ~= nil then
-					pcall(_Event.RegisterEvent, _Event, module.__initat);
+					pcall(_Driver.RegisterEvent, _Driver, module.__initat);
 					_TriggeredEvents[module.__initat] = false;
 				end
 			end

@@ -18,7 +18,7 @@ local IsInGroup, IsInRaid, GetNumGroupMembers, GetRaidRosterInfo = IsInGroup, Is
 local GetNumWhoResults, GetWhoInfo = C_FriendList.GetNumWhoResults, C_FriendList.GetWhoInfo;
 local WOW_PROJECT_ID = WOW_PROJECT_ID;
 
-local __EventHandler = nil;
+local _Driver = nil;
 local _tPlayerInfo = {  };		--	[name] = { GUID, class, level, time, src, }
 local _isInGuild = IsInGuild();
 local _isInGroup = IsInGroup();
@@ -524,8 +524,8 @@ local _GUILD = GetGuildInfo('player');
 	local B_Initialized = false;
 	local function Init()
 		B_Initialized = true;
-		__EventHandler = CreateFrame('FRAME');
-		__EventHandler:SetScript("OnEvent", OnEvent);
+		_Driver = CreateFrame('FRAME');
+		_Driver:SetScript("OnEvent", OnEvent);
 	end
 	local __GetPlayerLink = nil;
 	local function HookGetPlayerLink()
@@ -566,29 +566,29 @@ local _GUILD = GetGuildInfo('player');
 	end
 	local function CheckState()
 		if _db.ShowLevel then
-			if __EventHandler ~= nil then
-				__EventHandler:RegisterEvent("UPDATE_MOUSEOVER_UNIT");
-				__EventHandler:RegisterEvent("PLAYER_TARGET_CHANGED");
-				__EventHandler:RegisterEvent("UNIT_NAME_UPDATE");
-				__EventHandler:RegisterEvent("UNIT_LEVEL");
-				__EventHandler:RegisterEvent("TRADE_SHOW");
-				__EventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED");
-				__EventHandler:RegisterEvent("CHAT_MSG_SYSTEM");
-				__EventHandler:RegisterEvent("FRIENDLIST_UPDATE");
-				__EventHandler:RegisterEvent("GROUP_ROSTER_UPDATE");
-				__EventHandler:RegisterEvent("BN_CONNECTED");
-				__EventHandler:RegisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
-				__EventHandler:RegisterEvent("BN_FRIEND_INFO_CHANGED");
-				__EventHandler:RegisterEvent("WHO_LIST_UPDATE");
-				__EventHandler:RegisterUnitEvent("PLAYER_GUILD_UPDATE", 'player');
-				__EventHandler:RegisterEvent("GUILD_ROSTER_UPDATE");
+			if _Driver ~= nil then
+				_Driver:RegisterEvent("UPDATE_MOUSEOVER_UNIT");
+				_Driver:RegisterEvent("PLAYER_TARGET_CHANGED");
+				_Driver:RegisterEvent("UNIT_NAME_UPDATE");
+				_Driver:RegisterEvent("UNIT_LEVEL");
+				_Driver:RegisterEvent("TRADE_SHOW");
+				_Driver:RegisterEvent("NAME_PLATE_UNIT_ADDED");
+				_Driver:RegisterEvent("CHAT_MSG_SYSTEM");
+				_Driver:RegisterEvent("FRIENDLIST_UPDATE");
+				_Driver:RegisterEvent("GROUP_ROSTER_UPDATE");
+				_Driver:RegisterEvent("BN_CONNECTED");
+				_Driver:RegisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
+				_Driver:RegisterEvent("BN_FRIEND_INFO_CHANGED");
+				_Driver:RegisterEvent("WHO_LIST_UPDATE");
+				_Driver:RegisterUnitEvent("PLAYER_GUILD_UPDATE", 'player');
+				_Driver:RegisterEvent("GUILD_ROSTER_UPDATE");
 				if IsInGuild() then
 					_isInGuild = true;
 					_GUILD = GetGuildInfo('player');
 				else
 					_isInGuild = false;
 				end
-				__EventHandler:RegisterEvent("PLAYER_LEVEL_CHANGED");
+				_Driver:RegisterEvent("PLAYER_LEVEL_CHANGED");
 			else
 				if IsInGuild() then
 					_isInGuild = true;
@@ -604,30 +604,30 @@ local _GUILD = GetGuildInfo('player');
 			end
 			ScheduleDelayUpdateAll();
 		elseif _db.WelToGuild or _db.ShowSubGroup then
-			if __EventHandler ~= nil then
-				__EventHandler:UnregisterEvent("UPDATE_MOUSEOVER_UNIT");
-				__EventHandler:UnregisterEvent("PLAYER_TARGET_CHANGED");
-				__EventHandler:UnregisterEvent("TRADE_SHOW");
-				__EventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED");
-				__EventHandler:UnregisterEvent("FRIENDLIST_UPDATE");
-				__EventHandler:UnregisterEvent("BN_CONNECTED");
-				__EventHandler:UnregisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
-				__EventHandler:UnregisterEvent("BN_FRIEND_INFO_CHANGED");
-				__EventHandler:UnregisterEvent("WHO_LIST_UPDATE");
-				__EventHandler:UnregisterEvent("PLAYER_LEVEL_CHANGED");
+			if _Driver ~= nil then
+				_Driver:UnregisterEvent("UPDATE_MOUSEOVER_UNIT");
+				_Driver:UnregisterEvent("PLAYER_TARGET_CHANGED");
+				_Driver:UnregisterEvent("TRADE_SHOW");
+				_Driver:UnregisterEvent("NAME_PLATE_UNIT_ADDED");
+				_Driver:UnregisterEvent("FRIENDLIST_UPDATE");
+				_Driver:UnregisterEvent("BN_CONNECTED");
+				_Driver:UnregisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
+				_Driver:UnregisterEvent("BN_FRIEND_INFO_CHANGED");
+				_Driver:UnregisterEvent("WHO_LIST_UPDATE");
+				_Driver:UnregisterEvent("PLAYER_LEVEL_CHANGED");
 			end
 			if _db.WelToGuild then
-				if __EventHandler ~= nil then
-					__EventHandler:RegisterUnitEvent("PLAYER_GUILD_UPDATE", 'player');
-					__EventHandler:RegisterEvent("GUILD_ROSTER_UPDATE");
-					-- __EventHandler:RegisterEvent("PLAYER_ENTERING_WORLD");
+				if _Driver ~= nil then
+					_Driver:RegisterUnitEvent("PLAYER_GUILD_UPDATE", 'player');
+					_Driver:RegisterEvent("GUILD_ROSTER_UPDATE");
+					-- _Driver:RegisterEvent("PLAYER_ENTERING_WORLD");
 					if IsInGuild() then
 						_isInGuild = true;
-						__EventHandler:RegisterEvent("CHAT_MSG_SYSTEM");
+						_Driver:RegisterEvent("CHAT_MSG_SYSTEM");
 						_GUILD = GetGuildInfo('player');
 					else
 						_isInGuild = false;
-						__EventHandler:UnregisterEvent("CHAT_MSG_SYSTEM");
+						_Driver:UnregisterEvent("CHAT_MSG_SYSTEM");
 					end
 				else
 					if IsInGuild() then
@@ -645,11 +645,11 @@ local _GUILD = GetGuildInfo('player');
 				end
 				ScheduleDelayUpdate('guild');
 			else
-				if __EventHandler ~= nil then
-					__EventHandler:UnregisterEvent("PLAYER_GUILD_UPDATE");
-					__EventHandler:UnregisterEvent("GUILD_ROSTER_UPDATE");
-					-- __EventHandler:UnregisterEvent("PLAYER_ENTERING_WORLD");
-					__EventHandler:UnregisterEvent("CHAT_MSG_SYSTEM");
+				if _Driver ~= nil then
+					_Driver:UnregisterEvent("PLAYER_GUILD_UPDATE");
+					_Driver:UnregisterEvent("GUILD_ROSTER_UPDATE");
+					-- _Driver:UnregisterEvent("PLAYER_ENTERING_WORLD");
+					_Driver:UnregisterEvent("CHAT_MSG_SYSTEM");
 				end
 				_tGuildPreQueue = {  };
 				_tGuildMsgQueue = {  };
@@ -658,37 +658,37 @@ local _GUILD = GetGuildInfo('player');
 				end
 			end
 			if _db.ShowSubGroup then
-				if __EventHandler ~= nil then
-					__EventHandler:RegisterEvent("UNIT_NAME_UPDATE");
-					__EventHandler:RegisterEvent("UNIT_LEVEL");
-					__EventHandler:RegisterEvent("GROUP_ROSTER_UPDATE");
+				if _Driver ~= nil then
+					_Driver:RegisterEvent("UNIT_NAME_UPDATE");
+					_Driver:RegisterEvent("UNIT_LEVEL");
+					_Driver:RegisterEvent("GROUP_ROSTER_UPDATE");
 				end
 				ScheduleDelayUpdate('group');
 			else
-				if __EventHandler ~= nil then
-					__EventHandler:UnregisterEvent("UNIT_NAME_UPDATE");
-					__EventHandler:UnregisterEvent("UNIT_LEVEL");
-					__EventHandler:UnregisterEvent("GROUP_ROSTER_UPDATE");
+				if _Driver ~= nil then
+					_Driver:UnregisterEvent("UNIT_NAME_UPDATE");
+					_Driver:UnregisterEvent("UNIT_LEVEL");
+					_Driver:UnregisterEvent("GROUP_ROSTER_UPDATE");
 				end
 			end
 		else
-			if __EventHandler ~= nil then
-				__EventHandler:UnregisterEvent("UPDATE_MOUSEOVER_UNIT");
-				__EventHandler:UnregisterEvent("PLAYER_TARGET_CHANGED");
-				__EventHandler:UnregisterEvent("UNIT_NAME_UPDATE");
-				__EventHandler:UnregisterEvent("UNIT_LEVEL");
-				__EventHandler:UnregisterEvent("TRADE_SHOW");
-				__EventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED");
-				__EventHandler:UnregisterEvent("FRIENDLIST_UPDATE");
-				__EventHandler:UnregisterEvent("GROUP_ROSTER_UPDATE");
-				__EventHandler:UnregisterEvent("BN_CONNECTED");
-				__EventHandler:UnregisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
-				__EventHandler:UnregisterEvent("BN_FRIEND_INFO_CHANGED");
-				__EventHandler:UnregisterEvent("WHO_LIST_UPDATE");
-				__EventHandler:UnregisterEvent("PLAYER_GUILD_UPDATE");
-				__EventHandler:UnregisterEvent("GUILD_ROSTER_UPDATE");
-				__EventHandler:UnregisterEvent("CHAT_MSG_SYSTEM");
-				__EventHandler:UnregisterEvent("PLAYER_LEVEL_CHANGED");
+			if _Driver ~= nil then
+				_Driver:UnregisterEvent("UPDATE_MOUSEOVER_UNIT");
+				_Driver:UnregisterEvent("PLAYER_TARGET_CHANGED");
+				_Driver:UnregisterEvent("UNIT_NAME_UPDATE");
+				_Driver:UnregisterEvent("UNIT_LEVEL");
+				_Driver:UnregisterEvent("TRADE_SHOW");
+				_Driver:UnregisterEvent("NAME_PLATE_UNIT_ADDED");
+				_Driver:UnregisterEvent("FRIENDLIST_UPDATE");
+				_Driver:UnregisterEvent("GROUP_ROSTER_UPDATE");
+				_Driver:UnregisterEvent("BN_CONNECTED");
+				_Driver:UnregisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
+				_Driver:UnregisterEvent("BN_FRIEND_INFO_CHANGED");
+				_Driver:UnregisterEvent("WHO_LIST_UPDATE");
+				_Driver:UnregisterEvent("PLAYER_GUILD_UPDATE");
+				_Driver:UnregisterEvent("GUILD_ROSTER_UPDATE");
+				_Driver:UnregisterEvent("CHAT_MSG_SYSTEM");
+				_Driver:UnregisterEvent("PLAYER_LEVEL_CHANGED");
 			end
 			_tGuildPreQueue = {  };
 			_tGuildMsgQueue = {  };
