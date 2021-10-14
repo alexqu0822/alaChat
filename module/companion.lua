@@ -532,8 +532,9 @@ local _GUILD = GetGuildInfo('player');
 		if __GetPlayerLink == nil then
 			__GetPlayerLink = _G.GetPlayerLink;
 			function _G.GetPlayerLink(fullName, nameApp, lineId, cType, cTarget, ...)
-				local name = Ambiguate(fullName, 'none');
-				fullName = strfind(fullName, "-") == nil and (fullName .. "-" .. _PREALM) or fullName;
+				local short, realm = strsplit("-", fullName);
+				-- local name = Ambiguate(fullName, 'none');
+				fullName = realm == nil and (short .. "-" .. _PREALM) or fullName;
 				local info = _tPlayerInfo[fullName];
 				if _db.ShowLevel and info ~= nil and info[3] > 0 then
 					local level = nil;
@@ -549,14 +550,30 @@ local _GUILD = GetGuildInfo('player');
 					else
 						level = "|cffff0000" .. info[3] .. "|r";
 					end
-					if _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
-						nameApp = gsub(nameApp, name, format(__PLFStr_LI, name, level, _tSubGroup[fullName]));
-					else
-						nameApp = gsub(nameApp, name, format(__PLFStr_L, name, level, ""));
+					local pat = gsub(fullName, "[%%%.%+%-%*%?%[%]%(%)%^%$]", "%%%1");
+					if strfind(nameApp, pat) ~= nil then
+						local repl = _db.ShowSubGroup and _tSubGroup[fullName] ~= nil and format(__PLFStr_LI, fullName, level, _tSubGroup[fullName]) or format(__PLFStr_L, fullName, level, "");
+						nameApp = gsub(nameApp, pat, repl);
+					elseif strfind(nameApp, short) ~= nil then
+						local repl = _db.ShowSubGroup and _tSubGroup[fullName] ~= nil and format(__PLFStr_LI, short, level, _tSubGroup[fullName]) or format(__PLFStr_L, short, level, "");
+						nameApp = gsub(nameApp, short, repl);
 					end
+					-- if _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
+					-- 	nameApp = gsub(nameApp, name, format(__PLFStr_LI, name, level, _tSubGroup[fullName]));
+					-- else
+					-- 	nameApp = gsub(nameApp, name, format(__PLFStr_L, name, level, ""));
+					-- end
 					return "|Hplayer:" .. fullName .. ":" .. (lineId or 0) .. ":" .. (cType or 0) .. ":" .. (cTarget or "") .. "|h" .. nameApp .. "|h";
 				elseif _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
-					nameApp = gsub(nameApp, name, format(__PLFStr_I, name, "", _tSubGroup[fullName]));
+					local pat = gsub(fullName, "[%%%.%+%-%*%?%[%]%(%)%^%$]", "%%%1");
+					if strfind(nameApp, pat) ~= nil then
+						local repl = format(__PLFStr_I, fullName, "", _tSubGroup[fullName]);
+						nameApp = gsub(nameApp, pat, repl);
+					elseif strfind(nameApp, short) ~= nil then
+						local repl = format(__PLFStr_I, short, "", _tSubGroup[fullName]);
+						nameApp = gsub(nameApp, short, repl);
+					end
+					-- nameApp = gsub(nameApp, name, format(__PLFStr_I, name, "", _tSubGroup[fullName]));
 					return "|Hplayer:" .. fullName .. ":" .. (lineId or 0) .. ":" .. (cType or 0) .. ":" .. (cTarget or "") .. "|h" .. nameApp .. "|h";
 				else
 					return __GetPlayerLink(fullName, nameApp, lineId, cType, cTarget, ...);
