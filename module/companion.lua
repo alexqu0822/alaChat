@@ -211,9 +211,9 @@ local _GUILD = GetGuildInfo('player');
 				if name ~= nil and name ~= "" then
 					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 					AddPlayerInfo(fullName, GUID, class, level, 'guild', now);
-					if _tGuildPreQueue[name] ~= nil then
-						_tGuildPreQueue[name] = nil;
-						OnRosterInfo(name, class, level, rank, classStr, zoneStr, rankStr, GUID);
+					if _tGuildPreQueue[fullName] ~= nil then
+						_tGuildPreQueue[fullName] = nil;
+						OnRosterInfo(fullName, class, level, rank, classStr, zoneStr, rankStr, GUID);
 					end
 				end
 			end
