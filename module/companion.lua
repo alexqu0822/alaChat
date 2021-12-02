@@ -3,6 +3,7 @@ local __addon, __private = ...;
 local L = __private.L;
 
 local time = time;
+local print = print;
 local next = next;
 local strsplit, strtrim, strmatch, gsub, format = string.split, string.trim, string.match, string.gsub, string.format;
 local C_Timer_After = C_Timer.After;
@@ -222,6 +223,9 @@ local _GUILD = GetGuildInfo('player');
 					_tGuildPreQueue[fullName] = val - 1;
 				else
 					_tGuildPreQueue[fullName] = nil;
+					if __private.__isdev then
+						print("Guild |cffff0000remove|r queue", fullName);
+					end
 				end
 			end
 		end,
@@ -400,7 +404,10 @@ local _GUILD = GetGuildInfo('player');
 				local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 				if fullName ~= _FULLPLAYER then
 					if _tGuildMsgQueue[fullName] == nil then
-						_tGuildPreQueue[fullName] = 2;
+						_tGuildPreQueue[fullName] = 8;
+						if __private.__isdev then
+							print("Guild |cff00ff00add|r queue", fullName);
+						end
 					end
 				end
 				return true;

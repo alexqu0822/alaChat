@@ -429,7 +429,7 @@ local _db = {  };
 		Pin.RefreshTextFont = PinRefreshTextFont;
 		Pin.SetOrder = PinSetOrder;
 		Pin.__theme = {  };
-		for inext = 1, #_T_ThemeMethod do
+		for index = 1, #_T_ThemeMethod do
 			local method = _T_ThemeMethod[_T_ThemeMethod[index]];
 			if method ~= nil then
 				xpcall(method, geterrorhandler(), "__add", Pin, Pin.__theme);
@@ -528,7 +528,7 @@ local _db = {  };
 		end
 	end
 	function Docker:SetThemeMethod(which, method)
-		for inext = 1, #_T_ThemeMethod do
+		for index = 1, #_T_ThemeMethod do
 			local method = _T_ThemeMethod[_T_ThemeMethod[index]];
 			if method ~= nil then
 				for Pin, order in next, _T_Pins do
