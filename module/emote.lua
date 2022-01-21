@@ -1,4 +1,5 @@
 ﻿
+local __ala_meta__ = _G.__ala_meta__;
 local __addon, __private = ...;
 local L = __private.L;
 
@@ -158,37 +159,6 @@ local _db = {  };
 -->
 
 -->		GUI
-	local function SetBackdrop(_F, inset, dr, dg, db, da, width, rr, rg, rb, ra)	--	inset > 0 : inner	--	inset < 0 : outter
-		local ofs = width + inset;
-		local Backdrop = _F:CreateTexture(nil, "BACKGROUND");
-		Backdrop:SetPoint("BOTTOMLEFT", _F, "BOTTOMLEFT", ofs, ofs);
-		Backdrop:SetPoint("TOPRIGHT", _F, "TOPRIGHT", -ofs, -ofs);
-		Backdrop:SetColorTexture(dr or 0.0, dg or 0.0, db or 0.0, da or 1.0);
-		local LBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
-		local TBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
-		local RBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
-		local BBorder = _F:CreateTexture(nil, "BACKGROUND", nil, 1);
-		if width ~= nil then
-			rr, rg, rb, ra = rr or 1.0, rg or 1.0, rb or 1.0, ra or 0.5;
-			LBorder:SetWidth(width);
-			TBorder:SetHeight(width);
-			RBorder:SetWidth(width);
-			BBorder:SetHeight(width);
-			LBorder:SetColorTexture(rr, rg, rb, ra);
-			TBorder:SetColorTexture(rr, rg, rb, ra);
-			RBorder:SetColorTexture(rr, rg, rb, ra);
-			BBorder:SetColorTexture(rr, rg, rb, ra);
-			LBorder:SetPoint("TOPRIGHT", _F, "TOPLEFT", ofs, -ofs);
-			LBorder:SetPoint("BOTTOMRIGHT", _F, "BOTTOMLEFT", ofs, inset);
-			TBorder:SetPoint("BOTTOMRIGHT", _F, "TOPRIGHT", -ofs, -ofs);
-			TBorder:SetPoint("BOTTOMLEFT", _F, "TOPLEFT", inset, -ofs);
-			RBorder:SetPoint("BOTTOMLEFT", _F, "BOTTOMRIGHT", -ofs, ofs);
-			RBorder:SetPoint("TOPLEFT", _F, "TOPRIGHT", -ofs, -inset);
-			BBorder:SetPoint("TOPLEFT", _F, "BOTTOMLEFT", ofs, ofs);
-			BBorder:SetPoint("TOPRIGHT", _F, "BOTTOMRIGHT", -inset, ofs);
-		end
-	end
-	--
 	local PanelOnEvent, PanelOnUpdate, PanelOnEnter, PanelOnLeave;
 	local IconOnEnter, IconOnLeave, IconOnClick;
 	local ButtonOnEnter, ButtonOnLeave, ButtonOnClick;
@@ -338,7 +308,7 @@ local _db = {  };
 		Panel:Hide();
 		Panel:ClearAllPoints();
 		Panel:SetPoint("BOTTOMLEFT", Button, "TOPRIGHT", 0, 32);
-		SetBackdrop(Panel, 1, 0.0, 0.0, 0.0, 0.9, 1, 1.0, 1.0, 1.0, 0.25);
+		__ala_meta__._SetBackdrop(Panel, 1, 0.0, 0.0, 0.0, 0.9, 1, 1.0, 1.0, 1.0, 0.25);
 		Panel:SetClampedToScreen(true);
 
 		-- Panel:SetScript("OnUpdate", PanelOnUpdate);

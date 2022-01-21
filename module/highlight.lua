@@ -6,7 +6,7 @@ local TEXTURE_PATH = __private.TEXTURE_PATH;
 local PIN_ORDER_OFFSET = 96;
 
 local time = time;
-local strbyte, strsub, strsplit, strtrim, strfind, strmatch, gsub = string.byte, string.sub, string.split, string.trim, string.find, string.match, string.gsub;
+local strbyte, strlen, strsub, strsplit, strtrim, strfind, strmatch, gsub = string.byte, string.len, string.sub, string.split, string.trim, string.find, string.match, string.gsub;
 local Ambiguate = Ambiguate;
 
 local __highlight = {  };
@@ -15,6 +15,7 @@ local _db = {  };
 local __STRSET = "";
 local __CLR = {  };
 local __FMT = "";
+local __CS = nil;
 local _nStrPatList = 0;
 local _tStrPatList = {  };
 local _tStrRepList = {  };
@@ -58,16 +59,16 @@ local _BlockNoMatching = {  };
 	local function NoCase(str)
 		return gsub(str, "%a", NoCaseRep);
 	end
-	local function InitStrPatList()
+	local function InitStrPatList(force)
 		local SSET = _db.StrSet;
 		local fmt = _db.format;
 		local clr = _db.color;
 		if SSET ~= nil and fmt ~= nil and clr ~= nil then
 			SSET = gsub(gsub(gsub(SSET, "^[\t\n ]+", ""), "[\t\n ]+$", ""), "\n\n", "\n");
 			SSET = gsub(SSET, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1");
-			if _db.CaseInsensitive then
-				SSET = NoCase(SSET);
-			end
+			-- if _db.CaseInsensitive then
+			-- 	SSET = NoCase(SSET);
+			-- end
 			if strmatch(fmt, __PAT) == nil then
 				fmt = "";
 			else
@@ -79,10 +80,12 @@ local _BlockNoMatching = {  };
 			if (SSET ~= nil and __STRSET ~= SSET)
 				or (clr ~= nil and (clr[1] ~= __CLR[1] or clr[2] ~= __CLR[2] or clr[3] ~= __CLR[3]))
 				or (fmt ~= nil and __FMT ~= fmt)
+				or (__CS ~= _db.CaseInsensitive)
 			then
 				__STRSET = SSET;
 				__CLR = clr;
 				__FMT = fmt;
+				__CS = _db.CaseInsensitive;
 				local list = { strsplit("\n", SSET) };
 				_nStrPatList = 0;
 				_tStrPatList = {  };
@@ -90,13 +93,32 @@ local _BlockNoMatching = {  };
 				local hex = format("%.2x%.2x%.2x", clr[1] * 255, clr[2] * 255, clr[3] * 255);
 				for index = 1, #list do
 					local str = strtrim(list[index]);
-					if str ~= nil and str ~= "" and hash[str] == nil then
+					local str, c = strsplit("#", str);
+					if str ~= "" and hash[str] == nil then
+						if _db.CaseInsensitive then
+							str = NoCase(str);
+						end
+						if c ~= nil then
+							local len = strlen(c);
+							if len < 6 then
+								c = hex;
+							else
+								if len > 6 then
+									c = strsub(c, 1, 6);
+								end
+								if strmatch(c, "[^0-9a-fA-F]") ~= nil then
+									c = hex;
+								end
+							end
+						else
+							c = hex;
+						end
 						_nStrPatList = _nStrPatList + 1;
 						_tStrPatList[_nStrPatList] = "^([^|]-)(" .. str .. ")";
-						_tStrRepList[_nStrPatList] = "%1|cff" .. hex .. (fmt == "" and "%2" or gsub(fmt, __PAT, "%%2")) .. "|r";
+						_tStrRepList[_nStrPatList] = "%1|cff" .. c .. (fmt == "" and "%2" or gsub(fmt, __PAT, "%%2")) .. "|r";
 						_nStrPatList = _nStrPatList + 1;
 						_tStrPatList[_nStrPatList] = "(|[^HTc][^|]-)(" .. str .. ")";
-						_tStrRepList[_nStrPatList] = "%1|cff" .. hex .. (fmt == "" and "%2" or gsub(fmt, __PAT, "%%2")) .. "|r";
+						_tStrRepList[_nStrPatList] = "%1|cff" .. c .. (fmt == "" and "%2" or gsub(fmt, __PAT, "%%2")) .. "|r";
 						hash[str] = index;
 					end
 				end

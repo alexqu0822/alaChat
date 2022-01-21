@@ -253,7 +253,7 @@ L.SETTING = {
 		--
 		CaseInsensitive = "Case |cff00ff00in|rsensitive",
 		StrSet = "Key words",
-		StrSetTip = "Each word occupies one line",
+		StrSetTip = "Each word occupies one line\nThe following color hex starts with # will make it differen color. 4 example: Raid#FF0000 makes 'Raid' highlighted tp '|cffff0000Raid|r'",
 		color = "Color",
 		format = "Format",
 		ShowMatchedOnly = "Block not matching message `Auto closed each time entering world or reloading",

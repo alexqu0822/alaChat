@@ -253,7 +253,7 @@ L.SETTING = {
 		--
 		CaseInsensitive = "忽略大小寫",
 		StrSet = "設置關鍵詞",
-		StrSetTip = "每行一個關鍵詞",
+		StrSetTip = "每行一個關鍵詞\n可以在關鍵詞後面以#接上六位顔色代碼，例如：副本#FF0000，即將‘副本’高亮為‘|cffff0000副本|r’",
 		color = "設置著色",
 		format = "設置格式",
 		ShowMatchedOnly = "只顯示包含關鍵詞的聊天 `每次登錄或重載插件都會自動關閉",

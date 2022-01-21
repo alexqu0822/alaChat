@@ -253,7 +253,7 @@ L.SETTING = {
 		--
 		CaseInsensitive = "忽略大小写",
 		StrSet = "设置关键词",
-		StrSetTip = "每行一个关键词",
+		StrSetTip = "每行一个关键词\n可以在关键词后面以#接上六位颜色代码，例如：副本#FF0000，即将‘副本’高亮显示为‘|cffff0000副本|r’",
 		color = "设置颜色",
 		format = "设置格式",
 		ShowMatchedOnly = "只显示包含关键词的聊天 `每次登陆或重载插件都会自动关闭",

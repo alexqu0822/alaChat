@@ -491,14 +491,23 @@ local __db = __default;
 				__db.channeltab.AutoAddChannelToDefaultChatFrame = false;
 				__db.channeltab._bfworldcf = {  };
 			end
+			if __db.__version < 220118.01 then
+				local StrSet = __db.highlight.StrSet;
+				if StrSet ~= nil then
+					__db.highlight.StrSet = gsub(StrSet, "#[^\n]+\n", "");
+				end
+			end
 		end
 		DisableOldVersion();
-		__db.__version = 210726.01;
+		__db.__version = 220118.01;
 		CheckDB(__db, __default);
 		if not __db.highlight.KeepShowMatchedOnly then
 			__db.highlight.ShowMatchedOnly = false;
 		end
 		__private.__db = __db;
+		if __db.__overridedev == false then
+			__private.__isdev = false;
+		end
 	end
 -->
 
