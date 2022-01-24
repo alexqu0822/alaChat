@@ -1,5 +1,8 @@
 ﻿
+local _G = _G;
 local __ala_meta__ = _G.__ala_meta__;
+local uireimp = __ala_meta__.uireimp;
+
 local __addon, __private = ...;
 local L = __private.L;
 
@@ -308,7 +311,7 @@ local _db = {  };
 		Panel:Hide();
 		Panel:ClearAllPoints();
 		Panel:SetPoint("BOTTOMLEFT", Button, "TOPRIGHT", 0, 32);
-		__ala_meta__._SetBackdrop(Panel, 1, 0.0, 0.0, 0.0, 0.9, 1, 1.0, 1.0, 1.0, 0.25);
+		uireimp._SetSimpleBackdrop(Panel, 1, 1, 0.0, 0.0, 0.0, 0.9, 1.0, 1.0, 1.0, 0.25);
 		Panel:SetClampedToScreen(true);
 
 		-- Panel:SetScript("OnUpdate", PanelOnUpdate);

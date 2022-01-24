@@ -2,6 +2,8 @@
 	SETTING
 --]=]
 local __ala_meta__ = _G.__ala_meta__;
+local uireimp = __ala_meta__.uireimp;
+
 local __addon, __private = ...;
 local L = __private.L;
 
@@ -497,7 +499,7 @@ local _SettingNodes = {  };
 						editbox.err:SetVertexColor(1.0, 1.0, 1.0, 1.0);
 					end
 				end
-				__ala_meta__._SetBackdrop(editbox, 0, 0.25, 0.25, 0.25, 1.0, 1, 1.0, 1.0, 1.0, 0.125);
+				uireimp._SetSimpleBackdrop(editbox, 0, 1, 0.25, 0.25, 0.25, 1.0, 1.0, 1.0, 1.0, 0.125);
 				-- elements[#elements + 1] = {
 				-- 	text = "",
 				-- 	para = { module, key, nil, drop, editbox, },
@@ -548,7 +550,7 @@ local _SettingNodes = {  };
 						editbox:SetText(LSETTINGMODULE[val] or val);
 					end
 				end
-				__ala_meta__._SetBackdrop(editbox, 0, 0.0, 0.0, 0.0, 1.0, 1, 1.0, 1.0, 1.0, 0.25);
+				uireimp._SetSimpleBackdrop(editbox, 0, 1, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.25);
 				editbox:Disable();
 			end
 			drop._SetPoint = drop.SetPoint;

@@ -3,7 +3,6 @@
 --]=]
 
 local __addon, __private = ...;
-_G.__ala_meta__ = _G.__ala_meta__ or {  };
 __ala_meta__.chatv2 = __private;
 
 local pcall, xpcall, geterrorhandler = pcall, xpcall, geterrorhandler;
