@@ -6,7 +6,8 @@ local TEXTURE_PATH = __private.TEXTURE_PATH;
 local PIN_ORDER_OFFSET = 96;
 
 local time = time;
-local strbyte, strlen, strsub, strsplit, strtrim, strfind, strmatch, gsub = string.byte, string.len, string.sub, string.split, string.trim, string.find, string.match, string.gsub;
+local strbyte, strlen, strsub, strupper, strlower, strsplit, strtrim, strfind, strmatch, format, gsub
+	= string.byte, string.len, string.sub, string.upper, string.lower, string.split, string.trim, string.find, string.match, string.format, string.gsub;
 local Ambiguate = Ambiguate;
 
 local __highlight = {  };
@@ -21,6 +22,10 @@ local _tStrPatList = {  };
 local _tStrRepList = {  };
 local __PAT = "#HL#";
 local _BlockNoMatching = {  };
+
+if __private.__is_dev then
+	__private:BuildEnv("highlight");
+end
 
 -->		MessageFilter
 	local function ChatMessageFilter(self, event, msg, sender, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, arg12, arg13, arg14, ...)

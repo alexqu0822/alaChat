@@ -4,14 +4,17 @@ local L = __private.L;
 
 local next = next;
 local select = select;
+local hooksecurefunc = hooksecurefunc;
 local strtrim, strsplit, strupper, strsub, strmatch, gsub = string.trim, string.split, string.upper, string.sub, string.match, string.gsub;
-local wipe = table.wipe;
+local tremove, wipe = table.remove, table.wipe;
 local tostring = tostring;
+local C_Timer = C_Timer;
 local GetChannelName = GetChannelName;
 local IsInGroup, IsInRaid = IsInGroup, IsInRaid;
 local GameTooltip = GameTooltip;
 local ChatTypeInfo = ChatTypeInfo;
 local LE_PARTY_CATEGORY_HOME, LE_PARTY_CATEGORY_INSTANCE = LE_PARTY_CATEGORY_HOME, LE_PARTY_CATEGORY_INSTANCE;
+local _G = _G;
 local LSM = LibStub("LibSharedMedia-3.0");
 
 local __misc = {  };
@@ -21,6 +24,10 @@ local _tLineCache = {  };
 local _tHistory = {  };_G._tHistory = _tHistory
 local _nHistory = 0;
 local _pHistory = 0;
+
+if __private.__is_dev then
+	__private:BuildEnv("misc");
+end
 
 -->		Data
 	local ColorTable = {  };

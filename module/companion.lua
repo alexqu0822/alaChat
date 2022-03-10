@@ -4,6 +4,9 @@ local L = __private.L;
 
 local time = time;
 local print = print;
+local xpcall = xpcall;
+local geterrorhandler = geterrorhandler;
+local tonumber = tonumber;
 local next = next;
 local strsplit, strtrim, strmatch, gsub, format = string.split, string.trim, string.match, string.gsub, string.format;
 local C_Timer_After = C_Timer.After;
@@ -17,6 +20,8 @@ local GetNumFriends = C_FriendList ~= nil and C_FriendList.GetNumFriends or GetN
 local GetFriendInfoByIndex = C_FriendList ~= nil and C_FriendList.GetFriendInfoByIndex or GetFriendInfoByIndex;
 local IsInGroup, IsInRaid, GetNumGroupMembers, GetRaidRosterInfo = IsInGroup, IsInRaid, GetNumGroupMembers, GetRaidRosterInfo;
 local GetNumWhoResults, GetWhoInfo = C_FriendList.GetNumWhoResults, C_FriendList.GetWhoInfo;
+local BNGetNumFriends, BNGetNumFriendGameAccounts, BNGetFriendGameAccountInfo = BNGetNumFriends, BNGetNumFriendGameAccounts, BNGetFriendGameAccountInfo;
+local BNET_CLIENT_WOW = BNET_CLIENT_WOW;
 local WOW_PROJECT_ID = WOW_PROJECT_ID;
 
 local _Driver = nil;
@@ -56,8 +61,12 @@ local _PFACTION = UnitFactionGroup('player');
 local _PLEVEL = UnitLevel('player');
 local _GUILD = GetGuildInfo('player');
 
+if __private.__is_dev then
+	__private:BuildEnv("companion");
+end
+
 --[=[
-	--	/run for k,v in next,_G do if type(v)=='string' and strfind(v,"开除出公会") then print(k,v) end end
+	--	/run for k,v in next,_G do if type(v)=='string' and strmatch(v,"开除出公会") then print(k,v) end end
 	ERR_GUILD_JOIN_S == "%s加入了公会。"
 	GUILDEVENT_TYPE_JOIN == "%s加入了公会。"
 	ERR_GUILD_LEAVE_S == "%s离开了公会。"
@@ -78,7 +87,7 @@ local _GUILD = GetGuildInfo('player');
 				src,
 			};
 			_tPlayerInfo[fullName] = pinfo;
-			-- if __private.__isdev then
+			-- if __private.__is_dev then
 			-- 	print("|cff00ff00++++|r", fullName, pinfo[2], pinfo[3]);
 			-- end
 		else
@@ -87,7 +96,7 @@ local _GUILD = GetGuildInfo('player');
 			pinfo[3] = level ~= 0 and level or pinfo[3];
 			pinfo[4] = now;
 			pinfo[5] = src;
-			-- if __private.__isdev then
+			-- if __private.__is_dev then
 			-- 	print("|cffffff00****|r", fullName, pinfo[2], pinfo[3]);
 			-- end
 		end
@@ -210,7 +219,7 @@ local _GUILD = GetGuildInfo('player');
 			for index = 1, GetNumGuildMembers() do
 				local name, rankStr, rank, level, classStr, zoneStr, _, _, _, _, class, _, _, _, _, _, GUID = GetGuildRosterInfo(index);
 				if name ~= nil and name ~= "" then
-					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					local fullName = strmatch(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 					AddPlayerInfo(fullName, GUID, class, level, 'guild', now);
 					if _tGuildPreQueue[fullName] ~= nil then
 						_tGuildPreQueue[fullName] = nil;
@@ -223,7 +232,7 @@ local _GUILD = GetGuildInfo('player');
 					_tGuildPreQueue[fullName] = val - 1;
 				else
 					_tGuildPreQueue[fullName] = nil;
-					if __private.__isdev then
+					if __private.__is_dev then
 						print("Guild |cffff0000remove|r queue", fullName);
 					end
 				end
@@ -236,7 +245,7 @@ local _GUILD = GetGuildInfo('player');
 				if info.connected then
 					local name = info.name;
 					if name ~= nil and name ~= "" then
-						local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+						local fullName = strmatch(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 						AddPlayerInfo(fullName, info.guid, LOCALIZED_CLASS_NAMES_HASH[info.className], info.level, 'friend', now);
 					end
 				end
@@ -248,7 +257,7 @@ local _GUILD = GetGuildInfo('player');
 			for index = 1, GetNumGroupMembers() do
 				local name, rank, subGroup, level, classStr, class, zone, online, dead, role, isML, combatRole = GetRaidRosterInfo(index);
 				if name ~= nil and name ~= "" then
-					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					local fullName = strmatch(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 					AddPlayerInfo(fullName, UnitGUID(name), class, (level == nil or level == 0) and UnitLevel(name) or level, 'group', now);
 					_tSubGroup[fullName] = subGroup;
 				end
@@ -260,7 +269,7 @@ local _GUILD = GetGuildInfo('player');
 				local info = GetWhoInfo(index);
 				local name = info.fullName;
 				if name ~= nil and name ~= "" then
-					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					local fullName = strmatch(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 					AddPlayerInfo(fullName, nil, info.filename, info.level, 'who', now);
 				end
 			end
@@ -401,11 +410,11 @@ local _GUILD = GetGuildInfo('player');
 			end
 			name = strmatch(msg, _PATJOIN);
 			if name ~= nil then
-				local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+				local fullName = strmatch(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 				if fullName ~= _FULLPLAYER then
 					if _tGuildMsgQueue[fullName] == nil then
 						_tGuildPreQueue[fullName] = 8;
-						if __private.__isdev then
+						if __private.__is_dev then
 							print("Guild |cff00ff00add|r queue", fullName);
 						end
 					end
@@ -419,7 +428,7 @@ local _GUILD = GetGuildInfo('player');
 			end
 			name = strmatch(msg, _PATLEAVE);
 			if name ~= nil then
-				local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+				local fullName = strmatch(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 				_tGuildMsgQueue[fullName] = nil;
 				_tGuildPreQueue[fullName] = nil;
 				return;
@@ -431,7 +440,7 @@ local _GUILD = GetGuildInfo('player');
 			end
 			name = strmatch(msg, _PATREMOVED);
 			if name ~= nil then
-				local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+				local fullName = strmatch(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 				_tGuildMsgQueue[fullName] = nil;
 				_tGuildPreQueue[fullName] = nil;
 				return;
@@ -448,7 +457,7 @@ local _GUILD = GetGuildInfo('player');
 				level = tonumber(level);
 				local class = LOCALIZED_CLASS_NAMES_HASH[classStr];
 				if level ~= nil and class ~= nil then
-					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					local fullName = strmatch(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 					AddPlayerInfo(fullName, nil, class, level, 'who', time());
 				end
 				return;
@@ -462,7 +471,7 @@ local _GUILD = GetGuildInfo('player');
 				level = tonumber(level);
 				local class = LOCALIZED_CLASS_NAMES_HASH[classStr];
 				if level ~= nil and class ~= nil then
-					local fullName = strfind(name, "-") == nil and (name .. "-" .. _PREALM) or name;
+					local fullName = strmatch(name, "-") == nil and (name .. "-" .. _PREALM) or name;
 					AddPlayerInfo(fullName, nil, class, level, 'who', time());
 				end
 				return;
@@ -558,10 +567,10 @@ local _GUILD = GetGuildInfo('player');
 						level = "|cffff0000" .. info[3] .. "|r";
 					end
 					local pat = gsub(fullName, "[%%%.%+%-%*%?%[%]%(%)%^%$]", "%%%1");
-					if strfind(nameApp, pat) ~= nil then
+					if strmatch(nameApp, pat) ~= nil then
 						local repl = _db.ShowSubGroup and _tSubGroup[fullName] ~= nil and format(__PLFStr_LI, fullName, level, _tSubGroup[fullName]) or format(__PLFStr_L, fullName, level, "");
 						nameApp = gsub(nameApp, pat, repl);
-					elseif strfind(nameApp, short) ~= nil then
+					elseif strmatch(nameApp, short) ~= nil then
 						local repl = _db.ShowSubGroup and _tSubGroup[fullName] ~= nil and format(__PLFStr_LI, short, level, _tSubGroup[fullName]) or format(__PLFStr_L, short, level, "");
 						nameApp = gsub(nameApp, short, repl);
 					end
@@ -573,10 +582,10 @@ local _GUILD = GetGuildInfo('player');
 					return "|Hplayer:" .. fullName .. ":" .. (lineId or 0) .. ":" .. (cType or 0) .. ":" .. (cTarget or "") .. "|h" .. nameApp .. "|h";
 				elseif _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
 					local pat = gsub(fullName, "[%%%.%+%-%*%?%[%]%(%)%^%$]", "%%%1");
-					if strfind(nameApp, pat) ~= nil then
+					if strmatch(nameApp, pat) ~= nil then
 						local repl = format(__PLFStr_I, fullName, "", _tSubGroup[fullName]);
 						nameApp = gsub(nameApp, pat, repl);
-					elseif strfind(nameApp, short) ~= nil then
+					elseif strmatch(nameApp, short) ~= nil then
 						local repl = format(__PLFStr_I, short, "", _tSubGroup[fullName]);
 						nameApp = gsub(nameApp, short, repl);
 					end
@@ -805,7 +814,7 @@ local _GUILD = GetGuildInfo('player');
 						if GUID ~= nil then
 							local _, r, _ = strsplit("-", GUID);
 							if R == r then
-								if strfind(_name, "-") == nil then
+								if strmatch(_name, "-") == nil then
 									_tPlayerInfo[_name .. "-" .. _PREALM] = _info;
 								else
 									_tPlayerInfo[_name] = _info;

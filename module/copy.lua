@@ -13,6 +13,10 @@ local __TAG = "";
 local __FMT = "";
 local __CLR = { 1.0, 1.0, 1.0, };
 
+if __private.__is_dev then
+	__private:BuildEnv("copy");
+end
+
 -->		Method
 	local function SetTimeStamp()
 		--	"|cff" .. CLR .. "|Haccopy:-1|h" .. FMT .. "|h|r"

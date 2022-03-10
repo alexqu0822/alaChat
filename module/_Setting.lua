@@ -10,6 +10,7 @@ local L = __private.L;
 local pcall, xpcall, geterrorhandler = pcall, xpcall, geterrorhandler;
 local type = type;
 local next = next;
+local gsub = string.gsub;
 local min, max = math.min, math.max, math;
 local CreateFrame = CreateFrame;
 
@@ -45,6 +46,11 @@ local SettingUIFreeContainer = nil;
 local _CategoryList = {  };
 local _SettingList = {  };
 local _SettingNodes = {  };
+
+if __private.__is_dev then
+	__private:BuildEnv("_Setting");
+end
+
 --
 	local function SetDB(module, key, val, loading, extra)
 		local meta = _SettingList[module][key];

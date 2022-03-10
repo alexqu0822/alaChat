@@ -7,8 +7,8 @@ local L = __private.L;
 
 local type = type;
 
-
 local ChatFrame_AddMessageEventFilter, ChatFrame_RemoveMessageEventFilter = ChatFrame_AddMessageEventFilter, ChatFrame_RemoveMessageEventFilter;
+
 --
 local _FilterKeyList = {
 	"chattypeblocked",
@@ -50,6 +50,11 @@ local _FilterFuncList = {  };
 for index = 1, CHATTYPENUM do
 	_FilterFuncList[CHATTYPELIST[index]] = {  };
 end
+
+if __private.__is_dev then
+	__private:BuildEnv("_FilterManager");
+end
+
 function __private:AddMessageFilterAllChatTypes(which, Func)
 	local POS = _FilterKeyList[which];
 	if POS ~= nil then

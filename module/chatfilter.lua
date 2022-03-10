@@ -6,7 +6,9 @@ local TEXTURE_PATH = __private.TEXTURE_PATH;
 local PIN_ORDER_OFFSET = 97;
 
 local time = time;
-local strbyte, strsub, strsplit, strtrim, strfind, strmatch, format, gsub = string.byte, string.sub, string.split, string.trim, string.find, string.match, string.format, string.gsub;
+local next = next;
+local strbyte, strsub, strlower, strupper, strsplit, strtrim, strfind, strmatch, format, gsub = string.byte, string.sub, string.lower, string.upper, string.split, string.trim, string.find, string.match, string.format, string.gsub;
+local C_Timer = C_Timer;
 local IsAltKeyDown = IsAltKeyDown;
 local Ambiguate = Ambiguate;
 local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
@@ -27,10 +29,15 @@ local _tMSGCache = {  };	--	[msg] = { time, line, filtered, sender, actually_dis
 local _tSenderCache = {  };
 
 local PLAYER = UnitName('player');
+local LOCALE = GetLocale();
+
+if __private.__is_dev then
+	__private:BuildEnv("chatfilter");
+end
 
 -->		MessageFilter
 	local repeated_check_min = 0;
-	if GetLocale() == 'zhCN' or GetLocale() == 'zhTW' or GetLocale() == 'koKR' then
+	if LOCALE == 'zhCN' or LOCALE == 'zhTW' or LOCALE == 'koKR' then
 		repeated_check_min = 3 * 4;
 	elseif L.Locale == 'enUS' or L.Locale == 'enGB' then
 		repeated_check_min = 1 * 8;
@@ -128,7 +135,7 @@ local PLAYER = UnitName('player');
 				return true;
 			else
 				if _db.Rep and _db.RepInterval > 0 and cache[2] ~= line then
-					-- if __private.__isdev then print("REP", sender, msg); end
+					-- if __private.__is_dev then print("REP", sender, msg); end
 					cache[6] = true;	--	上一条消息的事件在这一条消息的事件前，已经处理完毕
 					return true;
 				elseif cache[5] ~= nil then
@@ -143,19 +150,19 @@ local PLAYER = UnitName('player');
 			for index = 1, _nNamePatList do
 				if strmatch(sender, _tNamePatList[index]) ~= nil then
 					_tNameHash[sender] = true;
-					if __private.__isdev then
-						local class, classFile, race, raceFile, sex = GetPlayerInfoByGUID(arg12);
-						if classFile ~= nil then
-							local color = RAID_CLASS_COLORS[classFile];
-							if color ~= nil then
-								print("BL " .. GetPlayerLink(arg2, format("[|cff%.2x%.2x%.2x%s|r] ", color.r * 255, color.g * 255, color.b * 255, sender), line) .. msg);
-							else
-								print("BL " .. GetPlayerLink(arg2, "[" .. sender .. "] ", line) .. msg);
-							end
-						else
-							print("BL " .. GetPlayerLink(arg2, "[" .. sender .. "] ", line) .. msg);
-						end
-					end
+					-- if __private.__is_dev then
+					-- 	local class, classFile, race, raceFile, sex = GetPlayerInfoByGUID(arg12);
+					-- 	if classFile ~= nil then
+					-- 		local color = RAID_CLASS_COLORS[classFile];
+					-- 		if color ~= nil then
+					-- 			print("BL " .. GetPlayerLink(arg2, format("[|cff%.2x%.2x%.2x%s|r] ", color.r * 255, color.g * 255, color.b * 255, sender), line) .. msg);
+					-- 		else
+					-- 			print("BL " .. GetPlayerLink(arg2, "[" .. sender .. "] ", line) .. msg);
+					-- 		end
+					-- 	else
+					-- 		print("BL " .. GetPlayerLink(arg2, "[" .. sender .. "] ", line) .. msg);
+					-- 	end
+					-- end
 					return true;
 				end
 			end
@@ -163,21 +170,21 @@ local PLAYER = UnitName('player');
 		if _nStrPatList > 0 then
 			for index = 1, _nStrPatList do
 				if strmatch(msg, _tStrPatList[index]) ~= nil then
-					if __private.__isdev then
-						local str = _tStrPatList[index];
-						str = _tStrPatDisplay[str] or str;
-						local class, classFile, race, raceFile, sex = GetPlayerInfoByGUID(arg12);
-						if classFile ~= nil then
-							local color = RAID_CLASS_COLORS[classFile];
-							if color ~= nil then
-								print("KW " .. GetPlayerLink(arg2, format("[|cff%.2x%.2x%.2x%s|r]", color.r * 255, color.g * 255, color.b * 255, sender), line) .. "[[|cffff3f00" .. str .. "|r]] " .. msg);
-							else
-								print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. str .. "|r]] " .. msg);
-							end
-						else
-							print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. str .. "|r]] " .. msg);
-						end
-					end
+					-- if __private.__is_dev then
+					-- 	local str = _tStrPatList[index];
+					-- 	str = _tStrPatDisplay[str] or str;
+					-- 	local class, classFile, race, raceFile, sex = GetPlayerInfoByGUID(arg12);
+					-- 	if classFile ~= nil then
+					-- 		local color = RAID_CLASS_COLORS[classFile];
+					-- 		if color ~= nil then
+					-- 			print("KW " .. GetPlayerLink(arg2, format("[|cff%.2x%.2x%.2x%s|r]", color.r * 255, color.g * 255, color.b * 255, sender), line) .. "[[|cffff3f00" .. str .. "|r]] " .. msg);
+					-- 		else
+					-- 			print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. str .. "|r]] " .. msg);
+					-- 		end
+					-- 	else
+					-- 		print("KW " .. GetPlayerLink(arg2, "[" .. sender .. "]", line) .. "[[|cffff3f00" .. str .. "|r]] " .. msg);
+					-- 	end
+					-- end
 					_tMSGCache[msg] = { time(), line, true, sender, };
 					return true;
 				end
@@ -189,7 +196,7 @@ local PLAYER = UnitName('player');
 			for m2, cache in next, _tMSGCache do
 				if strmatch(m2, m1) then
 					_tMSGCache[msg] = { time(), line, false, sender, nil, true, };
-					-- if __private.__isdev then print("REP", sender, msg, m2); end
+					-- if __private.__is_dev then print("REP", sender, msg, m2); end
 					return true;
 				end
 			end
@@ -198,13 +205,13 @@ local PLAYER = UnitName('player');
 		if _db.RepeatedSentence then
 			local filtered, new = CutRepeatedSentence(msg, sender, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, arg12, arg13, arg14, ...);
 			if filtered then
-				-- if __private.__isdev then print("s", sender, msg); end
+				-- if __private.__is_dev then print("s", sender, msg); end
 				return true;
 			end
 			if new ~= nil then
 				_tMSGCache[msg] = { time(), line, false, sender, new, };
 				_tMSGCache[new] = { time(), line, false, sender, };
-				-- if __private.__isdev then print("[[" .. new .. "]]", msg, sender); end
+				-- if __private.__is_dev then print("[[" .. new .. "]]", msg, sender); end
 				return false, new, sender, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, arg12, arg13, arg14, ...;
 			end
 		end

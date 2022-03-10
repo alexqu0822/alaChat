@@ -9,6 +9,8 @@ local pcall, xpcall, geterrorhandler = pcall, xpcall, geterrorhandler;
 local type = type;
 local rawget, rawset = rawget, rawset;
 local next = next;
+local _G = _G;
+local C_Timer = C_Timer;
 
 __private.__toc = select(4, GetBuildInfo());
 local __modulelist = {  };
@@ -32,16 +34,74 @@ end
 __private.__module = __module;
 __private.__dev = {  };
 
-__private.__isdev = select(2, GetAddOnInfo("!!!!!DebugMe")) ~= nil;
-__private.__is163 = select(2, GetAddOnInfo("!!!163UI!!!")) ~= nil;
+__private.__is_dev = select(2, GetAddOnInfo("!!!!!DebugMe")) ~= nil;
+__private.__is_163 = select(2, GetAddOnInfo("!!!163UI!!!")) ~= nil;
 
 __private.TEXTURE_PATH = [[Interface\AddOns\]] .. __addon .. [[\Media\Texture\]];
 
 __private.PinTextFont = GameFontNormal:GetFont();
 __private.PinTextBLZFont = NumberFont_Shadow_Med:GetFont();
 
-local L = __private.L;
+-->		Dev
+	local setfenv = setfenv;
+	local rawset = rawset;
+	local next = next;
+	local _GlobalRef = {  };
+	local _GlobalAssign = {  };
+	function __private:BuildEnv(category)
+		local _G = _G;
+		_GlobalRef[category] = _GlobalRef[category] or {  };
+		_GlobalAssign[category] = _GlobalAssign[category] or {  };
+		local Ref = _GlobalRef[category];
+		local Assign = _GlobalAssign[category];
+		setfenv(2, setmetatable(
+			{  },
+			{
+				__index = function(tbl, key, val)
+					Ref[key] = (Ref[key] or 0) + 1;
+					return _G[key];
+				end,
+				__newindex = function(tbl, key, value)
+					rawset(tbl, key, value);
+					Assign[key] = (Assign[key] or 0) + 1;
+					return value;
+				end,
+			}
+		));
+	end
+	function __private:MergeGlobal(DB)
+		local _Ref = DB._GlobalRef;
+		if _Ref ~= nil then
+			for category, db in next, _Ref do
+				local to = _GlobalRef[category];
+				if to == nil then
+					_GlobalRef[category] = db;
+				else
+					for key, val in next, db do
+						to[key] = (to[key] or 0) + val;
+					end
+				end
+			end
+		end
+		DB._GlobalRef = _GlobalRef;
+		local _Assign = DB._GlobalAssign;
+		if _Assign ~= nil then
+			for category, db in next, _Assign do
+				local to = _GlobalAssign[category];
+				if to == nil then
+					_GlobalAssign[category] = db;
+				else
+					for key, val in next, db do
+						to[key] = (to[key] or 0) + val;
+					end
+				end
+			end
+		end
+		DB._GlobalAssign = _GlobalAssign;
+	end
+-->
 
+local L = __private.L;
 
 local __default = {
 	general = {
@@ -195,7 +255,7 @@ if L.Locale == 'zhCN' and (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or WOW_PROJECT_
 	;
 	__default.chatfilter.NameSet = "#加基森\n#冬泉谷\n#玛拉顿\n#斯坦索姆\n#航空\n#航班\n#飞机\n#专机\n#直达\n#直飞\n";
 end
-if __private.__is163 then
+if __private.__is_163 then
 	for _, v in next, __default do
 		if v.PinStyle ~= nil then
 			v.PinStyle = "char.blz";
@@ -205,6 +265,10 @@ if __private.__is163 then
 end
 
 local __db = __default;
+
+if __private.__is_dev then
+	__private:BuildEnv("main");
+end
 
 -->		All ChatFrames
 	local ChatFrames = {  };
@@ -293,7 +357,7 @@ local __db = __default;
 	local function OldVersionCompatible(__db, enquiry)
 		if select(2, GetAddOnInfo("alaChat_Classic")) ~= nil then
 			local version = GetAddOnMetadata("alaChat_Classic", "Version");
-			if __private.__isdev then print("ACC Version", version); end
+			if __private.__is_dev then print("ACC Version", version); end
 			if version >= "205r.210711" then
 				EnableAddOn("alaChat_Classic");
 				LoadAddOn("alaChat_Classic");
@@ -504,8 +568,9 @@ local __db = __default;
 			__db.highlight.ShowMatchedOnly = false;
 		end
 		__private.__db = __db;
+		__private:MergeGlobal(__db);
 		if __db.__overridedev == false then
-			__private.__isdev = false;
+			__private.__is_dev = false;
 		end
 	end
 -->
@@ -540,7 +605,7 @@ _Driver:SetScript("OnEvent", function(self, event, param)
 			C_Timer.After(8, function()
 				for event, triggered in next, _TriggeredEvents do
 					if triggered ~= true then
-						if InitModules(event) and __private.__isdev then
+						if InitModules(event) and __private.__is_dev then
 							print("|cff00ff00Manal Trigger " .. tostring(event));
 						end
 					end

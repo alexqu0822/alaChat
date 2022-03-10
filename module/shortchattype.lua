@@ -5,12 +5,19 @@ local L = __private.L;
 local SHORTNAME_NORMALGLOBALFORMAT = L.SHORTNAME_NORMALGLOBALFORMAT;
 local SHORTNAME_CHANNELHASH = L.SHORTNAME_CHANNELHASH;
 
+local next = next;
 local strmatch = string.match;
+local _G = _G;
+local ChatFrame_ResolveChannelName = ChatFrame_ResolveChannelName;
 
 local __shortchattype = {  };
 local _db = {  };
 
 local chat_global_format_backup = {  };
+
+if __private.__is_dev then
+	__private:BuildEnv("shortchattype");
+end
 
 -->		Method
 	local method = {

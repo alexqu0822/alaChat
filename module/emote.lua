@@ -13,7 +13,9 @@ local PANEL_HIDE_PERIOD = 1.5;
 local EMOTE_STRING = L.EMOTE;
 local EMOTE_LOCALE_STRING = EMOTE_STRING[L.Locale] or EMOTE_STRING.enUS or select(2, next(EMOTE_STRING));
 
+local next = next;
 local strsub, strlen, gsub = string.sub, string.len, string.gsub;
+local CreateFrame = CreateFrame;
 local ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat = ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat;
 local GameTooltip = GameTooltip;
 
@@ -23,6 +25,10 @@ local isBCC = toc >= 20500 and toc < 30000;
 
 local __emote = {  };
 local _db = {  };
+
+if __private.__is_dev then
+	__private:BuildEnv("emote");
+end
 
 -->		Data
 	local T_SystemIconTable = {

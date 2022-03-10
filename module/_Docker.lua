@@ -5,14 +5,21 @@ local L = __private.L;
 local TEXTURE_PATH = __private.TEXTURE_PATH;
 
 local pcall, xpcall, geterrorhandler = pcall, xpcall, geterrorhandler;
+local setmetatable = setmetatable;
 local type = type;
 local rawget, rawset = rawget, rawset;
 local next, tinsert, tremove = next, table.insert, table.remove;
 local IsControlKeyDown = IsControlKeyDown;
 local CreateFrame = CreateFrame;
+local GetMouseFocus = GetMouseFocus;
+local GameTooltip = GameTooltip;
 
 local __docker = {  };
 local _db = {  };
+
+if __private.__is_dev then
+	__private:BuildEnv("_Docker");
+end
 
 --[=[
 	-->>	MIN = 1

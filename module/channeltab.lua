@@ -9,12 +9,16 @@ local TABSHORT = L.TABSHORT;
 
 local select = select;
 local next = next;
+local tinsert = table.insert;
 local strtrim, gsub = string.trim, string.gsub;
+local C_Timer = C_Timer;
 local GetChannelList = GetChannelList;
 local JoinPermanentChannel, LeaveChannelByName = JoinPermanentChannel, LeaveChannelByName;
+local EnumerateServerChannels = EnumerateServerChannels;
 local GameTooltip = GameTooltip;
 local ChatEdit_ActivateChat, ChatEdit_DeactivateChat = ChatEdit_ActivateChat, ChatEdit_DeactivateChat;
 local ChatTypeInfo = ChatTypeInfo;
+local _G = _G;
 
 local __channeltab = {  };
 local _db = {  };
@@ -30,6 +34,10 @@ local __enabledChannelKey2 = {  };
 local __channelBlocked = {  };
 local __ModifierFunc = nil;
 local _ExecuteAutoJoin = true;
+
+if __private.__is_dev then
+	__private:BuildEnv("channeltab");
+end
 
 --[==[
 	SwapChatChannelByLocalID
@@ -879,16 +887,16 @@ local _ExecuteAutoJoin = true;
 					end
 					if not hasOne then
 						ChatFrame_AddChannel(ChatFrames[1], channel);
-						if __private.__isdev then
-							print("|cffff0000>|r|cff00ff00AddChannel|r 1#1");
-						end
+						-- if __private.__is_dev then
+						-- 	print("|cffff0000>|r|cff00ff00AddChannel|r 1#1");
+						-- end
 					end
 				end
 				if _db.AutoAddChannelToDefaultChatFrame then
 					ChatFrame_AddChannel(ChatFrames[1], channel);
-					if __private.__isdev then
-						print("|cffff0000>|r|cff00ff00AddChannel|r 2#1");
-					end
+					-- if __private.__is_dev then
+					-- 	print("|cffff0000>|r|cff00ff00AddChannel|r 2#1");
+					-- end
 				end
 			elseif text == "YOU_LEFT" then
 			end

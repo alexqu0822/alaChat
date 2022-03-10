@@ -9,7 +9,11 @@ local __utils = {  };
 local _db = {  };
 
 local __pins = {  };
-local _prefix = __private.__is163 and L.STATREPORT["163UI"] or "";
+local _prefix = __private.__is_163 and L.STATREPORT["163UI"] or "";
+
+if __private.__is_dev then
+	__private:BuildEnv("utils");
+end
 
 -->		Method
 	--	StatReprot
