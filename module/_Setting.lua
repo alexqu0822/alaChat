@@ -830,6 +830,7 @@ end
 		__private:CreateCategory(SettingUI, "GENERAL").Tab:Click();
 		--
 		SettingUIFreeContainer = CreateFrame('FRAME', "ALACHAT_SETTING_UI_C", UIParent);
+		SettingUIFreeContainer:Hide();
 		SettingUIFreeContainer:SetFrameStrata("DIALOG");
 		SettingUIFreeContainer:SetPoint("CENTER");
 		SettingUIFreeContainer:EnableMouse(true);
@@ -848,7 +849,6 @@ end
 			SettingUI:ClearAllPoints();
 			SettingUI:SetPoint("BOTTOM", self, "BOTTOM");
 			SettingUI.Container = self;
-			SettingUI.Close:Show();
 		end);
 		SettingUIFreeContainer:SetScript("OnHide", function()
 			if not SettingUIInterfaceOptionsFrameContainer:IsShown() then
@@ -868,7 +868,7 @@ end
 		Close:SetScript("OnClick", function(self)
 			SettingUIFreeContainer:Hide();
 		end);
-		SettingUI.Close = Close;
+		SettingUIFreeContainer.Close = Close;
 		local BG = SettingUIFreeContainer:CreateTexture(nil, "BACKGROUND");
 		BG:SetAllPoints();
 		BG:SetColorTexture(0.0, 0.0, 0.0, 0.9);
@@ -884,7 +884,6 @@ end
 			SettingUI:ClearAllPoints();
 			SettingUI:SetPoint("TOPLEFT", self, "TOPLEFT", 4, 0);
 			SettingUI.Container = self;
-			SettingUI.Close:Hide();
 		end);
 		SettingUIInterfaceOptionsFrameContainer:SetScript("OnHide", function()
 			if not SettingUIFreeContainer:IsShown() then
