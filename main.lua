@@ -539,7 +539,7 @@ end
 				end
 			end
 			CopyTable(__db, __default);
-			alaChatSV = __db;
+			_G.alaChatSV = __db;
 			OldVersionCompatible(__db);
 		else
 			if __db.__upgraded ~= true then
