@@ -9,10 +9,11 @@ local geterrorhandler = geterrorhandler;
 local tonumber = tonumber;
 local next = next;
 local strsplit, strtrim, strmatch, gsub, format = string.split, string.trim, string.match, string.gsub, string.format;
+local random = random;
 local C_Timer_After = C_Timer.After;
 local Ambiguate = Ambiguate;
 local UnitIsPlayer = UnitIsPlayer;
-local UnitGUID, UnitName, UnitClassBase, UnitLevel, UnitFactionGroup = UnitGUID, UnitName, UnitClassBase, UnitLevel, UnitFactionGroup;
+local UnitGUID, UnitName, UnitClassBase, UnitLevel, UnitFactionGroup, UnitSex = UnitGUID, UnitName, UnitClassBase, UnitLevel, UnitFactionGroup, UnitSex;
 local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
 local IsInGuild, GetGuildInfo, GuildRoster = IsInGuild, GetGuildInfo, C_GuildInfo ~= nil and C_GuildInfo.GuildRoster or GuildRoster;
 local GetNumGuildMembers, GetGuildRosterInfo = GetNumGuildMembers, GetGuildRosterInfo;
@@ -21,8 +22,11 @@ local GetFriendInfoByIndex = C_FriendList ~= nil and C_FriendList.GetFriendInfoB
 local IsInGroup, IsInRaid, GetNumGroupMembers, GetRaidRosterInfo = IsInGroup, IsInRaid, GetNumGroupMembers, GetRaidRosterInfo;
 local GetNumWhoResults, GetWhoInfo = C_FriendList.GetNumWhoResults, C_FriendList.GetWhoInfo;
 local BNGetNumFriends, BNGetNumFriendGameAccounts, BNGetFriendGameAccountInfo = BNGetNumFriends, BNGetNumFriendGameAccounts, BNGetFriendGameAccountInfo;
+local SendChatMessage = SendChatMessage;
+local CreateFrame = CreateFrame;
 local BNET_CLIENT_WOW = BNET_CLIENT_WOW;
 local WOW_PROJECT_ID = WOW_PROJECT_ID;
+local _G = _G;
 
 local _Driver = nil;
 local _tPlayerInfo = {  };		--	[name] = { GUID, class, level, time, src, }

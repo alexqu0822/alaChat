@@ -7,19 +7,25 @@ local PIN_ORDER_OFFSET = 8;
 
 local TABSHORT = L.TABSHORT;
 
+local hooksecurefunc = hooksecurefunc;
 local select = select;
 local next = next;
 local tinsert = table.insert;
 local strtrim, gsub = string.trim, string.gsub;
 local C_Timer = C_Timer;
+local IsAltKeyDown = IsAltKeyDown;
 local GetChannelList = GetChannelList;
 local JoinPermanentChannel, LeaveChannelByName = JoinPermanentChannel, LeaveChannelByName;
 local EnumerateServerChannels = EnumerateServerChannels;
+local C_ChatInfo = C_ChatInfo;
+local CreateFrame = CreateFrame;
+local GetMouseFocus = GetMouseFocus;
 local GameTooltip = GameTooltip;
 local ChatEdit_ActivateChat, ChatEdit_DeactivateChat = ChatEdit_ActivateChat, ChatEdit_DeactivateChat;
 local ChatTypeInfo = ChatTypeInfo;
 local _G = _G;
 
+local PLAYER_GUID = UnitGUID('player');
 local __channeltab = {  };
 local _db = {  };
 local _bfworldcf = {  };
@@ -738,7 +744,7 @@ end
 				local Pin = __pins3[Key];
 				if Pin == nil then
 					local order2 = ChannelPinOrder[Key];
-					Pin = CreatePin(order2 ~= nil and (OrderOfs + order2) or (OrderOfs2 + index), Key, true, Key, id, L.DETAILEDTIP.channeltabjoin);
+					Pin = CreatePin(order2 ~= nil and (OrderOfs + order2) or (OrderOfs2 + index), Key, true, Key, L.DETAILEDTIP.channeltabjoin);
 					Pin.Blocked:Show();
 					__pins3[Key] = Pin;
 					Pin.Text:SetTextColor(1.0, 0.75294125080109, 0.75294125080109);
@@ -1088,11 +1094,10 @@ end
 	end
 	function __channeltab.__init(db, loading)
 		_db = db;
-		local PLAYERGUID = UnitGUID('player');
-		_bfworldcf = db._bfworldcf[PLAYERGUID];
+		_bfworldcf = db._bfworldcf[PLAYER_GUID];
 		if _bfworldcf == nil then
 			_bfworldcf = {  };
-			db._bfworldcf[PLAYERGUID] = _bfworldcf;
+			db._bfworldcf[PLAYER_GUID] = _bfworldcf;
 		end
 		for Key2, value in next, _db._channelblocked do
 			__channelBlocked[Key2] = value;

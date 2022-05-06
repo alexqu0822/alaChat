@@ -17,6 +17,7 @@ local next = next;
 local strsub, strlen, gsub = string.sub, string.len, string.gsub;
 local CreateFrame = CreateFrame;
 local ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat = ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat;
+local UIParent = UIParent;
 local GameTooltip = GameTooltip;
 
 local toc = select(4, GetBuildInfo());

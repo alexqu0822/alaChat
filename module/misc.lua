@@ -11,6 +11,7 @@ local tostring = tostring;
 local C_Timer = C_Timer;
 local GetChannelName = GetChannelName;
 local IsInGroup, IsInRaid = IsInGroup, IsInRaid;
+local GetCVar, SetCVar = GetCVar, SetCVar;
 local GameTooltip = GameTooltip;
 local ChatTypeInfo = ChatTypeInfo;
 local LE_PARTY_CATEGORY_HOME, LE_PARTY_CATEGORY_INSTANCE = LE_PARTY_CATEGORY_HOME, LE_PARTY_CATEGORY_INSTANCE;

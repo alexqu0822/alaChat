@@ -9,8 +9,9 @@ local pcall, xpcall, geterrorhandler = pcall, xpcall, geterrorhandler;
 local type = type;
 local rawget, rawset = rawget, rawset;
 local next = next;
-local _G = _G;
 local C_Timer = C_Timer;
+local CreateFrame = CreateFrame;
+local _G = _G;
 
 __private.__toc = select(4, GetBuildInfo());
 local __modulelist = {  };

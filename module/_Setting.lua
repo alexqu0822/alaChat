@@ -8,11 +8,15 @@ local __addon, __private = ...;
 local L = __private.L;
 
 local pcall, xpcall, geterrorhandler = pcall, xpcall, geterrorhandler;
+local setmetatable = setmetatable;
 local type = type;
-local next = next;
+local next, unpack = next, unpack;
 local gsub = string.gsub;
+local tinsert = table.insert;
 local min, max = math.min, math.max, math;
 local CreateFrame = CreateFrame;
+local UIParent = UIParent;
+local _G = _G;
 
 local TEXTURE_PATH = __private.TEXTURE_PATH;
 local SettingUIColWidth = 180;

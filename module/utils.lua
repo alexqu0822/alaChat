@@ -2,8 +2,14 @@
 local __addon, __private = ...;
 local L = __private.L;
 
+local tostring = tostring;
+local CLASS_ICON_TCOORDS = CLASS_ICON_TCOORDS;
+
+local PLAYER_CLASS = UnitClassBase('player');
 local TEXTURE_PATH = __private.TEXTURE_PATH;
 local PIN_ORDER_OFFSET = 120;
+local _isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE;
+local _isBCC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC;
 
 local __utils = {  };
 local _db = {  };
@@ -28,7 +34,7 @@ end
 		[31] = 24858,	--	MOONKIN
 	};
 	local GetReport = nil;
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+	if _isRetail then
 		local StatList = {
 			[LE_UNIT_STAT_STRENGTH]= ITEM_MOD_STRENGTH_SHORT,
 			[LE_UNIT_STAT_AGILITY] = ITEM_MOD_AGILITY_SHORT,
@@ -79,7 +85,7 @@ end
 			end
 		end
 		local method = nil;
-		if WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		if _isBCC then
 			method = {
 				tank = function(prefix, suffix)
 					local class, file = UnitClass('player');
@@ -396,9 +402,8 @@ end
 			};
 		end
 		function GetReport(which)
-			local class = UnitClassBase('player');
 			if method[which] ~= nil then
-				if class == "DRUID" then
+				if PLAYER_CLASS == "DRUID" then
 					local id = GetShapeshiftFormID();
 					local shape = id and DruidShapeFormID[id] and GetSpellInfo(DruidShapeFormID[id]);
 					return method[which](shape and ("[" .. shape .. "]"));
@@ -406,7 +411,7 @@ end
 					return method[which]();
 				end
 			end
-			if class == "WARRIOR" then
+			if PLAYER_CLASS == "WARRIOR" then
 				local _, _, p1 = GetTalentTabInfo(1);
 				local _, _, p2 = GetTalentTabInfo(2);
 				local _, _, p3 = GetTalentTabInfo(3);
@@ -415,9 +420,9 @@ end
 				else
 					return method.melee();
 				end
-			elseif class == "HUNTER" then
+			elseif PLAYER_CLASS == "HUNTER" then
 				return method.ranged();
-			elseif class == "SHAMAN" then
+			elseif PLAYER_CLASS == "SHAMAN" then
 				local _, _, p1 = GetTalentTabInfo(1);
 				local _, _, p2 = GetTalentTabInfo(2);
 				local _, _, p3 = GetTalentTabInfo(3);
@@ -428,11 +433,11 @@ end
 				else
 					return method.heal();
 				end
-			elseif class == "ROGUE" then
+			elseif PLAYER_CLASS == "ROGUE" then
 				return method.melee();
-			elseif class == "MAGE" then
+			elseif PLAYER_CLASS == "MAGE" then
 				return method.spell();
-			elseif class == "DRUID" then
+			elseif PLAYER_CLASS == "DRUID" then
 				local id = GetShapeshiftFormID();
 				local shape = id and DruidShapeFormID[id] and GetSpellInfo(DruidShapeFormID[id]);
 				local _, _, p1 = GetTalentTabInfo(1);
@@ -452,7 +457,7 @@ end
 				else
 					return method.heal(shape and ("[" .. shape .. "]"));
 				end
-			elseif class == "PALADIN" then
+			elseif PLAYER_CLASS == "PALADIN" then
 				local _, _, p1 = GetTalentTabInfo(1);
 				local _, _, p2 = GetTalentTabInfo(2);
 				local _, _, p3 = GetTalentTabInfo(3);
@@ -463,7 +468,7 @@ end
 				else
 					return method.melee();
 				end
-			elseif class == "PRIEST" then
+			elseif PLAYER_CLASS == "PRIEST" then
 				local _, _, p1 = GetTalentTabInfo(1);
 				local _, _, p2 = GetTalentTabInfo(2);
 				local _, _, p3 = GetTalentTabInfo(3);
@@ -472,7 +477,7 @@ end
 				else
 					return method.heal();
 				end
-			elseif class == "WARLOCK" then
+			elseif PLAYER_CLASS == "WARLOCK" then
 				return method.spell();
 			end
 		end
@@ -482,7 +487,7 @@ end
 
 -->		GUI
 	local SR_OnClick = nil;
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+	if _isRetail then
 		function SR_OnClick(Pin, button)
 			local report = GetReport();
 			if report ~= nil then
@@ -538,7 +543,7 @@ end
 					if not editBox:HasFocus() then
 						ChatEdit_ActivateChat(editBox);
 					end
-					editBox:Insert(report);
+					editBox:Insert(_prefix .. report);
 				end
 			end
 		end
@@ -575,7 +580,7 @@ end
 		local SR = __private.__docker:CreatePin(PIN_ORDER_OFFSET + 1);
 		SR:SetNormalTexture([[Interface\TARGETINGFRAME\UI-CLASSES-CIRCLES]]);
 		SR:SetPushedTexture([[Interface\TARGETINGFRAME\UI-CLASSES-CIRCLES]]);
-		local coord = CLASS_ICON_TCOORDS[UnitClassBase('player')];
+		local coord = CLASS_ICON_TCOORDS[PLAYER_CLASS];
 		SR:GetNormalTexture():SetTexCoord(coord[1], coord[2], coord[3], coord[4]);
 		SR:GetPushedTexture():SetTexCoord(coord[1], coord[2], coord[3], coord[4]);
 		SR:GetPushedTexture():SetVertexColor(0.5, 0.5, 0.5, 1.0);
@@ -682,7 +687,7 @@ end
 		end
 	end
 	function __utils.__setting()
-		__private:AddSetting("UTILS", { "utils", "StatReport", 'boolean', }, nil, nil, { [[Interface\TARGETINGFRAME\UI-CLASSES-CIRCLES]], CLASS_ICON_TCOORDS[UnitClassBase('player')], });
+		__private:AddSetting("UTILS", { "utils", "StatReport", 'boolean', }, nil, nil, { [[Interface\TARGETINGFRAME\UI-CLASSES-CIRCLES]], CLASS_ICON_TCOORDS[PLAYER_CLASS], });
 		__private:AddSetting("UTILS", { "utils", "DBMPull", 'boolean', }, nil, nil, TEXTURE_PATH .. [[DBMPull_normal]]);
 		__private:AddSetting("UTILS", { "utils", "DBMPullLen", 'number', { 3, 60, 1, }, nil, 0, }, 1);
 		__private:AddSetting("UTILS", { "utils", "roll", 'boolean', }, nil, nil, TEXTURE_PATH .. [[roll_normal]]);

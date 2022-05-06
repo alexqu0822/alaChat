@@ -13,6 +13,7 @@ local IsControlKeyDown = IsControlKeyDown;
 local CreateFrame = CreateFrame;
 local GetMouseFocus = GetMouseFocus;
 local GameTooltip = GameTooltip;
+local UIParent = UIParent;
 
 local __docker = {  };
 local _db = {  };
