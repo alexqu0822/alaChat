@@ -145,7 +145,7 @@ end
 
 -->		MessageFilter
 	local function ChatMessageFilter(self, event, msg, ...)
-		return false, gsub(msg, "{([^}]+)}", T_Key2Texture), ...;
+		return false, gsub(msg, "{([^{}]+)}", T_Key2Texture), ...;
 	end
 -->
 

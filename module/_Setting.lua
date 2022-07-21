@@ -222,7 +222,7 @@ end
 				ALADROP(self, "BOTTOMLEFT", self.meta, false);
 			else
 				local meta = self.meta;
-				local __list, __onshowbuttons, __onhidebuttons = self.__list();
+				local __list, __buttononshow, __buttononhide = self.__list();
 				local __para = self.__para;
 				local elements = meta.elements;
 				wipe(elements);
@@ -232,8 +232,8 @@ end
 						para = { __para[1], __para[2], val, __para[4], };
 					};
 				end
-				meta.__onshowbuttons = __onshowbuttons;
-				meta.__onhidebuttons = __onhidebuttons;
+				meta.__buttononshow = __buttononshow;
+				meta.__buttononhide = __buttononhide;
 				ALADROP(self, "BOTTOMLEFT", meta, false);
 			end
 		end

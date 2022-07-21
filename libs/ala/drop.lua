@@ -6,17 +6,26 @@
 	ALADROP(parent, anchor, data, useMousePosition)
 	data
 			handler		(function)
-			elements[i]	(table)
-										handler		(function)optional
+			__onshowprepend	[optional]
+			__onshowappend	[optional]
+			__onhide	[optional]
+			__buttononshow	[optional]
+			__buttononhide	[optional]
+			__buttononenter	[optional]
+			__buttononleave	[optional]
+			elements[i]	(table)[optional]
+										handler		(function)[optional]
 										para		(table)for parameter
 										text		(string)
 										--info		(string)
 										show/hide
-										__onshow
-										__onhide
+										__onshow	[optional]
+										__onhide	[optional]
+										__onenter	[optional]
+										__onleave	[optional]
 ]=]
 
-local __version = 7;
+local __version = 8;
 
 local _G = _G;
 _G.__ala_meta__ = _G.__ala_meta__ or {  };
@@ -172,9 +181,15 @@ local uireimp = __ala_meta__.uireimp;
 	end
 	local function MenuButtonOnEnter(Button)
 		MenuOnEnter(Button.Menu);
+		if Button.__onenter ~= nil then
+			return Button:__onenter(unpack(Button.para));
+		end
 	end
 	local function MenuButtonOnLeave(Button)
 		MenuOnLeave(Button.Menu);
+		if Button.__onleave ~= nil then
+			return Button:__onleave(unpack(Button.para));
+		end
 	end
 	local function MenuCloseOnClick(Button, Menu)
 		Menu:Hide();
@@ -288,7 +303,7 @@ local uireimp = __ala_meta__.uireimp;
 			Menu.__flag = nil;
 			return;
 		end
-		if type(data) ~= "table" or type(data.elements) ~= "table" then
+		if type(data) ~= "table" or (data[1] == nil and type(data.elements) ~= "table") then
 			return;
 		end
 		Menu = GetMenu(parent, anchor, useMousePosition);
@@ -300,7 +315,7 @@ local uireimp = __ala_meta__.uireimp;
 		end
 
 		local Buttons = Menu.Buttons;
-		local elements = data.elements;
+		local elements = data.elements or data;
 
 		local width = -1;
 		local numButtons = 0;
@@ -320,11 +335,14 @@ local uireimp = __ala_meta__.uireimp;
 				Button:Show();
 
 				Button.Text:SetText(ele.text);
-				local __onshow = ele.__onshow or elements.__onshowbuttons;
+				local __onshow = ele.__onshow or data.__buttononshow;
 				if __onshow ~= nil then
 					__onshow(Button, ele);
-					Button.__onhide = ele.__onhide or elements.__onhidebuttons or SetButton;
+					Button.__onhide = ele.__onhide or data.__buttononhide or SetButton;
 				end
+
+				Button.__onenter = ele.__onenter or data.__buttononenter or nil;
+				Button.__onleave = ele.__onleave or data.__buttononleave or nil;
 
 				local w = Button.Text:GetWidth();
 				if w > width then

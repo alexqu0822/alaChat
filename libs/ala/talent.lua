@@ -2,7 +2,7 @@
 	ALA@163UI
 --]]--
 
-local __version = 11;
+local __version = 12;
 
 local _G = _G;
 _G.__ala_meta__ = _G.__ala_meta__ or {  };
@@ -444,12 +444,12 @@ local __ala_meta__ = _G.__ala_meta__;
 		end
 	end
 -->		Equipment
-	function __emulib.GetEquipmentData(data)
+	function __emulib.GetEquipmentData(data, unit)
 		if data == nil then
 			data = {  };
 		end
 		for slot = 0, 19 do
-			local link = GetInventoryItemLink('player', slot);
+			local link = GetInventoryItemLink(unit or 'player', slot);
 			if link then
 				_, _, link = strfind(link, "\124H(item:[%-0-9:]+)\124h");
 			end
