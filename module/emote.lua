@@ -23,6 +23,7 @@ local GameTooltip = GameTooltip;
 local toc = select(4, GetBuildInfo());
 local isRetail = toc >= 80300;
 local isBCC = toc >= 20500 and toc < 30000;
+local isWLK = toc >= 30400 and toc < 40000;
 
 local __emote = {  };
 local _db = {  };
@@ -205,7 +206,7 @@ end
 		end
 		GameTooltip:Hide();
 	end
-	if isRetail then
+	if isRetail or isWLK then
 		function PanelOnEvent(self, event)
 			if self.__flag == "show" then
 				self.__flag = nil;
@@ -327,7 +328,7 @@ end
 		Panel:SetScript("OnLeave", PanelOnLeave);
 		Panel:SetScript("OnShow", PanelOnShow);
 		Panel:SetScript("OnHide", PanelOnHide);
-		if isRetail then
+		if isRetail or isWLK then
 			Panel:RegisterEvent("GLOBAL_MOUSE_UP");
 		elseif isBCC then
 			Panel:RegisterEvent("PLAYER_STARTED_LOOKING");
