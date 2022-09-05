@@ -10,6 +10,7 @@ local TEXTURE_PATH = __private.TEXTURE_PATH;
 local PIN_ORDER_OFFSET = 120;
 local _isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE;
 local _isBCC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC;
+local _isWLK = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC;
 
 local __utils = {  };
 local _db = {  };
@@ -85,7 +86,7 @@ end
 			end
 		end
 		local method = nil;
-		if _isBCC then
+		if _isBCC or _isWLK then
 			method = {
 				tank = function(prefix, suffix)
 					local class, file = UnitClass('player');

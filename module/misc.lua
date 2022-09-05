@@ -456,7 +456,7 @@ end
 		__private:AddSetting("MISC", { "misc", "ChatFrameToBorder", 'boolean', });
 		__private:AddSetting("MISC", { "misc", "ColoredPlayerName", 'boolean', });
 		__private:AddSetting("MISC", { "misc", "HoverHyperlink", 'boolean', nil, nil, nil, true, });
-		if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC or WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
 			__private:AddSetting("MISC", { "misc", "ChatHyperlink", 'boolean', });
 		end
 		__private:AddSetting("MISC", { "misc", "TabChangeChatType", 'boolean', });

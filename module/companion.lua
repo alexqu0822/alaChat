@@ -800,9 +800,9 @@ end
 			if _db._tPlayerInfo ~= nil then
 				_tPlayerInfo = _db._tPlayerInfo;
 				local expired = time() + 3600;
-				local maxLv = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and 70 or 60;
+				local minLv = 60;
 				for fullName, info in next, _tPlayerInfo do
-					if info[3] < maxLv and info[4] < expired then
+					if info[3] < minLv and info[4] < expired then
 						_tPlayerInfo[fullName] = nil;
 					end
 				end
