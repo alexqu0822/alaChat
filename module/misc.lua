@@ -309,7 +309,7 @@ end
 	end
 	function __misc.FontFlag(value, loading)
 		if value == "none" then
-			value = nil;
+			value = "";
 		end
 		local ChatFrames = __private.__chatFrames;
 		for _, F in next, ChatFrames do
@@ -343,6 +343,20 @@ end
 		local to = value and "0" or "1";
 		if GetCVar("chatClassColorOverride") ~= to then
 			SetCVar("chatClassColorOverride", to);
+		end
+		--	wotlk
+		if __private.__toc > 30000 and __private.__toc < 90000 then
+			local ToggleChatColorNamesByClassGroup = _G.ToggleChatColorNamesByClassGroup;
+			if ToggleChatColorNamesByClassGroup ~= nil then
+				for type, info in next, _G.ChatTypeGroup do
+					ToggleChatColorNamesByClassGroup(not not value, type);
+				end
+				local v = _G.getmetatable(_G.ChatTypeInfo);
+				v = v.__index and v.__index or _G.ChatTypeInfo;
+				for type, info in next, v do
+					ToggleChatColorNamesByClassGroup(not not value, type);
+				end
+			end
 		end
 	end
 	function __misc.HoverHyperlink(value, loading)

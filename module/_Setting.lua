@@ -313,7 +313,7 @@ end
 			head:SetTexture(SettingUIHeadTexture);
 			head:SetVertexColor(0.5, 0.75, 1.0, 0.5);
 			local label = Panel:CreateFontString(nil, "ARTWORK");
-			label:SetFont(SettingUIFont, SettingUIFontSize, "NORMAL");
+			label:SetFont(SettingUIFont, SettingUIFontSize, "");
 			label:SetText(gsub(LSETTINGMODULE[key], "%%[a-z]", ""));
 			label:SetPoint("LEFT", head, "CENTER", 16, 0);
 			local slider = CreateFrame('SLIDER', nil, Panel);
@@ -335,19 +335,19 @@ end
 			slider.Track:SetPoint("RIGHT");
 			slider.Track:SetColorTexture(1.0, 1.0, 1.0, 0.25);
 			slider.Text = slider:CreateFontString(nil, "ARTWORK");
-			slider.Text:SetFont(SettingUIFont, SettingUIFontSize - 1);
+			slider.Text:SetFont(SettingUIFont, SettingUIFontSize - 1, "");
 			slider.Text:ClearAllPoints();
 			slider.Text:SetPoint("TOP", slider, "BOTTOM", 0, 6);
 			slider.Text:SetAlpha(0.75);
 			slider.Low = slider:CreateFontString(nil, "ARTWORK");
-			slider.Low:SetFont(SettingUIFont, SettingUIFontSize - 1);
+			slider.Low:SetFont(SettingUIFont, SettingUIFontSize - 1, "");
 			slider.Low:ClearAllPoints();
 			slider.Low:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 4, 6);
 			slider.Low:SetVertexColor(0.5, 1.0, 0.5);
 			slider.Low:SetAlpha(0.75);
 			slider.Low:SetText(extra[1]);
 			slider.High = slider:CreateFontString(nil, "ARTWORK");
-			slider.High:SetFont(SettingUIFont, SettingUIFontSize - 1);
+			slider.High:SetFont(SettingUIFont, SettingUIFontSize - 1, "");
 			slider.High:ClearAllPoints();
 			slider.High:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", -4, 6);
 			slider.High:SetVertexColor(1.0, 0.5, 0.5);
@@ -395,7 +395,7 @@ end
 				self:SetChecked(val);
 			end
 			local label = Panel:CreateFontString(nil, "ARTWORK");
-			label:SetFont(SettingUIFont, SettingUIFontSize, "NORMAL");
+			label:SetFont(SettingUIFont, SettingUIFontSize, "");
 			label:SetText(gsub(LSETTINGMODULE[key], "%%[a-z]", ""));
 			label:SetPoint("LEFT", check, "CENTER", 16, 0);
 			_SettingNodes[module][key] = check;
@@ -416,7 +416,7 @@ end
 			button.extra = LSETTINGMODULE[extra] or extra;
 			button:SetScript("OnClick", EditorCallOutButton_OnClick);
 			local str = button:CreateFontString(nil, "ARTWORK");
-			str:SetFont(SettingUIFont, SettingUIFontSize, "NORMAL");
+			str:SetFont(SettingUIFont, SettingUIFontSize, "");
 			str:SetPoint("CENTER");
 			str:SetText(gsub(LSETTINGMODULE[key], "%%[a-z]", ""));
 			button._SetPoint = button.SetPoint;
@@ -441,7 +441,7 @@ end
 			button.key = key;
 			button:SetScript("OnClick", ColorCallOutButton_OnClick);
 			local str = button:CreateFontString(nil, "ARTWORK");
-			str:SetFont(SettingUIFont, SettingUIFontSize, "NORMAL");
+			str:SetFont(SettingUIFont, SettingUIFontSize, "");
 			str:SetPoint("CENTER");
 			str:SetText(gsub(LSETTINGMODULE[key], "%%[a-z]", ""));
 			button._SetPoint = button.SetPoint;
@@ -459,7 +459,7 @@ end
 			head:SetTexture(SettingUIHeadTexture);
 			head:SetVertexColor(0.5, 0.75, 1.0, 0.5);
 			local label = Panel:CreateFontString(nil, "ARTWORK");
-			label:SetFont(SettingUIFont, SettingUIFontSize, "NORMAL");
+			label:SetFont(SettingUIFont, SettingUIFontSize, "");
 			label:SetText(gsub(LSETTINGMODULE[key], "%%[a-z]", ""));
 			label:SetPoint("LEFT", head, "CENTER", 16, 0);
 			local drop = CreateFrame('BUTTON', nil, Panel);
@@ -490,7 +490,7 @@ end
 			drop:SetScript("OnClick", ListDrop_OnClick);
 			local editbox = CreateFrame('EDITBOX', nil, Panel);
 			editbox:SetSize(160, 20);
-			editbox:SetFont(SettingUIFont, SettingUIFontSize, "NORMAL");
+			editbox:SetFont(SettingUIFont, SettingUIFontSize, "");
 			editbox:SetPoint("LEFT", drop, "RIGHT", 2, 0);
 			editbox:SetAutoFocus(false);
 			editbox:SetTextInsets(10, 0, 0, 0);
@@ -541,7 +541,7 @@ end
 				editbox.discard = discard;
 				discard.editbox = editbox;
 				local err = editbox:CreateFontString(nil, "ARTWORK");
-				err:SetFont(SettingUIFont, SettingUIFontSize);
+				err:SetFont(SettingUIFont, SettingUIFontSize, "");
 				err:SetPoint("LEFT", editbox, "BOTTOMLEFT", 0, -SettingUILineHeight * 0.5);
 				err:Show();
 				editbox.err = err;
@@ -577,7 +577,7 @@ end
 			head:SetTexture(SettingUIHeadTexture);
 			head:SetVertexColor(0.5, 0.75, 1.0, 0.5);
 			local label = Panel:CreateFontString(nil, "ARTWORK");
-			label:SetFont(SettingUIFont, SettingUIFontSize, "NORMAL");
+			label:SetFont(SettingUIFont, SettingUIFontSize, "");
 			label:SetText(gsub(LSETTINGMODULE[key], "%%[a-z]", ""));
 			label:SetPoint("LEFT", head, "CENTER", 16, 0);
 			local list = {  };
@@ -596,7 +596,7 @@ end
 				check.val = val;
 				list[index] = check;
 				local text = Panel:CreateFontString(nil, "ARTWORK");
-				text:SetFont(SettingUIFont, SettingUIFontSize, "NORMAL");
+				text:SetFont(SettingUIFont, SettingUIFontSize, "");
 				text:SetText(val);
 				text:SetPoint("LEFT", check, "RIGHT", 2, 0);
 				check.text = text;
@@ -717,7 +717,7 @@ end
 		local _EditorEditBox = CreateFrame('EDITBOX', nil, _EditorScrollFrame);
 		_EditorEditBox:SetPoint("LEFT", 0, 0);
 		-- _EditorEditBox:SetPoint("RIGHT", 0, 0);
-		_EditorEditBox:SetFont(SettingUIFont, SettingUIFontSize);
+		_EditorEditBox:SetFont(SettingUIFont, SettingUIFontSize, "");
 		_EditorEditBox:SetJustifyH("LEFT");
 		_EditorEditBox:SetTextColor(1.0, 1.0, 1.0, 1.0);
 		_EditorEditBox:SetMultiLine(true);
@@ -730,7 +730,7 @@ end
 		SetButtonColorTexture(_EditorSaveValue);
 		_EditorSaveValue:SetPoint("CENTER", _Editor, "BOTTOM", -48, 16);
 		local _EditorSaveValueStr = _EditorSaveValue:CreateFontString(nil, "ARTWORK");
-		_EditorSaveValueStr:SetFont(SettingUIFont, SettingUIFontSize);
+		_EditorSaveValueStr:SetFont(SettingUIFont, SettingUIFontSize, "");
 		_EditorSaveValueStr:SetPoint("CENTER");
 		-- _EditorSaveValueStr:SetTextColor(0.5, 1.0, 0.5);
 		_EditorSaveValueStr:SetText(OKAY or "OKAY");
@@ -739,12 +739,12 @@ end
 		SetButtonColorTexture(_EditorCancel);
 		_EditorCancel:SetPoint("CENTER", _Editor, "BOTTOM", 48, 16);
 		local _EditorCancelStr = _EditorCancel:CreateFontString(nil, "ARTWORK");
-		_EditorCancelStr:SetFont(SettingUIFont, SettingUIFontSize);
+		_EditorCancelStr:SetFont(SettingUIFont, SettingUIFontSize, "");
 		_EditorCancelStr:SetPoint("CENTER");
 		-- _EditorCancelStr:SetTextColor(1.0, 0.5, 0.5);
 		_EditorCancelStr:SetText(CANCEL or "CANCEL");
 		local _Information = _Editor:CreateFontString(nil, "ARTWORK");
-		_Information:SetFont(SettingUIFont, SettingUIFontSize);
+		_Information:SetFont(SettingUIFont, SettingUIFontSize, "");
 		_Information:SetPoint("LEFT", _Editor, "TOPLEFT", 4, -36);
 		_Information:SetPoint("RIGHT", _Editor, "TOPRIGHT", -4, -36);
 		--	Editor Script
@@ -942,7 +942,7 @@ end
 _G.SLASH_ALACHAT1 = "/alac";
 _G.SLASH_ALACHAT2 = "/alachat";
 SlashCmdList["ALACHAT"] = function()
-	if InterfaceOptionsFrame:IsShown() then
+	if (SettingsPanel or InterfaceOptionsFrame):IsShown() then
 		InterfaceOptionsFrame_OpenToCategory(__addon);
 	else
 		SettingUIFreeContainer:SetShown(not SettingUIFreeContainer:IsShown());

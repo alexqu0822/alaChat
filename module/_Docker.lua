@@ -376,19 +376,19 @@ end
 		end
 	--	Font
 		local function PinSetTextFont(Pin)
-			Pin.Text:SetFont(__private.PinTextFont, _db.PinSize - 4);
+			Pin.Text:SetFont(__private.PinTextFont, _db.PinSize - 4, "");
 			Pin.Text.__blz = false;
 		end
 		local function PinSetTextBLZFont(Pin)
-			Pin.Text:SetFont(__private.PinTextBLZFont, _db.PinSize - 9);
+			Pin.Text:SetFont(__private.PinTextBLZFont, _db.PinSize - 9, "");
 			Pin.Text.__blz = true;
 		end
 		local function PinRefreshTextFont(Pin)
 			local Text = Pin.Text;
 			if Text.__blz then
-				Text:SetFont(__private.PinTextBLZFont, _db.PinSize - 9);
+				Text:SetFont(__private.PinTextBLZFont, _db.PinSize - 9, "");
 			else
-				Text:SetFont(__private.PinTextFont, _db.PinSize - 4);
+				Text:SetFont(__private.PinTextFont, _db.PinSize - 4, "");
 			end
 		end
 	--	Drag

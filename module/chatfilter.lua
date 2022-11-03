@@ -335,8 +335,10 @@ end
 			Button:SetPushedTexture(TEXTURE_PATH .. "blz_text_pushed");
 		else
 			Button:SetTextFont();
-			Button:SetNormalTexture(nil);
-			Button:SetPushedTexture(nil);
+			-- Button:SetNormalTexture("");
+			local Texture = Button:GetNormalTexture(); if Texture ~= nil then Texture:SetColorTexture(0.0, 0.0, 0.0, 0.0); end
+			-- Button:SetPushedTexture("");
+			local Texture = Button:GetPushedTexture(); if Texture ~= nil then Texture:SetColorTexture(0.0, 0.0, 0.0, 0.0); end
 		end
 	end
 	local function CreateGUI()

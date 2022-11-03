@@ -38,6 +38,8 @@ __private.__dev = {  };
 __private.__is_dev = select(2, GetAddOnInfo("!!!!!DebugMe")) ~= nil;
 __private.__is_163 = select(2, GetAddOnInfo("!!!163UI!!!")) ~= nil;
 
+__private.SELFGUID = UnitGUID('player');
+
 __private.TEXTURE_PATH = [[Interface\AddOns\]] .. __addon .. [[\Media\Texture\]];
 
 __private.PinTextFont = GameFontNormal:GetFont();
@@ -542,6 +544,7 @@ end
 			CopyTable(__db, __default);
 			_G.alaChatSV = __db;
 			OldVersionCompatible(__db);
+			__db.__AppliedDBVersion = {  };
 		else
 			if __db.__upgraded ~= true then
 				OldVersionCompatible(__db, true);
@@ -561,9 +564,12 @@ end
 					__db.highlight.StrSet = gsub(StrSet, "#[^\n]+\n", "");
 				end
 			end
+			if __db.__version < 221020.01 then
+				__db.__AppliedDBVersion = {  };
+			end
 		end
 		DisableOldVersion();
-		__db.__version = 220118.01;
+		__db.__version = 221020.01;
 		CheckDB(__db, __default);
 		if not __db.highlight.KeepShowMatchedOnly then
 			__db.highlight.ShowMatchedOnly = false;
@@ -612,6 +618,15 @@ _Driver:SetScript("OnEvent", function(self, event, param)
 					end
 				end
 			end);
+			__db.__AppliedDBVersion = __db.__AppliedDBVersion or {  };
+			if __db.__AppliedDBVersion[__private.SELFGUID] == nil or __db.__AppliedDBVersion[__private.SELFGUID] < 221020.01 then
+				__db.__AppliedDBVersion[__private.SELFGUID] = 221020.01;
+				C_Timer.After(2, function()
+					if __db.misc.ColoredPlayerName then
+						__private.__module["misc"].ColoredPlayerName(true);
+					end
+				end);
+			end
 		end
 	end
 end);

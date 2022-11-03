@@ -599,8 +599,10 @@ end
 			Pin.Icon:Hide();
 		else
 			Pin:SetTextFont();
-			Pin:SetNormalTexture(nil);
-			Pin:SetPushedTexture(nil);
+			-- Pin:SetNormalTexture("");
+			local Texture = Pin:GetNormalTexture(); if Texture ~= nil then Texture:SetColorTexture(0.0, 0.0, 0.0, 0.0); end
+			-- Pin:SetPushedTexture("");
+			local Texture = Pin:GetPushedTexture(); if Texture ~= nil then Texture:SetColorTexture(0.0, 0.0, 0.0, 0.0); end
 			if _db.PinStyle == "char" then
 				Pin:SetHighlightTexture([[Interface\Buttons\UI-Common-MouseHilight]]);
 				Pin.Text:Show();
