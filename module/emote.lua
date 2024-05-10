@@ -330,13 +330,13 @@ end
 		Panel:SetScript("OnHide", PanelOnHide);
 		if isRetail or isWLK then
 			Panel:RegisterEvent("GLOBAL_MOUSE_UP");
-		elseif isBCC then
+		else--if isBCC then
 			Panel:RegisterEvent("PLAYER_STARTED_LOOKING");
 			-- Panel:RegisterEvent("PLAYER_STOPPED_LOOKING");
 			Panel:RegisterEvent("PLAYER_STARTED_TURNING");
 			-- Panel:RegisterEvent("PLAYER_STOPPED_TURNING");
-		else
-			Panel:RegisterEvent("CURSOR_UPDATE");
+		-- else
+		-- 	Panel:RegisterEvent("CURSOR_UPDATE");
 		end
 
 		local IconList = {  };

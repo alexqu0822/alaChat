@@ -425,7 +425,7 @@ end
 		local Text = Pin:CreateFontString(nil, "ARTWORK", nil, 7);
 		Text:SetPoint("CENTER");
 		Text:SetJustifyH("CENTER");
-		Text:SetJustifyV("CENTER");
+		Text:SetJustifyV("MIDDLE");
 		Pin.Text = Text;
 		local Icon = Pin:CreateTexture(nil, "ARTWORK", nil, 7);
 		Icon:SetAllPoints();
