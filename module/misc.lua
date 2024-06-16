@@ -151,16 +151,20 @@ end
 		["unit"] = true,
 	};
 	local function _OnHyperlinkEnter(_this, linkData, link)
-		local t = linkData:match("^(.-):");
-		if LinkHoverType[t] then
-			GameTooltip:SetOwner(_this, "ANCHOR_RIGHT");
-			GameTooltip:SetHyperlink(link);
-			GameTooltip:Show();
+		if _db.HoverHyperlink then
+			local t = linkData:match("^(.-):");
+			if LinkHoverType[t] then
+				GameTooltip:SetOwner(_this, "ANCHOR_RIGHT");
+				GameTooltip:SetHyperlink(link);
+				GameTooltip:Show();
+			end
 		end
 	end
 	local function _OnHyperlinkLeave(_this, linkData, link)
-		if GameTooltip:IsOwned(_this) then
-			GameTooltip:Hide();
+		if _db.HoverHyperlink then
+			if GameTooltip:IsOwned(_this) then
+				GameTooltip:Hide();
+			end
 		end
 	end
 	--
@@ -286,9 +290,18 @@ end
 			end
 		end
 	end
-	local B_InitializedChatHyperLink = false;
+	local B_InitializedHoverHyperlink = false;
+	local function InitHoverHyperlink()
+		B_InitializedHoverHyperlink = true;
+		for i = 1, NUM_CHAT_WINDOWS do
+			local frame = __private.__chatFrames[i];
+			frame:HookScript("OnHyperlinkEnter", _OnHyperlinkEnter);
+			frame:HookScript("OnHyperlinkLeave", _OnHyperlinkLeave);
+		end
+	end
+	local B_InitializedChatHyperlink = false;
 	local function InitChatHyperLink()
-		B_InitializedChatHyperLink = true;
+		B_InitializedChatHyperlink = true;
 		__SendChatMessage = _G.SendChatMessage;
 		_G.SendChatMessage = HyperlinkSendChatMessage;
 		-- __BNSendWhisper = _G.BNSendWhisper;
@@ -361,27 +374,19 @@ end
 	end
 	function __misc.HoverHyperlink(value, loading)
 		if value then
-			for i = 1, NUM_CHAT_WINDOWS do
-				local frame = __private.__chatFrames[i];
-				frame:SetScript("OnHyperlinkEnter", _OnHyperlinkEnter);
-				frame:SetScript("OnHyperlinkLeave", _OnHyperlinkLeave);
-			end
-		else
-			for i = 1, NUM_CHAT_WINDOWS do
-				local frame = __private.__chatFrames[i];
-				frame:SetScript("OnHyperlinkEnter", nil);
-				frame:SetScript("OnHyperlinkLeave", nil);
+			if not B_InitializedHoverHyperlink then
+				InitHoverHyperlink();
 			end
 		end
 	end
 	function __misc.ChatHyperlink(value, loading)
 		if value then
 			__private:AddMessageFilter("CHAT_MSG_CHANNEL", "chathyperlink", ChatMessageFilter);
-			if not B_InitializedChatHyperLink then
+			if not B_InitializedChatHyperlink then
 				InitChatHyperLink();
 			end
 		elseif not loading then
-			if B_InitializedChatHyperLink then
+			if B_InitializedChatHyperlink then
 				__private:DelMessageFilter("CHAT_MSG_CHANNEL", "chathyperlink");
 			end
 		end

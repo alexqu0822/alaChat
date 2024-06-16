@@ -28,7 +28,7 @@ if __private.__is_dev then
 end
 
 -->		MessageFilter
-	local function ChatMessageFilter(self, event, msg, sender, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, arg12, arg13, arg14, ...)
+	local function ChatMessageFilter(self, event, msg, ...)
 		if _db._TemporaryDisabled then
 			return false;
 		end
@@ -48,7 +48,7 @@ end
 				end
 			end
 			if hasMatched then
-				return false, msg, sender, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, arg12, arg13, arg14, ...;
+				return false, msg, ...;
 			else
 				return _db.ShowMatchedOnly and _BlockNoMatching[event] == true;
 			end

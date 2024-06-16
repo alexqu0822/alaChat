@@ -16,6 +16,7 @@ local _FilterKeyList = {
 	"chathyperlink",
 	"emote",
 	"highlight",
+	"companion",
 };
 local _FilterKeyNum = #_FilterKeyList;
 for index = 1, _FilterKeyNum do

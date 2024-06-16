@@ -237,9 +237,9 @@ local __default = {
 		ArrowHistory = false,
 	},
 	companion = {
-		ShowLevel = true,
-		ShowSubGroup = true,
-		PlayerLinkFormat = "#INDEX.##NAME##:LEVEL#",
+		ShowLevel = false,
+		ShowSubGroup = false,
+		PlayerLinkFormat = "<#@INDEX, ##LvLEVEL#> ",
 		WelToGuild = false,
 		WelToGuildStrSet = L.SETTING.companion["def.WelToGuildStrSet"],
 		WelToGuildDelay = true,
@@ -567,9 +567,14 @@ end
 			if __db.__version < 221020.01 then
 				__db.__AppliedDBVersion = {  };
 			end
+			if __db.__version < 240605.02 then
+				__db.companion.ShowLevel = false;
+				__db.companion.ShowSubGroup = false;
+				__db.companion.PlayerLinkFormat = "<#@INDEX, ##LvLEVEL#> ";
+			end
 		end
 		DisableOldVersion();
-		__db.__version = 221020.01;
+		__db.__version = 240605.02;
 		CheckDB(__db, __default);
 		if not __db.highlight.KeepShowMatchedOnly then
 			__db.highlight.ShowMatchedOnly = false;

@@ -107,12 +107,14 @@ end
 	end
 --		level and subGroup
 	local PlayerLinkStaticString = {
-		["#LEVEL#"] = "%1$s",
-		["#INDEX#"] = "%2$s",
+		["#NAME#"] = "%1$s",
+		["#LEVEL#"] = "%2$s",
+		["#INDEX#"] = "%3$s",
 	};
 	local PlayerLinkVariableString = {
-		["#([^#]*)LEVEL([^#]*)#"] = "%1%%1$s%2",
-		["#([^#]*)INDEX([^#]*)#"] = "%1%%2$s%2",
+		["#([^#]*)NAME([^#]*)#"] = "%1%%1$s%2",
+		["#([^#]*)LEVEL([^#]*)#"] = "%1%%2$s%2",
+		["#([^#]*)INDEX([^#]*)#"] = "%1%%3$s%2",
 	};
 	local function InitPlayerLinkFormatStr()
 		local SSET = _db.PlayerLinkFormat;
@@ -538,38 +540,6 @@ end
 	end
 -->
 
--->		MessageFilter
-	local function ChatMessageFilter(self, event, msg, sender, ...)
-		local short, realm = strsplit("-", sender);
-		-- local name = Ambiguate(sender, 'none');
-		local fullName = realm == nil and (short .. "-" .. _PREALM) or sender;
-		local info = _tPlayerInfo[fullName];
-		if _db.ShowLevel and info ~= nil and info[3] > 0 then
-			local level = nil;
-			local diff = _PLEVEL - info[3];
-			if diff >= 10 then
-				level = "|cff00ff00" .. info[3] .. "|r";
-			elseif diff > 0 then
-				level = format("|cff%.2xff00%d|r", diff * 25.5, info[3]);
-			elseif diff == 0 then
-				level = "|cffffff00" .. info[3] .. "|r";
-			elseif diff > -10 then
-				level = format("|cffff%.2x00%d|r", 255 + diff * 25.5, info[3]);
-			else
-				level = "|cffff0000" .. info[3] .. "|r";
-			end
-			if _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
-				return false, format(__PLFStr_LI, level, _tSubGroup[fullName]) .. msg, sender, ...;
-			else
-				return false, format(__PLFStr_L, level, "") .. msg, sender, ...;
-			end
-		elseif _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
-			return false, format(__PLFStr_I, "", _tSubGroup[fullName]) .. msg, sender, ...;
-		end
-		return false, "" .. msg, sender, ...;
-	end
--->
-
 -->		Init
 	local B_Initialized = false;
 	local function Init()
@@ -577,7 +547,60 @@ end
 		_Driver = CreateFrame('FRAME');
 		_Driver:SetScript("OnEvent", OnEvent);
 	end
-	local B_FilterRunning = false;
+	local __GetPlayerLink = nil;
+	local function HookGetPlayerLink()
+		if __GetPlayerLink == nil then
+			__GetPlayerLink = _G.GetPlayerLink;
+			function _G.GetPlayerLink(fullName, nameApp, lineId, cType, cTarget, ...)
+				local short, realm = strsplit("-", fullName);
+				-- local name = Ambiguate(fullName, 'none');
+				fullName = realm == nil and (short .. "-" .. _PREALM) or fullName;
+				local info = _tPlayerInfo[fullName];
+				if _db.ShowLevel and info ~= nil and info[3] > 0 then
+					local level = nil;
+					local diff = _PLEVEL - info[3];
+					if diff >= 10 then
+						level = "|cff00ff00" .. info[3] .. "|r";
+					elseif diff > 0 then
+						level = format("|cff%.2xff00%d|r", diff * 25.5, info[3]);
+					elseif diff == 0 then
+						level = "|cffffff00" .. info[3] .. "|r";
+					elseif diff > -10 then
+						level = format("|cffff%.2x00%d|r", 255 + diff * 25.5, info[3]);
+					else
+						level = "|cffff0000" .. info[3] .. "|r";
+					end
+					local pat = gsub(fullName, "[%%%.%+%-%*%?%[%]%(%)%^%$]", "%%%1");
+					if strmatch(nameApp, pat) ~= nil then
+						local repl = _db.ShowSubGroup and _tSubGroup[fullName] ~= nil and format(__PLFStr_LI, fullName, level, _tSubGroup[fullName]) or format(__PLFStr_L, fullName, level, "");
+						nameApp = gsub(nameApp, pat, repl);
+					elseif strmatch(nameApp, short) ~= nil then
+						local repl = _db.ShowSubGroup and _tSubGroup[fullName] ~= nil and format(__PLFStr_LI, short, level, _tSubGroup[fullName]) or format(__PLFStr_L, short, level, "");
+						nameApp = gsub(nameApp, short, repl);
+					end
+					-- if _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
+					-- 	nameApp = gsub(nameApp, name, format(__PLFStr_LI, name, level, _tSubGroup[fullName]));
+					-- else
+					-- 	nameApp = gsub(nameApp, name, format(__PLFStr_L, name, level, ""));
+					-- end
+					return "|Hplayer:" .. fullName .. ":" .. (lineId or 0) .. ":" .. (cType or 0) .. ":" .. (cTarget or "") .. "|h" .. nameApp .. "|h";
+				elseif _db.ShowSubGroup and _tSubGroup[fullName] ~= nil then
+					local pat = gsub(fullName, "[%%%.%+%-%*%?%[%]%(%)%^%$]", "%%%1");
+					if strmatch(nameApp, pat) ~= nil then
+						local repl = format(__PLFStr_I, fullName, "", _tSubGroup[fullName]);
+						nameApp = gsub(nameApp, pat, repl);
+					elseif strmatch(nameApp, short) ~= nil then
+						local repl = format(__PLFStr_I, short, "", _tSubGroup[fullName]);
+						nameApp = gsub(nameApp, short, repl);
+					end
+					-- nameApp = gsub(nameApp, name, format(__PLFStr_I, name, "", _tSubGroup[fullName]));
+					return "|Hplayer:" .. fullName .. ":" .. (lineId or 0) .. ":" .. (cType or 0) .. ":" .. (cTarget or "") .. "|h" .. nameApp .. "|h";
+				else
+					return __GetPlayerLink(fullName, nameApp, lineId, cType, cTarget, ...);
+				end
+			end
+		end
+	end
 	local function CheckState()
 		if _db.ShowLevel then
 			if _Driver ~= nil then
@@ -724,12 +747,7 @@ end
 			if not B_Initialized then
 				Init();
 			end
-			if not B_FilterRunning then
-				__private:AddMessageFilterAllChatTypes("companion", ChatMessageFilter);
-			end
-		elseif not _db.ShowSubGroup then
-			__private:AddMessageFilterAllChatTypes("companion");
-			B_FilterRunning = false;
+			HookGetPlayerLink();
 		end
 		CheckState();
 		InitPlayerLinkFormatStr();
@@ -739,12 +757,7 @@ end
 			if not B_Initialized then
 				Init();
 			end
-			if not B_FilterRunning then
-				__private:AddMessageFilterAllChatTypes("companion", ChatMessageFilter);
-			end
-		elseif not _db.ShowLevel then
-			__private:AddMessageFilterAllChatTypes("companion");
-			B_FilterRunning = false;
+			HookGetPlayerLink();
 		end
 		CheckState();
 		InitPlayerLinkFormatStr();
@@ -864,13 +877,14 @@ end
 		-- __private:AddSetting("COMPANION", { "companion", "PlayerLinkFormat", 'editor', "PlayerLinkFormattip", }, 1);
 		__private:AddSetting("COMPANION", { "companion", "PlayerLinkFormat", 'input-list',
 			{
-				"<#INDEX, ##LEVEL#> ","<#LEVEL##, INDEX#> ",
-				"<#@INDEX, ##LvLEVEL#> ","<#LvLEVEL##, @INDEX#> ",
+				"#INDEX.##NAME##LEVEL#", "#INDEX.##NAME##:LEVEL#", "#INDEX.##NAME##(LEVEL)#",
+				"#(INDEX)##NAME##LEVEL#", "#(INDEX)##NAME##:LEVEL#",
+				"#LEVEL:##NAME## INDEX#"
 			},
 			nil,
 			nil,
 			function(val)
-				return format(__PLFStr_LI, 60, 2);
+				return format(__PLFStr_LI, "Alex", 1, "|cffffff0070|r");
 			end,
 		}, 1);
 		--

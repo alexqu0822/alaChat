@@ -489,13 +489,13 @@ end
 			}
 			drop:SetScript("OnClick", ListDrop_OnClick);
 			local editbox = CreateFrame('EDITBOX', nil, Panel);
-			editbox:SetSize(160, 20);
 			editbox:SetFont(SettingUIFont, SettingUIFontSize, "");
 			editbox:SetPoint("LEFT", drop, "RIGHT", 2, 0);
 			editbox:SetAutoFocus(false);
 			editbox:SetTextInsets(10, 0, 0, 0);
 			editbox.parent = drop;
 			if Type == 'input-list' then
+				editbox:SetSize(320, 20);
 				if exhibit ~= nil then
 					function drop:SetVal(val)
 						editbox:SetText(val);
@@ -551,6 +551,7 @@ end
 				editbox:SetScript("OnEscapePressed", InputListEditBox_OnEscapePressed);
 				editbox:SetScript("OnTextChanged", InputListEditBox_OnTextChanged);
 			else
+				editbox:SetSize(160, 20);
 				if exhibit ~= nil then
 					function drop:SetVal(val)
 						editbox:SetText(LSETTINGMODULE[val] or exhibit(val) or val);
