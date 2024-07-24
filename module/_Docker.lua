@@ -177,7 +177,7 @@ end
 		end
 	end
 	function Docker:LoadManualPosition()
-		local pos = _db._manualPosition;print("LOAD", pos)
+		local pos = _db._manualPosition;
 		if pos ~= nil then
 			-- Docker:SetClampedToScreen(true);
 			Docker:ClearAllPoints();
