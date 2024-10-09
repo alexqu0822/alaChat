@@ -45,6 +45,13 @@ __private.TEXTURE_PATH = [[Interface\AddOns\]] .. __addon .. [[\Media\Texture\]]
 __private.PinTextFont = GameFontNormal:GetFont();
 __private.PinTextBLZFont = NumberFont_Shadow_Med:GetFont();
 
+-->		Compatible
+	local _comptb = {  };
+	__private._comptb = _comptb;
+	_comptb.GetMouseFocus = GetMouseFocus or function()
+		return GetMouseFoci()[1];
+	end
+-->
 -->		Dev
 	local setfenv = setfenv;
 	local rawset = rawset;

@@ -6,6 +6,7 @@ local hooksecurefunc = hooksecurefunc;
 local date = date;
 local format, gsub = string.format, string.gsub;
 local GetCVar, SetCVar = GetCVar, SetCVar;
+local GetMouseFocus = GetMouseFocus or __private._comptb.GetMouseFocus;
 local ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat = ChatEdit_ChooseBoxForSend, ChatEdit_ActivateChat;
 local ItemRefTooltip = ItemRefTooltip;
 local _G = _G;

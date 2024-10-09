@@ -11,7 +11,7 @@ local rawget, rawset = rawget, rawset;
 local next, tinsert, tremove = next, table.insert, table.remove;
 local IsControlKeyDown = IsControlKeyDown;
 local CreateFrame = CreateFrame;
-local GetMouseFocus = GetMouseFocus;
+local GetMouseFocus = GetMouseFocus or __private._comptb.GetMouseFocus;
 local GameTooltip = GameTooltip;
 local UIParent = UIParent;
 
