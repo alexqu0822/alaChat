@@ -1,4 +1,4 @@
-## Interface: 100207
+## Interface: 110002, 110005
 ## Title: ala's Chat Enhanced
 ## Title-zhCN: ala聊天增强
 ## Title-zhTW: ala聊天增強
@@ -12,7 +12,7 @@
 ## Author: |cff00ff00ALA|r
 ## Author-zhCN: |cff00ff00ALA|r
 ## Author-zhTW: |cff00ff00ALA|r
-## Version: 1002r.241011
+## Version: 1002r.241205
 ## X-Curse-Project-ID: 324936
 
 

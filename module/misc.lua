@@ -358,16 +358,20 @@ end
 			SetCVar("chatClassColorOverride", to);
 		end
 		--	wotlk
-		if __private.__toc > 30000 and __private.__toc < 90000 then
+		if __private.__toc < 90000 then
 			local ToggleChatColorNamesByClassGroup = _G.ToggleChatColorNamesByClassGroup;
 			if ToggleChatColorNamesByClassGroup ~= nil then
+				local h = {  };
 				for type, info in next, _G.ChatTypeGroup do
 					ToggleChatColorNamesByClassGroup(not not value, type);
+					h[type] = true;
 				end
 				local v = _G.getmetatable(_G.ChatTypeInfo);
 				v = v.__index and v.__index or _G.ChatTypeInfo;
 				for type, info in next, v do
-					ToggleChatColorNamesByClassGroup(not not value, type);
+					if h[type] == nil then
+						ToggleChatColorNamesByClassGroup(not not value, type);
+					end
 				end
 			end
 		end

@@ -11,7 +11,28 @@ local rawget, rawset = rawget, rawset;
 local next = next;
 local C_Timer = C_Timer;
 local CreateFrame = CreateFrame;
+local GetAddOnInfo = GetAddOnInfo or C_AddOns.GetAddOnInfo;
+local GetAddOnMetadata = GetAddOnMetadata or C_AddOns.GetAddOnMetadata;
+local EnableAddOn = EnableAddOn or C_AddOns.EnableAddOn;
+local DisableAddOn = DisableAddOn or C_AddOns.DisableAddOn;
+local LoadAddOn = LoadAddOn or C_AddOns.LoadAddOn;
+local SaveAddOns = SaveAddOns or C_AddOns.SaveAddOns;
 local _G = _G;
+-->		Compatible
+	local _comptb = {  };
+	__private._comptb = _comptb;
+	if GetMouseFocus then
+		_comptb.GetMouseFocus = GetMouseFocus;
+	elseif GetMouseFoci then
+		local GetMouseFoci = GetMouseFoci;
+		_comptb.GetMouseFocus = function()
+			return GetMouseFoci()[1];
+		end
+	else
+		_comptb.GetMouseFocus = function()
+		end
+	end
+-->
 
 __private.__toc = select(4, GetBuildInfo());
 local __modulelist = {  };
@@ -45,13 +66,6 @@ __private.TEXTURE_PATH = [[Interface\AddOns\]] .. __addon .. [[\Media\Texture\]]
 __private.PinTextFont = GameFontNormal:GetFont();
 __private.PinTextBLZFont = NumberFont_Shadow_Med:GetFont();
 
--->		Compatible
-	local _comptb = {  };
-	__private._comptb = _comptb;
-	_comptb.GetMouseFocus = GetMouseFocus or function()
-		return GetMouseFoci()[1];
-	end
--->
 -->		Dev
 	local setfenv = setfenv;
 	local rawset = rawset;
@@ -636,15 +650,11 @@ _Driver:SetScript("OnEvent", function(self, event, param)
 					end
 				end
 			end);
-			__db.__AppliedDBVersion = __db.__AppliedDBVersion or {  };
-			if __db.__AppliedDBVersion[__private.SELFGUID] == nil or __db.__AppliedDBVersion[__private.SELFGUID] < 221020.01 then
-				__db.__AppliedDBVersion[__private.SELFGUID] = 221020.01;
-				C_Timer.After(2, function()
-					if __db.misc.ColoredPlayerName then
-						__private.__module["misc"].ColoredPlayerName(true);
-					end
-				end);
-			end
+			C_Timer.After(2, function()
+				if __db.misc.ColoredPlayerName then
+					__private.__module["misc"].ColoredPlayerName(true);
+				end
+			end);
 		end
 	end
 end);
