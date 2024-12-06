@@ -1,4 +1,4 @@
-## Interface: 40400
+## Interface: 40401
 ## Title: ala's Chat Enhanced
 ## Title-zhCN: ala聊天增强
 ## Title-zhTW: ala聊天增強
