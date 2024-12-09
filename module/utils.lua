@@ -1,4 +1,7 @@
 ﻿
+local __ala_meta__ = _G.__ala_meta__;
+local menulib = __ala_meta__.__menulib;
+
 local __addon, __private = ...;
 local L = __private.L;
 
@@ -501,8 +504,8 @@ end
 		end
 	else
 		local SR_MENU = {
-			handler = function(self, which)
-				local report = GetReport(which);
+			handler = function(self, param)
+				local report = GetReport(param[1]);
 				if report ~= nil then
 					local editBox = ChatEdit_ChooseBoxForSend();
 					if not editBox:HasFocus() then
@@ -511,32 +514,30 @@ end
 					editBox:Insert(_prefix .. report);
 				end
 			end,
-			elements = {
-				{
-					text = L.STATREPORT["melee"],
-					para = { "melee", },
-				},
-				{
-					text = L.STATREPORT["spell"],
-					para = { "spell", },
-				},
-				{
-					text = L.STATREPORT["ranged"],
-					para = { "ranged", },
-				},
-				{
-					text = L.STATREPORT["tank"],
-					para = { "tank", },
-				},
-				{
-					text = L.STATREPORT["heal"],
-					para = { "heal", },
-				},
+			{
+				text = L.STATREPORT["melee"],
+				para = { "melee", },
+			},
+			{
+				text = L.STATREPORT["spell"],
+				para = { "spell", },
+			},
+			{
+				text = L.STATREPORT["ranged"],
+				para = { "ranged", },
+			},
+			{
+				text = L.STATREPORT["tank"],
+				para = { "tank", },
+			},
+			{
+				text = L.STATREPORT["heal"],
+				para = { "heal", },
 			},
 		};
 		function SR_OnClick(Pin, button)
 			if button == "RightButton" then
-				ALADROP(Pin, "TOPRIGHT", SR_MENU, false);
+				menulib.ShowMenu(Pin, "TOPRIGHT", SR_MENU, nil, false);
 			else
 				local report = GetReport();
 				if report ~= nil then

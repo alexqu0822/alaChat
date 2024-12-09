@@ -3,6 +3,7 @@
 --]=]
 local __ala_meta__ = _G.__ala_meta__;
 local uireimp = __ala_meta__.uireimp;
+local menulib = __ala_meta__.__menulib;
 
 local __addon, __private = ...;
 local L = __private.L;
@@ -234,28 +235,30 @@ end
 			SetDB(module, key, value, false);
 		end
 		--	list
-		local function ListButton_Handler(self, module, key, val, drop, editbox)
+		local function ListButton_Handler(self, _, param)
+			local module, key, val, drop, editbox = param[1], param[2], param[3], param[4], param[5];
 			SetDB(module, key, val, false);
 			drop:SetVal(val);
 		end
 		local function ListDrop_OnClick(self)
 			if self.__list == nil then
-				ALADROP(self, "BOTTOMLEFT", self.meta, false);
+				menulib.ShowMenu(self, "BOTTOMLEFT", self.menudef, nil, false);
 			else
-				local meta = self.meta;
+				local menudef = self.menudef;
 				local __list, __buttononshow, __buttononhide = self.__list();
-				local __para = self.__para;
-				local elements = meta.elements;
-				wipe(elements);
+				local __param = self.__param;
+				local index = 1;
 				for name, val in next, __list do
-					elements[#elements + 1] = {
+					menudef[index] = {
 						text = name,
-						para = { __para[1], __para[2], val, __para[4], };
+						param = { __param[1], __param[2], val, __param[4], };
 					};
+					index = index + 1;
 				end
-				meta.__buttononshow = __buttononshow;
-				meta.__buttononhide = __buttononhide;
-				ALADROP(self, "BOTTOMLEFT", meta, false);
+				menudef.num = index;
+				menudef.__buttononshow = __buttononshow;
+				menudef.__buttononhide = __buttononhide;
+				menulib.ShowMenu(self, "BOTTOMLEFT", menudef, nil, false);
 			end
 		end
 		local function InputListEditBox_OnEnterPressed(self)
@@ -491,23 +494,23 @@ end
 			drop:GetPushedTexture():SetVertexColor(0.5, 0.5, 0.5, 1.0);
 			drop:SetHighlightTexture(TEXTURE_PATH .. "ArrowDown");
 			drop:GetHighlightTexture():SetVertexColor(0.0, 0.5, 1.0, 0.25);
-			local elements = {  };
+			local menudef = {
+				handler = ListButton_Handler,
+			};
 			if type(extra) == 'table' then
 				for index = 1, #extra do
-					elements[index] = {
+					menudef[index] = {
 						text = LSETTINGMODULE[extra[index]] or extra[index];
-						para = { module, key, extra[index], drop, };
+						param = { module, key, extra[index], drop, };
 					};
 				end
+				menudef.num = #extra;
 			elseif type(extra) == 'function' then
 				drop.__list = extra;
-				drop.__para = { module, key, nil, drop, };
+				drop.__param = { module, key, nil, drop, };
 				extra();
 			end
-			drop.meta = {
-				handler = ListButton_Handler,
-				elements = elements,
-			}
+			drop.menudef = menudef;
 			drop:SetScript("OnClick", ListDrop_OnClick);
 			local editbox = CreateFrame('EDITBOX', nil, Panel);
 			editbox:SetFont(SettingUIFont, SettingUIFontSize, "");
@@ -531,10 +534,11 @@ end
 					end
 				end
 				uireimp._SetSimpleBackdrop(editbox, 0, 1, 0.25, 0.25, 0.25, 1.0, 1.0, 1.0, 1.0, 0.125);
-				-- elements[#elements + 1] = {
+				-- menudef[#menudef + 1] = {
 				-- 	text = "",
-				-- 	para = { module, key, nil, drop, editbox, },
+				-- 	param = { module, key, nil, drop, editbox, },
 				-- };
+				-- menudef.num = #menudef;
 				local okay = CreateFrame('BUTTON', nil, editbox);
 				okay:SetSize(16, 16);
 				okay:SetPoint("LEFT", editbox, "RIGHT", 2, 0);
