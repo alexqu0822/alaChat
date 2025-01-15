@@ -12,7 +12,7 @@
 ## Author: |cff00ff00ALA|r
 ## Author-zhCN: |cff00ff00ALA|r
 ## Author-zhTW: |cff00ff00ALA|r
-## Version: 1105r.250112
+## Version: 1105r.250115
 ## X-Curse-Project-ID: 324936
 
 
