@@ -247,13 +247,13 @@ end
 				local menudef = self.menudef;
 				local __list, __buttononshow, __buttononhide = self.__list();
 				local __param = self.__param;
-				local index = 1;
+				local index = 0;
 				for name, val in next, __list do
+					index = index + 1;
 					menudef[index] = {
 						text = name,
 						param = { __param[1], __param[2], val, __param[4], };
 					};
-					index = index + 1;
 				end
 				menudef.num = index;
 				menudef.__buttononshow = __buttononshow;

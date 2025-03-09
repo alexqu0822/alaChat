@@ -457,10 +457,10 @@ end
 			return __misc[which](value, loading);
 		end
 	end
-	local function FontSetButton(button, ele)
+	local function FontSetButton(button, param1, param2)
 		local Text = button.Text;
 		local _, size, flag = Text:GetFont();
-		Text:SetFont(ele.para[1], size, flag);
+		Text:SetFont(param2[3], size, flag);
 	end
 	local function FontGetMeta()
 		local __list = LSM:HashTable("font");
