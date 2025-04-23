@@ -35,7 +35,7 @@ local _db = {  };
 		end
 	end
 	function __general.__setting()
-		__private:AddSetting("GENERAL", { "general", "detailedtip", 'boolean', });
+		__private.__SettingUI:AddSetting("GENERAL", { "general", "detailedtip", 'boolean', });
 	end
 
 	__private.__module["general"] = __general;

@@ -139,7 +139,7 @@ end
 			_db._TemporaryDisabled = not _db._TemporaryDisabled;
 			Button.Blocked:SetShown(_db._TemporaryDisabled);
 		elseif button == "RightButton" then
-			__private:OpenSettingTo("highlight", "StrSet");
+			__private.__SettingUI:OpenSettingTo("highlight", "StrSet");
 		end
 	end
 	local function ButtonSetStyle(Button, style)
@@ -276,13 +276,13 @@ end
 		end
 	end
 	function __highlight.__setting()
-		__private:AlignSetting("HIGHLIGHT", 0.5);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "toggle", 'boolean', });
+		__private.__SettingUI:AlignSetting("HIGHLIGHT", 0.5);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "toggle", 'boolean', });
 		--
-		__private:AddSetting("HIGHLIGHT", { "highlight", "CaseInsensitive", 'boolean', }, 1);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "StrSet", 'editor', "StrSetTip", }, 1);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "color", 'color', }, 1);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "format", 'input-list', { "#HL#", ">>#HL#<<", "**#HL#**", "[[#HL#]]", }, nil, nil,
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "CaseInsensitive", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "StrSet", 'editor', "StrSetTip", }, 1);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "color", 'color', }, 1);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "format", 'input-list', { "#HL#", ">>#HL#<<", "**#HL#**", "[[#HL#]]", }, nil, nil,
 			function(val)
 				if strmatch(val, __PAT) == nil then
 					return "NAXX";
@@ -290,13 +290,13 @@ end
 				return gsub(val, __PAT, "NAXX");
 			end,
 		}, 1);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "ShowMatchedOnly", 'boolean', }, 1);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "ShowMatchedOnly.CHANNEL", 'boolean', }, 2);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "ShowMatchedOnly.SAY-YELL", 'boolean', }, 2);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "ShowMatchedOnly.NORMAL", 'boolean', }, 2);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "KeepShowMatchedOnly", 'boolean', }, 2);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "ButtonInDock", 'boolean', }, 1);
-		__private:AddSetting("HIGHLIGHT", { "highlight", "PinStyle", 'list', { "char", "char.blz", }, }, 2);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "ShowMatchedOnly", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "ShowMatchedOnly.CHANNEL", 'boolean', }, 2);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "ShowMatchedOnly.SAY-YELL", 'boolean', }, 2);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "ShowMatchedOnly.NORMAL", 'boolean', }, 2);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "KeepShowMatchedOnly", 'boolean', }, 2);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "ButtonInDock", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("HIGHLIGHT", { "highlight", "PinStyle", 'list', { "char", "char.blz", }, }, 2);
 	end
 
 	__private.__module["highlight"] = __highlight;

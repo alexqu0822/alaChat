@@ -1114,52 +1114,52 @@ end
 		end
 	end
 	function __channeltab.__setting()
-		__private:AddSetting("CHANNELTAB", { "channeltab", "toggle", 'boolean', });
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "toggle", 'boolean', });
 		--
-		__private:AlignSetting("CHANNELTAB");
-		__private:AddSetting("CHANNELTAB", { "channeltab", "SAY", 'boolean', }, 1);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "PARTY", 'boolean', }, 1);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "RAID", 'boolean', }, 1);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "RAID_WARNING", 'boolean', }, 1);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "INSTANCE_CHAT", 'boolean', }, 1);
+		__private.__SettingUI:AlignSetting("CHANNELTAB");
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "SAY", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "PARTY", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "RAID", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "RAID_WARNING", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "INSTANCE_CHAT", 'boolean', }, 1);
 		--
-		__private:AddSetting("CHANNELTAB", { "channeltab", "GUILD", 'boolean', }, 1, 2);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "YELL", 'boolean', }, 1, 2);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "WHISPER", 'boolean', }, 1, 2);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "OFFICER", 'boolean', }, 1, 2);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "GUILD", 'boolean', }, 1, 2);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "YELL", 'boolean', }, 1, 2);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "WHISPER", 'boolean', }, 1, 2);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "OFFICER", 'boolean', }, 1, 2);
 		--
 		if CHANNELLIST.GENERAL ~= nil then
-			__private:AddSetting("CHANNELTAB", { "channeltab", "GENERAL", 'boolean', }, 1, 3);
+			__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "GENERAL", 'boolean', }, 1, 3);
 		end
 		if CHANNELLIST.TRADE ~= nil then
-			__private:AddSetting("CHANNELTAB", { "channeltab", "TRADE", 'boolean', }, 1, 3);
+			__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "TRADE", 'boolean', }, 1, 3);
 		end
 		if CHANNELLIST.LOCAL_DEFENSE ~= nil then
-			__private:AddSetting("CHANNELTAB", { "channeltab", "LOCAL_DEFENSE", 'boolean', }, 1, 3);
+			__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "LOCAL_DEFENSE", 'boolean', }, 1, 3);
 		end
 		if CHANNELLIST.LOOK_FOR_GROUP ~= nil then
-			__private:AddSetting("CHANNELTAB", { "channeltab", "LOOK_FOR_GROUP", 'boolean', }, 1, 3);
+			__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "LOOK_FOR_GROUP", 'boolean', }, 1, 3);
 		end
 		if (L.Locale == "zhCN" or L.Locale == "zhTW") and CHANNELLIST.BF_WORLD ~= nil then
-			__private:AddSetting("CHANNELTAB", { "channeltab", "BF_WORLD", 'boolean', }, 1, 3);
+			__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "BF_WORLD", 'boolean', }, 1, 3);
 		end
-		__private:AddSetting("CHANNELTAB", { "channeltab", "UNMANAGEDCHANNEL", 'boolean', }, 1, 3);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "UNMANAGEDCHANNEL", 'boolean', }, 1, 3);
 		--
-		__private:AlignSetting("CHANNELTAB", 0.5);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "PinStyle", 'list', { "char", "char.blz", "circle.blur", "circle", "square.blur", "square", }, }, 1);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "UseColor", 'boolean', }, 1);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "LeaveChannelModifier", 'list', { "none", "SHIFT", "ALT", "CTRL", "SHIFT+CTRL", "SHIFT+ALT", "CTRL+ALT", }, }, 1);
+		__private.__SettingUI:AlignSetting("CHANNELTAB", 0.5);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "PinStyle", 'list', { "char", "char.blz", "circle.blur", "circle", "square.blur", "square", }, }, 1);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "UseColor", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "LeaveChannelModifier", 'list', { "none", "SHIFT", "ALT", "CTRL", "SHIFT+CTRL", "SHIFT+ALT", "CTRL+ALT", }, }, 1);
 		--
-		__private:AlignSetting("CHANNELTAB", 0.5);
-		__private:AddSetting("CHANNELTAB", { "channeltab", "AutoAddChannelToDefaultChatFrame", 'boolean', });
-		__private:AddSetting("CHANNELTAB", { "channeltab", "ChannelBlockButton_BLZ", 'boolean', });
+		__private.__SettingUI:AlignSetting("CHANNELTAB", 0.5);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "AutoAddChannelToDefaultChatFrame", 'boolean', });
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "ChannelBlockButton_BLZ", 'boolean', });
 		if L.Locale == "zhCN" or L.Locale == "zhTW" then
-			__private:AddSetting("CHANNELTAB", { "channeltab", "ChannelBlockButton_World", 'boolean', });
+			__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "ChannelBlockButton_World", 'boolean', });
 		end
-		__private:AddSetting("CHANNELTAB", { "channeltab", "ChannelBlockButton_Size", 'number', { 8, 64, 1, }, nil, 0, }, 1);
+		__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "ChannelBlockButton_Size", 'number', { 8, 64, 1, }, nil, 0, }, 1);
 		--
 		if L.Locale == "zhCN" or L.Locale == "zhTW" then
-			__private:AddSetting("CHANNELTAB", { "channeltab", "AutoJoinWorld", 'boolean', });
+			__private.__SettingUI:AddSetting("CHANNELTAB", { "channeltab", "AutoJoinWorld", 'boolean', });
 		end
 	end
 

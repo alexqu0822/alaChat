@@ -779,23 +779,23 @@ end
 		end
 	end
 	function __docker.__setting()
-		__private:AddSetting("GENERAL", { "docker", "Position", 'list', { "below.editbox", "above.editbox", "manual", }, });
-		__private:AddSetting("GENERAL", { "docker", "AutoAdjustEditBox", 'boolean', });
-		__private:AddSetting("GENERAL", { "docker", "Direction", 'list', { "RIGHT", "LEFT", "DOWN", "UP", }, });
-		__private:AlignSetting("GENERAL");
-		__private:AddSetting("GENERAL", { "docker", "alpha", 'number', { 0.0, 1.0, 0.05, }, nil, 2, });
-		__private:AddSetting("GENERAL", { "docker", "FadInTime", 'number', { 0.0, 4.0, 0.25, }, nil, 2, }, 2, 2);
-		__private:AddSetting("GENERAL", { "docker", "FadedAlpha", 'number', { 0.0, 1.0, 0.05, }, nil, 2, });
-		__private:AddSetting("GENERAL", { "docker", "FadeOutTime", 'number', { 0.0, 8.0, 0.5, }, nil, 2, }, 2, 2);
-		__private:AddSetting("GENERAL", { "docker", "FadeOutDelay", 'number', { 0.0, 8.0, 0.5, }, nil, 2, }, 2, 2);
-		__private:AlignSetting("GENERAL");
-		__private:AddSetting("GENERAL", { "docker", "Backdrop", 'boolean', });
-		__private:AddSetting("GENERAL", { "docker", "BackdropColor", 'color', }, 1);
-		__private:AddSetting("GENERAL", { "docker", "BackdropAlpha", 'number', { 0.0, 1.0, 0.05, }, nil, 2, }, 1);
-		__private:AlignSetting("GENERAL");
-		__private:AddSetting("GENERAL", { "docker", "PinSize", 'number', { 12, 48, 1, }, nil, 0, });
-		__private:AddSetting("GENERAL", { "docker", "PinInt", 'number', { -8, 16, 1, }, nil, 0, }, 2, 2);
-		__private:AddSetting("GENERAL", { "docker", "PinStyle", 'list', { "char", "char.blz", "circle.blur", "circle", "square.blur", "square", }, });
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "Position", 'list', { "below.editbox", "above.editbox", "manual", }, });
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "AutoAdjustEditBox", 'boolean', });
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "Direction", 'list', { "RIGHT", "LEFT", "DOWN", "UP", }, });
+		__private.__SettingUI:AlignSetting("GENERAL");
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "alpha", 'number', { 0.0, 1.0, 0.05, }, nil, 2, });
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "FadInTime", 'number', { 0.0, 4.0, 0.25, }, nil, 2, }, 2, 2);
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "FadedAlpha", 'number', { 0.0, 1.0, 0.05, }, nil, 2, });
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "FadeOutTime", 'number', { 0.0, 8.0, 0.5, }, nil, 2, }, 2, 2);
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "FadeOutDelay", 'number', { 0.0, 8.0, 0.5, }, nil, 2, }, 2, 2);
+		__private.__SettingUI:AlignSetting("GENERAL");
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "Backdrop", 'boolean', });
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "BackdropColor", 'color', }, 1);
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "BackdropAlpha", 'number', { 0.0, 1.0, 0.05, }, nil, 2, }, 1);
+		__private.__SettingUI:AlignSetting("GENERAL");
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "PinSize", 'number', { 12, 48, 1, }, nil, 0, });
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "PinInt", 'number', { -8, 16, 1, }, nil, 0, }, 2, 2);
+		__private.__SettingUI:AddSetting("GENERAL", { "docker", "PinStyle", 'list', { "char", "char.blz", "circle.blur", "circle", "square.blur", "square", }, });
 	end
 
 	__private.__module["docker"] = __docker;

@@ -419,10 +419,10 @@ end
 		end
 	end
 	function __emote.__setting()
-		__private:AddSetting("MISC", { "emote", "toggle", 'boolean', }, nil, nil, TEXTURE_PATH .. "emote_normal");
+		__private.__SettingUI:AddSetting("MISC", { "emote", "toggle", 'boolean', }, nil, nil, TEXTURE_PATH .. "emote_normal");
 		--
-		__private:AddSetting("MISC", { "emote", "IconInEditBox", 'boolean', }, 1);
-		__private:AddSetting("MISC", { "emote", "PinStyle", 'list', { "char", "char.blz", }, }, 1);
+		__private.__SettingUI:AddSetting("MISC", { "emote", "IconInEditBox", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("MISC", { "emote", "PinStyle", 'list', { "char", "char.blz", }, }, 1);
 	end
 
 	__private.__module["emote"] = __emote;

@@ -3,7 +3,7 @@
 
     <script file="_FilterManager.lua"/>
     <script file="_Docker.lua"/>
-    <script file="_Setting.lua"/>
+    <!-- <script file="_Setting.lua"/> -->
     <script file="general.lua"/>
     <script file="misc.lua"/>
     <script file="channeltab.lua"/>

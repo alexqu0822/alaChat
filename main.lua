@@ -614,6 +614,27 @@ end
 	end
 -->
 
+
+local function GetDefault(module, key)
+	return __default[module][key];
+end
+local function GetConfig(module, key)
+	return __db[module][key];
+end
+local function SetConfig(module, key, val, loading)
+	__db[module][key] = val;
+	__module:callback(module, key, val, loading);
+end
+local function LookupText(type, module, key, extra)
+	if type == 'category' then
+		return L.SETTINGCATEGORY[module];
+	elseif type == 'node' then
+		return gsub(L.SETTING[module][key], "%%[a-z]", "");
+	else
+		return L.SETTING[module][extra];
+	end
+end
+
 local _TriggeredEvents = {  };
 local _Driver = CreateFrame('FRAME');
 _Driver:RegisterEvent("ADDON_LOADED");
@@ -625,7 +646,8 @@ _Driver:SetScript("OnEvent", function(self, event, param)
 		if param == __addon then
 			self:UnregisterEvent("ADDON_LOADED");
 			InitDB();
-			__private:InitSettingUI(__db, __default, __modulelist, __module);
+			-- __private:InitSettingUI(__db, __default, __modulelist, __module);
+			__private.__SettingUI = __ala_meta__.__settingfactory:CreateSetting("alaChat", GetDefault, GetConfig, SetConfig, LookupText, "/alac", "/alachat");
 			InitModules();
 			for index = 1, #__modulelist do
 				local key = __modulelist[index];
@@ -659,3 +681,19 @@ _Driver:SetScript("OnEvent", function(self, event, param)
 	end
 end);
 
+function __private:SetDB(module, key, val, loading, extra)
+	__private.__SettingUI:SetConfigInner(module, key, val, loading);
+	__private.__SettingUI:RefreshNode(module, key, val, loading);
+end
+function __private:SetDBAllModules(key, val, loading, extra)
+	for index = 1, #__modulelist do
+		__private:SetDB(__modulelist[index], key, val, loading, extra);
+	end
+end
+function __private:SetDBAllModulesExceptOne(key, val, exclude, loading, extra)
+	for index = 1, #__modulelist do
+		if __modulelist[index] ~= exclude then
+			__private:SetDB(__modulelist[index], key, val, loading, extra);
+		end
+	end
+end

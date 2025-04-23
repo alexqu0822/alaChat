@@ -134,10 +134,10 @@ end
 		end
 	end
 	function __copy.__setting()
-		__private:AddSetting("COPY", { "copy", "toggle", 'boolean', });
+		__private.__SettingUI:AddSetting("COPY", { "copy", "toggle", 'boolean', });
 		--
-		__private:AddSetting("COPY", { "copy", "color", 'color', }, 1);
-		__private:AddSetting("COPY", { "copy", "format", 'input-list',
+		__private.__SettingUI:AddSetting("COPY", { "copy", "color", 'color', }, 1);
+		__private.__SettingUI:AddSetting("COPY", { "copy", "format", 'input-list',
 			{ "none", "%H:%M", "%H:%M:%S", "%I:%M", "%I:%M:%S", "%I:%M %p", "%I:%M:%S %p", },
 			nil,
 			nil,

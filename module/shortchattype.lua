@@ -81,9 +81,9 @@ end
 		end
 	end
 	function __shortchattype.__setting()
-		__private:AddSetting("MISC", { "shortchattype", "toggle", 'boolean', });
+		__private.__SettingUI:AddSetting("MISC", { "shortchattype", "toggle", 'boolean', });
 		--
-		__private:AddSetting("MISC", { "shortchattype", "format", 'list', { "n.w", "n", "w", }, }, 1);
+		__private.__SettingUI:AddSetting("MISC", { "shortchattype", "format", 'list', { "n.w", "n", "w", }, }, 1);
 	end
 
 	__private.__module["shortchattype"] = __shortchattype;

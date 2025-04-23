@@ -504,8 +504,8 @@ end
 		end
 	else
 		local SR_MENU = {
-			handler = function(self, param)
-				local report = GetReport(param[1]);
+			handler = function(self, _, param)
+				local report = GetReport(param);
 				if report ~= nil then
 					local editBox = ChatEdit_ChooseBoxForSend();
 					if not editBox:HasFocus() then
@@ -516,23 +516,23 @@ end
 			end,
 			{
 				text = L.STATREPORT["melee"],
-				para = { "melee", },
+				param = "melee",
 			},
 			{
 				text = L.STATREPORT["spell"],
-				para = { "spell", },
+				param = "spell",
 			},
 			{
 				text = L.STATREPORT["ranged"],
-				para = { "ranged", },
+				param = "ranged",
 			},
 			{
 				text = L.STATREPORT["tank"],
-				para = { "tank", },
+				param = "tank",
 			},
 			{
 				text = L.STATREPORT["heal"],
-				para = { "heal", },
+				param = "heal",
 			},
 		};
 		function SR_OnClick(Pin, button)
@@ -689,11 +689,11 @@ end
 		end
 	end
 	function __utils.__setting()
-		__private:AddSetting("UTILS", { "utils", "StatReport", 'boolean', }, nil, nil, { [[Interface\TARGETINGFRAME\UI-CLASSES-CIRCLES]], CLASS_ICON_TCOORDS[PLAYER_CLASS], });
-		__private:AddSetting("UTILS", { "utils", "DBMPull", 'boolean', }, nil, nil, TEXTURE_PATH .. [[DBMPull_normal]]);
-		__private:AddSetting("UTILS", { "utils", "DBMPullLen", 'number', { 3, 60, 1, }, nil, 0, }, 1);
-		__private:AddSetting("UTILS", { "utils", "roll", 'boolean', }, nil, nil, TEXTURE_PATH .. [[roll_normal]]);
-		__private:AddSetting("UTILS", { "utils", "ReadyCheck", 'boolean', });
+		__private.__SettingUI:AddSetting("UTILS", { "utils", "StatReport", 'boolean', }, nil, nil, { [[Interface\TARGETINGFRAME\UI-CLASSES-CIRCLES]], CLASS_ICON_TCOORDS[PLAYER_CLASS], });
+		__private.__SettingUI:AddSetting("UTILS", { "utils", "DBMPull", 'boolean', }, nil, nil, TEXTURE_PATH .. [[DBMPull_normal]]);
+		__private.__SettingUI:AddSetting("UTILS", { "utils", "DBMPullLen", 'number', { 3, 60, 1, }, nil, 0, }, 1);
+		__private.__SettingUI:AddSetting("UTILS", { "utils", "roll", 'boolean', }, nil, nil, TEXTURE_PATH .. [[roll_normal]]);
+		__private.__SettingUI:AddSetting("UTILS", { "utils", "ReadyCheck", 'boolean', });
 	end
 
 	__private.__module["utils"] = __utils;

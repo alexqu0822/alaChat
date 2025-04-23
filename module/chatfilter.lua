@@ -322,9 +322,9 @@ end
 			Button.Blocked:SetShown(_db._TemporaryDisabled);
 		elseif button == "RightButton" then
 			if IsAltKeyDown() then
-				__private:OpenSettingTo("chatfilter", "NameSet");
+				__private.__SettingUI:OpenSettingTo("chatfilter", "NameSet");
 			else
-				__private:OpenSettingTo("chatfilter", "StrSet");
+				__private.__SettingUI:OpenSettingTo("chatfilter", "StrSet");
 			end
 		end
 	end
@@ -437,16 +437,16 @@ end
 		end
 	end
 	function __chatfilter.__setting()
-		__private:AddSetting("CHATFILTER", { "chatfilter", "toggle", 'boolean', });
+		__private.__SettingUI:AddSetting("CHATFILTER", { "chatfilter", "toggle", 'boolean', });
 		--
-		__private:AddSetting("CHATFILTER", { "chatfilter", "CaseInsensitive", 'boolean', }, 1);
-		__private:AddSetting("CHATFILTER", { "chatfilter", "StrSet", 'editor', "StrSetTip", }, 1);
-		__private:AddSetting("CHATFILTER", { "chatfilter", "NameSet", 'editor', "NameSetTip", }, 1);
-		__private:AddSetting("CHATFILTER", { "chatfilter", "Rep", 'boolean', }, 1);
-		__private:AddSetting("CHATFILTER", { "chatfilter", "RepInterval", 'number', { 0, 240, 5, }, nil, 6, }, 2);
-		__private:AddSetting("CHATFILTER", { "chatfilter", "RepeatedSentence", 'boolean', }, 1);
-		__private:AddSetting("CHATFILTER", { "chatfilter", "ButtonInDock", 'boolean', }, 1);
-		__private:AddSetting("CHATFILTER", { "chatfilter", "PinStyle", 'list', { "char", "char.blz", }, }, 2);
+		__private.__SettingUI:AddSetting("CHATFILTER", { "chatfilter", "CaseInsensitive", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("CHATFILTER", { "chatfilter", "StrSet", 'editor', "StrSetTip", }, 1);
+		__private.__SettingUI:AddSetting("CHATFILTER", { "chatfilter", "NameSet", 'editor', "NameSetTip", }, 1);
+		__private.__SettingUI:AddSetting("CHATFILTER", { "chatfilter", "Rep", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("CHATFILTER", { "chatfilter", "RepInterval", 'number', { 0, 240, 5, }, nil, 6, }, 2);
+		__private.__SettingUI:AddSetting("CHATFILTER", { "chatfilter", "RepeatedSentence", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("CHATFILTER", { "chatfilter", "ButtonInDock", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("CHATFILTER", { "chatfilter", "PinStyle", 'list', { "char", "char.blz", }, }, 2);
 	end
 
 	__private.__module["chatfilter"] = __chatfilter;

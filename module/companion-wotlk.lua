@@ -876,11 +876,11 @@ end
 		end
 	end
 	function __companion.__setting()
-		__private:AddSetting("COMPANION", { "companion", "SavedInDB", 'boolean', });
-		__private:AddSetting("COMPANION", { "companion", "ShowLevel", 'boolean', });
-		__private:AddSetting("COMPANION", { "companion", "ShowSubGroup", 'boolean', });
-		-- __private:AddSetting("COMPANION", { "companion", "PlayerLinkFormat", 'editor', "PlayerLinkFormattip", }, 1);
-		__private:AddSetting("COMPANION", { "companion", "PlayerLinkFormat", 'input-list',
+		__private.__SettingUI:AddSetting("COMPANION", { "companion", "SavedInDB", 'boolean', });
+		__private.__SettingUI:AddSetting("COMPANION", { "companion", "ShowLevel", 'boolean', });
+		__private.__SettingUI:AddSetting("COMPANION", { "companion", "ShowSubGroup", 'boolean', });
+		-- __private.__SettingUI:AddSetting("COMPANION", { "companion", "PlayerLinkFormat", 'editor', "PlayerLinkFormattip", }, 1);
+		__private.__SettingUI:AddSetting("COMPANION", { "companion", "PlayerLinkFormat", 'input-list',
 			{
 				"#INDEX.##NAME##LEVEL#", "#INDEX.##NAME##:LEVEL#", "#INDEX.##NAME##(LEVEL)#",
 				"#(INDEX)##NAME##LEVEL#", "#(INDEX)##NAME##:LEVEL#",
@@ -893,12 +893,12 @@ end
 			end,
 		}, 1);
 		--
-		__private:AlignSetting("COMPANION", 0.5);
-		__private:AddSetting("COMPANION", { "companion", "WelToGuild", 'boolean', });
-		__private:AddSetting("COMPANION", { "companion", "WelToGuildStrSet", 'editor', "WelToGuildStrSetTip", }, 1);
-		__private:AddSetting("COMPANION", { "companion", "WelToGuildDelay", 'boolean', }, 1);
-		__private:AddSetting("COMPANION", { "companion", "NewMemberNotice", 'boolean', }, 1);
-		__private:AddSetting("COMPANION", { "companion", "NewMemberNoticeStr", 'editor', "NewMemberNoticeStrTip", }, 2);
+		__private.__SettingUI:AlignSetting("COMPANION", 0.5);
+		__private.__SettingUI:AddSetting("COMPANION", { "companion", "WelToGuild", 'boolean', });
+		__private.__SettingUI:AddSetting("COMPANION", { "companion", "WelToGuildStrSet", 'editor', "WelToGuildStrSetTip", }, 1);
+		__private.__SettingUI:AddSetting("COMPANION", { "companion", "WelToGuildDelay", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("COMPANION", { "companion", "NewMemberNotice", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("COMPANION", { "companion", "NewMemberNoticeStr", 'editor', "NewMemberNoticeStrTip", }, 2);
 	end
 
 	__private.__module["companion"] = __companion;

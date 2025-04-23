@@ -473,21 +473,21 @@ end
 		return __list, FontSetButton;
 	end
 	function __misc.__setting()
-		__private:AlignSetting("MISC");
-		__private:AddSetting("MISC", { "misc", "Font", 'list', FontGetMeta, });
-		__private:AddSetting("MISC", { "misc", "FontFlag", 'list', { "none", "OUTLINE", "THICKOUTLINE", }, }, 2, 2);
-		__private:AddSetting("MISC", { "misc", "ChatFrameToBorder", 'boolean', });
-		__private:AddSetting("MISC", { "misc", "ColoredPlayerName", 'boolean', });
-		__private:AddSetting("MISC", { "misc", "HoverHyperlink", 'boolean', nil, nil, nil, true, });
+		__private.__SettingUI:AlignSetting("MISC");
+		__private.__SettingUI:AddSetting("MISC", { "misc", "Font", 'list', FontGetMeta, });
+		__private.__SettingUI:AddSetting("MISC", { "misc", "FontFlag", 'list', { "none", "OUTLINE", "THICKOUTLINE", }, }, 2, 2);
+		__private.__SettingUI:AddSetting("MISC", { "misc", "ChatFrameToBorder", 'boolean', });
+		__private.__SettingUI:AddSetting("MISC", { "misc", "ColoredPlayerName", 'boolean', });
+		__private.__SettingUI:AddSetting("MISC", { "misc", "HoverHyperlink", 'boolean', nil, nil, nil, true, });
 		if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-			__private:AddSetting("MISC", { "misc", "ChatHyperlink", 'boolean', });
+			__private.__SettingUI:AddSetting("MISC", { "misc", "ChatHyperlink", 'boolean', });
 		end
-		__private:AddSetting("MISC", { "misc", "TabChangeChatType", 'boolean', });
-		__private:AddSetting("MISC", { "misc", "StickyWhisper", 'boolean', });
-		__private:AddSetting("MISC", { "misc", "StickyBNWhisper", 'boolean', });
-		__private:AddSetting("MISC", { "misc", "StickyChannel", 'boolean', });
-		__private:AddSetting("MISC", { "misc", "ArrowKey", 'boolean', });
-		__private:AddSetting("MISC", { "misc", "ArrowHistory", 'boolean', }, 1);
+		__private.__SettingUI:AddSetting("MISC", { "misc", "TabChangeChatType", 'boolean', });
+		__private.__SettingUI:AddSetting("MISC", { "misc", "StickyWhisper", 'boolean', });
+		__private.__SettingUI:AddSetting("MISC", { "misc", "StickyBNWhisper", 'boolean', });
+		__private.__SettingUI:AddSetting("MISC", { "misc", "StickyChannel", 'boolean', });
+		__private.__SettingUI:AddSetting("MISC", { "misc", "ArrowKey", 'boolean', });
+		__private.__SettingUI:AddSetting("MISC", { "misc", "ArrowHistory", 'boolean', }, 1);
 	end
 
 	__private.__module["misc"] = __misc;
