@@ -48,13 +48,13 @@ end
 		local total = 0;
 		local num1, num = 0, 0;
 		for index = 1, #slots do
+			num = num + 1;
 			local slot = slots[index];
 			local item = GetInventoryItemLink('player', slot);
 			if item ~= nil and item ~= "" then
 				local _, _, _, level, _, _, _, _, loc = GetItemInfo(item);
 				if level ~= nil then
 					total = total + level;
-					num = num + 1;
 				end
 				if slot == 16 and loc == "INVTYPE_2HWEAPON" then
 					break;
