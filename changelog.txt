@@ -1,4 +1,9 @@
 
+2025-04-28
+Fix setting error.
+Stat report includes item level now.
+Update lib.
+
 2025-04-22
 Setting update.
 Fix an error when reporting stats.

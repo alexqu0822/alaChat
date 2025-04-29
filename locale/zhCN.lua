@@ -352,6 +352,7 @@ L.STATREPORT = {
 	heal = "治疗",
 	SHAPESHIFTFORMFIRST = "先变熊或变豹",
 	["163UI"] = "有爱属性通报: ",
+	ItemLevel = "装等",
 };
 
 L.TIP = {

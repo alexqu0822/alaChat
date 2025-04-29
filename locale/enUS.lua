@@ -352,6 +352,7 @@ L.STATREPORT = {
 	heal = "Healder",
 	SHAPESHIFTFORMFIRST = "Use it in cat or bear form",
 	["163UI"] = "Stat Report: ",
+	ItemLevel = "ItemLevel",
 };
 
 L.TIP = {

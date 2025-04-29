@@ -352,6 +352,7 @@ L.STATREPORT = {
 	heal = "補師",
 	SHAPESHIFTFORMFIRST = "先變熊或者貓",
 	["163UI"] = "有愛屬性通報: ",
+	ItemLevel = "裝等",
 };
 
 L.TIP = {

@@ -37,6 +37,38 @@ end
 		--	29			--	FLIGHT
 		[31] = 24858,	--	MOONKIN
 	};
+	local function GetItemLevel()
+		local slots = { 1, 2, 3, 5, 6, 7, 8,9, 10, 11, 12, 13, 14, 15, };
+		if PLAYER_CLASS ~= "DRUID" and PLAYER_CLASS ~= "PALADIN" and PLAYER_CLASS ~= "SHAMAN" then
+			slots[#slots + 1] = 18;
+		end
+		slots[#slots + 1] = 16;
+		slots[#slots + 1] = 17;		--	make it the last in table
+		--	16MainHand, 17OffHand, 18Ranged
+		local total = 0;
+		local num1, num = 0, 0;
+		for index = 1, #slots do
+			local slot = slots[index];
+			local item = GetInventoryItemLink('player', slot);
+			if item ~= nil and item ~= "" then
+				local _, _, _, level, _, _, _, _, loc = GetItemInfo(item);
+				if level ~= nil then
+					total = total + level;
+					num = num + 1;
+				end
+				if slot == 16 and loc == "INVTYPE_2HWEAPON" then
+					break;
+				end
+			end
+		end
+		if num == 0 then
+			return;
+		end
+		local lvl = total / num + 0.05;
+		lvl = lvl - lvl % 0.1;
+		return lvl;
+	end
+
 	local GetReport = nil;
 	if _isRetail then
 		local StatList = {
@@ -75,9 +107,9 @@ end
 		end
 	else
 		local function GetTalentDesc()
-			local n1, _, p1 = GetTalentTabInfo(1);
-			local n2, _, p2 = GetTalentTabInfo(2);
-			local n3, _, p3 = GetTalentTabInfo(3);
+			local _, n1, _, _, p1 = GetTalentTabInfo(1);
+			local _, n2, _, _, p2 = GetTalentTabInfo(2);
+			local _, n3, _, _, p3 = GetTalentTabInfo(3);
 			if p1 == p2 or p2 == p3 or p1 == p3 then
 				return TALENT .. " (" .. p1 .. "/" .. p2 .. "/" .. p3 .. ")";
 			elseif p1 > p2 and p1 > p3 then
@@ -111,6 +143,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (" " .. MANA .. ", " .. mana))
 								.. ", " .. ARMOR .. " " .. armor
@@ -124,6 +157,7 @@ end
 							.. (suffix == nil and "" or (", " .. suffix));
 				end,
 				melee = function(prefix, suffix)
+					local ilv = GetItemLevel();
 					local class, file = UnitClass('player');
 					local health = UnitHealthMax('player');
 					local mana = UnitPowerMax('player', 0);
@@ -143,6 +177,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (", " .. MANA .. " " .. mana))
 							.. ", " .. ATTACK_POWER_TOOLTIP .. " " .. (apBase + apPos + apNeg)
@@ -155,6 +190,7 @@ end
 							.. (suffix == nil and "" or (", " .. suffix));
 				end,
 				spell = function(prefix, suffix)
+					local ilv = GetItemLevel();
 					local class, file = UnitClass('player');
 					local health = UnitHealthMax('player');
 					local mana = UnitPowerMax('player', 0);
@@ -190,6 +226,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (", " .. MANA .. " " .. mana))
 							.. ", " .. STAT_SPELLPOWER .. " " .. sp .. (sp == msp and "" or (" (" .. _G["DAMAGE_SCHOOL" .. msch] .. " " .. msp .. ")"))
@@ -201,6 +238,7 @@ end
 							.. (suffix == nil and "" or (", " .. suffix));
 				end,
 				ranged = function(prefix, suffix)
+					local ilv = GetItemLevel();
 					local class, file = UnitClass('player');
 					local health = UnitHealthMax('player');
 					local mana = UnitPowerMax('player', 0);
@@ -218,6 +256,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (", " .. MANA .. " " .. mana))
 							.. ", " .. RANGED_ATTACK_POWER .. " " .. (rapBase + rapPos + rapNeg)
@@ -229,6 +268,7 @@ end
 							.. (suffix == nil and "" or (", " .. suffix));
 				end,
 				heal = function(prefix, suffix)
+					local ilv = GetItemLevel();
 					local class, file = UnitClass('player');
 					local health = UnitHealthMax('player');
 					local mana = UnitPowerMax('player', 0);
@@ -244,6 +284,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (", " .. MANA .. " " .. mana))
 							.. ", " .. STAT_SPELLHEALING .. " " .. heal
@@ -260,6 +301,7 @@ end
 			local MAX_SPELL_SCHOOLS = 7;
 			method = {
 				tank = function(prefix, suffix)
+					local ilv = GetItemLevel();
 					local class, file = UnitClass('player');
 					local health = UnitHealthMax('player');
 					local mana = UnitPowerMax('player', 0);
@@ -298,6 +340,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (" " .. MANA .. ", " .. mana))
 								.. ", " .. ARMOR .. " " .. armor
@@ -310,6 +353,7 @@ end
 							.. (suffix == nil and "" or (", " .. suffix));
 				end,
 				melee = function(prefix, suffix)
+					local ilv = GetItemLevel();
 					local class, file = UnitClass('player');
 					local health = UnitHealthMax('player');
 					local mana = UnitPowerMax('player', 0);
@@ -320,6 +364,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (", " .. MANA .. " " .. mana))
 							.. ", " .. ATTACK_POWER_TOOLTIP .. " " .. (apBase + apPos + apNeg)
@@ -328,6 +373,7 @@ end
 							.. (suffix == nil and "" or (", " .. suffix));
 				end,
 				spell = function(prefix, suffix)
+					local ilv = GetItemLevel();
 					local class, file = UnitClass('player');
 					local health = UnitHealthMax('player');
 					local mana = UnitPowerMax('player', 0);
@@ -357,6 +403,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (", " .. MANA .. " " .. mana))
 							.. ", " .. STAT_SPELLPOWER .. " " .. sp .. (sp == msp and "" or (" (" .. _G["DAMAGE_SCHOOL" .. msch] .. " " .. msp .. ")"))
@@ -366,6 +413,7 @@ end
 							.. (suffix == nil and "" or (", " .. suffix));
 				end,
 				ranged = function(prefix, suffix)
+					local ilv = GetItemLevel();
 					local class, file = UnitClass('player');
 					local health = UnitHealthMax('player');
 					local mana = UnitPowerMax('player', 0);
@@ -376,6 +424,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (", " .. MANA .. " " .. mana))
 							.. ", " .. RANGED_ATTACK_POWER .. " " .. (rapBase + rapPos + rapNeg)
@@ -384,6 +433,7 @@ end
 							.. (suffix == nil and "" or (", " .. suffix));
 				end,
 				heal = function(prefix, suffix)
+					local ilv = GetItemLevel();
 					local class, file = UnitClass('player');
 					local health = UnitHealthMax('player');
 					local mana = UnitPowerMax('player', 0);
@@ -394,6 +444,7 @@ end
 							.. class
 							.. ", " .. LEVEL .. UnitLevel('player')
 							.. ", " .. GetTalentDesc()
+							.. (ilv == nil and "" or (", " .. L.STATREPORT.ItemLevel .. " " .. ilv))
 							.. ", " .. HEALTH .. " " .. health
 								.. (mana == 0 and "" or (", " .. MANA .. " " .. mana))
 							.. ", " .. STAT_SPELLHEALING .. " " .. heal
@@ -416,9 +467,9 @@ end
 				end
 			end
 			if PLAYER_CLASS == "WARRIOR" then
-				local _, _, p1 = GetTalentTabInfo(1);
-				local _, _, p2 = GetTalentTabInfo(2);
-				local _, _, p3 = GetTalentTabInfo(3);
+				local _, _, _, _, p1 = GetTalentTabInfo(1);
+				local _, _, _, _, p2 = GetTalentTabInfo(2);
+				local _, _, _, _, p3 = GetTalentTabInfo(3);
 				if p3 >= p1 and p3 >= p2 then
 					return method.tank();
 				else
@@ -427,9 +478,9 @@ end
 			elseif PLAYER_CLASS == "HUNTER" then
 				return method.ranged();
 			elseif PLAYER_CLASS == "SHAMAN" then
-				local _, _, p1 = GetTalentTabInfo(1);
-				local _, _, p2 = GetTalentTabInfo(2);
-				local _, _, p3 = GetTalentTabInfo(3);
+				local _, _, _, _, p1 = GetTalentTabInfo(1);
+				local _, _, _, _, p2 = GetTalentTabInfo(2);
+				local _, _, _, _, p3 = GetTalentTabInfo(3);
 				if p1 > p2 and p1 >= p3 then
 					return method.spell();
 				elseif p2 >= p1 and p2 >= p3 then
@@ -444,9 +495,9 @@ end
 			elseif PLAYER_CLASS == "DRUID" then
 				local id = GetShapeshiftFormID();
 				local shape = id and DruidShapeFormID[id] and GetSpellInfo(DruidShapeFormID[id]);
-				local _, _, p1 = GetTalentTabInfo(1);
-				local _, _, p2 = GetTalentTabInfo(2);
-				local _, _, p3 = GetTalentTabInfo(3);
+				local _, _, _, _, p1 = GetTalentTabInfo(1);
+				local _, _, _, _, p2 = GetTalentTabInfo(2);
+				local _, _, _, _, p3 = GetTalentTabInfo(3);
 				if p1 > p2 and p1 >= p3 then
 					return method.spell(shape and ("[" .. shape .. "]"));
 				elseif p2 >= p1 and p2 >= p3 then
@@ -462,9 +513,9 @@ end
 					return method.heal(shape and ("[" .. shape .. "]"));
 				end
 			elseif PLAYER_CLASS == "PALADIN" then
-				local _, _, p1 = GetTalentTabInfo(1);
-				local _, _, p2 = GetTalentTabInfo(2);
-				local _, _, p3 = GetTalentTabInfo(3);
+				local _, _, _, _, p1 = GetTalentTabInfo(1);
+				local _, _, _, _, p2 = GetTalentTabInfo(2);
+				local _, _, _, _, p3 = GetTalentTabInfo(3);
 				if p1 >= p2 and p1 >= p3 then
 					return method.heal();
 				elseif p2 >= p1 and p2 >= p3 then
@@ -473,9 +524,9 @@ end
 					return method.melee();
 				end
 			elseif PLAYER_CLASS == "PRIEST" then
-				local _, _, p1 = GetTalentTabInfo(1);
-				local _, _, p2 = GetTalentTabInfo(2);
-				local _, _, p3 = GetTalentTabInfo(3);
+				local _, _, _, _, p1 = GetTalentTabInfo(1);
+				local _, _, _, _, p2 = GetTalentTabInfo(2);
+				local _, _, _, _, p3 = GetTalentTabInfo(3);
 				if p3 >= p1 and p3 >= p2 then
 					return method.spell();
 				else
