@@ -146,6 +146,7 @@ end
 		-- 	Docker:StartMoving();
 		-- end
 		if IsControlKeyDown() then
+			Docker:SaveManualPosition(true);
 			if _db.Position ~= "manual" then
 				-- __docker.Position("manual", false, true);
 				__private:SetDB("docker", 'Position', "manual", false, true);
@@ -166,7 +167,7 @@ end
 	end
 	function Docker:SaveManualPosition(new)
 		if new then
-			Docker:ClearAllPoints();
+			-- Docker:ClearAllPoints();
 			_db._manualPosition = { "BOTTOMLEFT", "UIParent", "BOTTOMLEFT", Docker:GetLeft(), Docker:GetBottom(), };
 		else
 			local pos = { Docker:GetPoint() };
@@ -647,6 +648,13 @@ end
 		Docker:SetAlpha(_db.alpha);
 		Docker:SetSize(1, _db.PinSize);
 		Docker:SetFade();
+		if _db.Position == "manual" then
+			local pos = _db._manualPosition;
+			if pos == nil or pos[1] == nil then
+				_db.Position = "below.editbox";
+				_db._manualPosition = nil;
+			end
+		end
 		Docker:RefreshPosition(ChatEdit_ChooseBoxForSend());
 		if _db.Position == "manual" then
 			Docker:LoadManualPosition();

@@ -1,9 +1,9 @@
 ﻿
 local __addon, __private = ...;
 
-if __private.__toc >= 40000 then
-	return;
-end
+-- if __private.__toc >= 40000 then
+-- 	return;
+-- end
 
 local L = __private.L;
 

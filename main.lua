@@ -599,9 +599,12 @@ end
 					__db.companion.PlayerLinkFormat = "<#@INDEX, ##LvLEVEL#> ";
 				end
 			end
+			if __db.__version < 251101.01 then
+				__db.companion.PlayerLinkFormat = "#INDEX.##NAME##:LEVEL#";
+			end
 		end
 		DisableOldVersion();
-		__db.__version = 240705.01;
+		__db.__version = 251101.01;
 		CheckDB(__db, __default);
 		if not __db.highlight.KeepShowMatchedOnly then
 			__db.highlight.ShowMatchedOnly = false;

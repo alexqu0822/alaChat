@@ -12,7 +12,7 @@
     <script file="highlight.lua"/>
     <script file="copy.lua"/>
     <script file="shortchattype.lua"/>
-    <script file="companion.lua"/>
+    <!-- <script file="companion.lua"/> -->
     <script file="companion-wotlk.lua"/>
     <script file="utils.lua"/>
 
