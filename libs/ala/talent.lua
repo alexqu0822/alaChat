@@ -2,7 +2,7 @@
 	by ALA
 --]]--
 
-local __version = 251101;
+local __version = 251105;
 
 local _G = _G;
 _G.__ala_meta__ = _G.__ala_meta__ or {  };
@@ -845,7 +845,6 @@ else
 	local GetSpecialization = C_SpecializationInfo.GetSpecialization;			--	inspect, pet, group
 	local GetSpecializationInfo = C_SpecializationInfo.GetSpecializationInfo;	--	spec, inspect, pet, inspectUnit, sex, group
 	local GetTalentInfo = C_SpecializationInfo.GetTalentInfo;					--	{ specializationIndex, isInspect, isPet, inspectTarget, sex, groupIndex }
-	local GetSpecializationInfoByID = GetSpecializationInfoByID;				--	(id)	--	id, name, description, icon, role, class, loc-class
 	local GetTalentTierInfo = GetTalentTierInfo;								--	(tier, group)	--	available, selected, level
 	_GetNumTalentGroups = function(inspect, pet)
 		if inspect then
@@ -868,7 +867,11 @@ else
 	--	return 			UPPER_CLASS, data, level
 	function __emulib.GetTalentData(class, inspect, group, unit)
 		if inspect then
-			local data = "";
+			local spec = GetSpecialization(true, false);
+			if spec <= 0 or spec >= 5 then
+				spec = 0;
+			end
+			local data = spec;
 			local query = {
 				groupIndex = 1,
 				isInspect = true,
@@ -880,7 +883,7 @@ else
 				for col = 1, 3 do
 					query.column = col;
 					local info = C_SpecializationInfo.GetTalentInfo(query);
-					if info.selected then
+					if info and info.selected then
 						selected = col;
 						break;
 					end
@@ -890,6 +893,9 @@ else
 			return data, 6;
 		else
 			local spec = GetSpecialization(false, false, group);
+			if spec <= 0 or spec >= 5 then
+				spec = 0;
+			end
 			-- local id, name, description, icon = GetSpecializationInfo(spec, false, false)
 			local data = spec;
 			for tier = 1, 6 do
@@ -931,7 +937,14 @@ else
 					__emulib.Debug("_TalentDataSubDecoder V2", "Len1 == nil", __debase64[strsub(code, 6, 6)], code);
 					return nil;
 				end
+				if Len1 ~= 7 then
+					__emulib.Debug("_TalentDataSubDecoder V2", "Len1 ~= 7", __debase64[strsub(code, 6, 6)], code);
+					return nil;
+				end
 				local code1 = strsub(code, 7, Len1 + 6);
+				if tonumber(code1) == nil then
+					return nil;
+				end
 				return class, level, 1, activeGroup, code1;
 			else
 				local Len1 = __debase64[strsub(code, 6, 6)];
@@ -939,13 +952,27 @@ else
 					__emulib.Debug("_TalentDataSubDecoder V2", "Len1 == nil", __debase64[strsub(code, 6, 6)], code);
 					return nil;
 				end
+				if Len1 ~= 7 then
+					__emulib.Debug("_TalentDataSubDecoder V2", "Len1 ~= 7", __debase64[strsub(code, 6, 6)], code);
+					return nil;
+				end
 				local code1 = strsub(code, 7, Len1 + 6);
+				if tonumber(code1) == nil then
+					return nil;
+				end
 				local Len2 = __debase64[strsub(code, 7 + Len1, 7 + Len1)];
 				if Len2 == nil then
 					__emulib.Debug("_TalentDataSubDecoder V2", "Len2 == nil", __debase64[strsub(code, 7 + Len1, 7 + Len1)], code);
 					return nil;
 				end
+				if Len2 ~= 7 then
+					__emulib.Debug("_TalentDataSubDecoder V2", "Len2 ~= 7", __debase64[strsub(code, 6, 6)], code);
+					return nil;
+				end
 				local code2 = strsub(code, Len1 + 8, Len1 + Len2 + 7);
+				if tonumber(code2) == nil then
+					return nil;
+				end
 				return class, level, 2, activeGroup, code1, code2;
 			end
 		end,

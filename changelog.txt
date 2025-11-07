@@ -1,4 +1,7 @@
 
+2025-11-01
+Fix an error when dragging chat bar.
+
 2025-06-01
 Update TOC. (nothing actually)
 
