@@ -1,3 +1,5 @@
+2025-11-25
+pin-rearranging is less sensitive
 
 2025-11-01
 Fix an error when dragging chat bar.

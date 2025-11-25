@@ -561,7 +561,7 @@ end
 				local DH = _db.PinSize + _db.YToBorder * 2;
 				local ChatFrame = EditBox.chatFrame;
 				local B = ChatFrame:GetBottom();
-				if B > EBH + DH - 2 then
+				if B > EBH + DH * 0.5 - 2 then
 					if EditBox.__manualset then
 						EditBox:ClearAllPoints();
 						EditBox:SetPoint("TOPLEFT", ChatFrame, "BOTTOMLEFT", -5, -2);
