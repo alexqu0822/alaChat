@@ -667,7 +667,7 @@ _Driver:SetScript("OnEvent", function(self, event, param)
 			self:UnregisterEvent("ADDON_LOADED");
 			InitDB();
 			-- __private:InitSettingUI(__db, __default, __modulelist, __module);
-			__private.__SettingUI = __ala_meta__.__settingfactory:CreateSetting("alaChat", GetDefault, GetConfig, SetConfig, LookupText, "/alac", "/alachat");
+			__private.__SettingUI = __ala_meta__.__settingfactory:CreateSetting("alaChat-R2", GetDefault, GetConfig, SetConfig, LookupText, "/alac", "/alachat");
 			InitModules();
 			for index = 1, #__modulelist do
 				local key = __modulelist[index];

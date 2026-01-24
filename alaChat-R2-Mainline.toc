@@ -1,7 +1,7 @@
 ## Interface: 120000
-## Title: ala's Chat Enhanced
-## Title-zhCN: ala聊天增强
-## Title-zhTW: ala聊天增強
+## Title: alaChat-R2
+## Title-zhCN: ala聊天增强-R2
+## Title-zhTW: ala聊天增強-R2
 ## SavedVariablesPerCharacter: 
 ## SavedVariables: alaChatSV
 ## Notes: ala's Chat Enhanced
