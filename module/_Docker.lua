@@ -600,6 +600,17 @@ end
 			Docker.__ActiveEditBox = nil;
 		end
 	end
+	local function Docker_RefreshPosition_Throttled(EditBox)
+		if Docker.__RefreshTimer == nil then
+			Docker.__RefreshTimer = 0;
+			hooksecurefunc(Docker, "RefreshPosition", function()
+				Docker.__RefreshTimer = GetTime();
+			end);
+		end
+		if GetTime() - Docker.__RefreshTimer > 0.2 then
+			Docker:RefreshPosition(EditBox);
+		end
+	end
 	hooksecurefunc("ChatEdit_SetLastActiveWindow", function(EditBox)
 		if Docker.__ActiveEditBox ~= EditBox then
 			Docker:RefreshPosition(EditBox);
@@ -617,7 +628,7 @@ end
 	end);
 	hooksecurefunc("FCFTab_OnUpdate", function(Tab)
 		if Docker.__ActiveEditBox ~= nil then
-			Docker:RefreshPosition(Docker.__ActiveEditBox);
+			Docker_RefreshPosition_Throttled(Docker.__ActiveEditBox);
 		end
 	end);
 	-- local function ClickAnywhereButtonOnClick()

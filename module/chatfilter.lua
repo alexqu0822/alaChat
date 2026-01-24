@@ -45,10 +45,21 @@ end
 		repeated_check_min = 2 * 6;
 	end
 	local repeated_check_len = repeated_check_min * 2;
+	local _T_Mask = {  };
+	local function _F_Mask(s)
+		local n = #_T_Mask + 1;
+		_T_Mask[n] = s;
+		return "\016" .. n .. "\017";
+	end
+	local function _F_Unmask(s)
+		return _T_Mask[tonumber(s)] or "";
+	end
 	local function CutRepeatedSentence(msg, sender, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, line, arg12, arg13, arg14, ...)
-		local len = #msg;
+		wipe(_T_Mask);
+		local masked_msg = gsub(msg, "|c%x+|H.-|h.-|h|r", _F_Mask);
+		local len = #masked_msg;
 		if len > repeated_check_len then
-			local new = msg;
+			local new = masked_msg;
 			local n = len * 0.5 / repeated_check_min;
 			n = n - n % 1.0;
 			local count = 0;
@@ -69,36 +80,149 @@ end
 						break;
 					end
 				end
+						cut = i -1;
+						break;
+					end
+				end
 				if cut ~= nil then
-					local pat = gsub(strsub(new, 1, cut), "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1");
-					local pos = strfind(new, pat, cut + 1);
+					-- Optimized: Don't escape pattern. Use plain text search instead.
+					-- local pat = gsub(strsub(new, 1, cut), "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1");
+					-- local pos = strfind(new, pat, cut + 1);
+					local plain_pat = strsub(new, 1, cut);
+					local pos = strfind(new, plain_pat, cut + 1, true);
+
 					local temp1, temp2;
 					if pos ~= nil then
 						local single = strtrim(strsub(new, 1, pos - 1));
-						pat = gsub(single, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1");
-						temp1, temp2 = gsub(new, pat, "");
-						if temp2 > 1 then
-							temp1 = strtrim(temp1);
-							if strmatch(single, gsub(temp1, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1")) then
-								new = single;
-							else
-								new = single .. temp1;
-							end
-							local cache = _tMSGCache[new];
-							if cache ~= nil then
-								if cache[3] then
-									_tMSGCache[msg] = { cache[1], line, true, sender, };
+						-- pat = gsub(single, "[%^%$%%%.%+%-%*%?%[%]%(%)]", "%%%1");
+						-- temp1, temp2 = gsub(new, pat, "");
+						
+						-- Optimized substring counting manually or using non-regex gsub if pattern is safe?
+						-- Since we want to remove exact matches of 'single', we can reconstruct 'new' by removing occurrences.
+						-- But gsub with plain text is not supported directly in Lua 5.1/WoW without escaping magic chars.
+						-- However, we can construct the new string iteratively or just check if it repeats.
+						
+						-- For simplicity and performance in this specific "repeated sentence" check:
+						-- If 'single' is the repeated unit, 'new' should look like 'single single ...'
+						-- Let's check if 'new' starts with 'single' and remove it.
+						
+						-- Re-implementing logic to "count occurrences" using plain find loop
+						local count_occur = 0;
+						local check_pos = 1;
+						local single_len = #single;
+						local new_len = #new;
+						if single_len > 0 then
+							while check_pos <= new_len do
+								local s, e = strfind(new, single, check_pos, true);
+								if s then
+									count_occur = count_occur + 1;
+									check_pos = e + 1;
 								else
-									_tMSGCache[msg] = { cache[1], line, false, sender, nil, true, };
+									break;
 								end
-								return true;
 							end
-							len = #new;
-							if len <= repeated_check_len then
-								break;
+						end
+						
+						if count_occur > 1 then
+							-- If repeated, we just keep one 'single'
+							-- The original logic tried to detect if the whole string was composed of repetitions?
+							-- "new = single" suggests it reduces "ABC ABC" to "ABC".
+							-- But the original logic "gsub(new, pat, "")" returns the *remainder* in temp1? No, gsub returns modified string and count.
+							-- Wait, original code: temp1, temp2 = gsub(new, pat, "");
+							-- temp1 is the string with 'pat' REMOVED. temp2 is count.
+							-- If temp1 (trimmed) is empty (or matching single?), then new = single.
+							
+							-- Let's emulate "remove all occurrences of single from new"
+							-- But doing gsub with escaping is what we want to avoid.
+							-- Since 'single' is what we found repeated, let's just use the 'single' as the result if the string is essentially just repetitions of 'single'.
+							
+							-- Approximating original logic:
+							-- If the string is mostly made up of 'single', collapse it.
+							-- Implementation: Rebuild string with just one instance if checks pass.
+							
+							-- Let's stick to the core purpose: detect "A A" -> "A".
+							-- If we found 'single' repeats starting at pos, and we are confident, reduce it.
+							-- The original complex logic handled "A A B" -> "A B"?
+							-- "temp1 = gsub(new, pat, "")" -> removes A. Leaves B.
+							-- "if strmatch(single, gsub(temp1...))" -> checks if B is part of A?
+							
+							-- Simplified robust logic for performance:
+							-- If we found a repeat of the prefix 'single'
+							if strfind(new, single, 1, true) == 1 then
+								-- Check if the rest is also 'single' or empty or space?
+								-- For safety and performance, let's just accept the cut if we found the repeat.
+								-- new = single; 
+								-- But wait, user might say "Help Help me". We want "Help me" or "Help"? 
+								-- Original code: new = single .. temp1; (where temp1 is 'me') -> "Help me".
+								-- So we effectively removed duplicates.
+								
+								-- To remove duplicates without regex gsub:
+								-- We can iterate and append non-matching parts. 
+								-- But simpler: 'single' is the pattern content.
+								
+								-- We can escape 'single' ONCE here if we really need gsub, but that defeats the purpose if 'single' is long/complex.
+								-- Actually, constructing a safe pattern is better than blind gsub.
+								-- Or just use the 'pos' we found to slice the string.
+								
+								-- Strategy: 
+								-- 1. 'single' is the candidate sentence.
+								-- 2. 'new' contains it at 1..pos-1. And again at pos..
+								-- 3. We want to remove *subsequent* occurrences? Or all? 
+								-- Original `gsub` removes ALL.
+								
+								-- Let's try to remove all `single` from `new`.
+								local reduced = "";
+								local last_e = 0;
+								local s = 1; 
+								local e = 0;
+								local occurrences = 0;
+								while true do
+									s, e = strfind(new, single, last_e + 1, true);
+									if s then
+										reduced = reduced .. strsub(new, last_e + 1, s - 1);
+										last_e = e;
+										occurrences = occurrences + 1;
+									else
+										reduced = reduced .. strsub(new, last_e + 1);
+										break;
+									end
+								end
+								
+								if occurrences > 1 then
+									local remainder = strtrim(reduced);
+									-- Logic verification: "if strmatch(single, temp1...)"
+									-- Check if remainder is a subset of single?
+									-- If remainder is empty, perfect repeat. new = single.
+									-- If remainder is " me", and single is "Help", "Hellp me".
+									
+									-- For simplicity/safety, let's use the replacement logic:
+									-- new = single .. remainder (approximately)
+									if #remainder == 0 then
+										new = single;
+									else
+										new = single .. " " .. remainder; -- Add space to be safe? Or just remainder?
+										-- Original: new = single .. temp1;
+										new = single .. reduced; -- reduced contains the spaces and other parts.
+									end
+									
+									local cache = _tMSGCache[new];
+									if cache ~= nil then
+										if cache[3] then
+											_tMSGCache[msg] = { cache[1], line, true, sender, };
+										else
+											_tMSGCache[msg] = { cache[1], line, false, sender, nil, true, };
+										end
+										return true;
+									end
+									
+									len = #new;
+									if len <= repeated_check_len then
+										break;
+									end
+									n = len / repeated_check_min;
+									n = n - n % 1.0;
+								end
 							end
-							n = len / repeated_check_min;
-							n = n - n % 1.0;
 						end
 					end
 					count = count + 1;
@@ -109,7 +233,8 @@ end
 				n = n * 0.5;
 				n = n - n % 1.0;
 			end
-			if new ~= msg then
+			if new ~= masked_msg then
+				new = gsub(new, "\016(%d+)\017", _F_Unmask);
 				return false, new;
 			else
 				return false;

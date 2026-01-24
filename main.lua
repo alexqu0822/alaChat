@@ -11,13 +11,33 @@ local rawget, rawset = rawget, rawset;
 local next = next;
 local C_Timer = C_Timer;
 local CreateFrame = CreateFrame;
-local GetAddOnInfo = GetAddOnInfo or C_AddOns.GetAddOnInfo;
-local GetAddOnMetadata = GetAddOnMetadata or C_AddOns.GetAddOnMetadata;
-local EnableAddOn = EnableAddOn or C_AddOns.EnableAddOn;
-local DisableAddOn = DisableAddOn or C_AddOns.DisableAddOn;
-local LoadAddOn = LoadAddOn or C_AddOns.LoadAddOn;
-local SaveAddOns = SaveAddOns or C_AddOns.SaveAddOns;
+local GetAddOnInfo =  C_AddOns.GetAddOnInfo;
+local GetAddOnMetadata = C_AddOns.GetAddOnMetadata;
+local EnableAddOn = C_AddOns.EnableAddOn;
+local DisableAddOn = C_AddOns.DisableAddOn;
+local LoadAddOn = C_AddOns.LoadAddOn;
+local SaveAddOns = C_AddOns.SaveAddOns;
 local _G = _G;
+
+-->		Internal API Adapter
+	function __private.GetSpellInfo(spellID)
+		if not spellID then return nil; end
+		local info = C_Spell.GetSpellInfo(spellID);
+		if info then
+			return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+		end
+	end
+	function __private.GetSpellName(spellID)
+		if not spellID then return nil; end
+		return C_Spell.GetSpellName(spellID);
+	end
+	function __private.GetItemInfo(itemID)
+		return C_Item.GetItemInfo(itemID);
+	end
+	function __private.GetAddOnInfo(indexOrName)
+		return C_AddOns.GetAddOnInfo(indexOrName);
+	end
+-->
 -->		Compatible
 	local _comptb = {  };
 	__private._comptb = _comptb;
@@ -78,17 +98,22 @@ __private.PinTextBLZFont = NumberFont_Shadow_Med:GetFont();
 		_GlobalAssign[category] = _GlobalAssign[category] or {  };
 		local Ref = _GlobalRef[category];
 		local Assign = _GlobalAssign[category];
+		--  Safe environment: read from _G, write to private table
+		--  Prevents polution of _G by accident
 		setfenv(2, setmetatable(
 			{  },
 			{
-				__index = function(tbl, key, val)
+				__index = function(tbl, key)
 					Ref[key] = (Ref[key] or 0) + 1;
 					return _G[key];
 				end,
 				__newindex = function(tbl, key, value)
-					rawset(tbl, key, value);
-					Assign[key] = (Assign[key] or 0) + 1;
-					return value;
+					-- rawset(tbl, key, value);
+					-- Assign[key] = (Assign[key] or 0) + 1;
+					-- return value;
+                    -- Block implicit global write. 
+                    -- Modules must use _G.Key = Value if they really want to write to global.
+                    _G.geterrorhandler()(string.format("Constructive intent to write global '%s' inside module '%s'. Please use _G.%s = ... if intended.", key, category, key));
 				end,
 			}
 		));
@@ -269,15 +294,10 @@ local __default = {
 	},
 };
 if L.Locale == 'zhCN' and WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-	__default.chatfilter.StrSet =
-		"HclubTicket:\n航空\n航班\n专机\n直达\n直飞\n安全便捷\n收米\n出米\n托管\n公众号\n大米\n"
-		-- .. "--------\n========\n~~~~~~\n````````\n········\n"		--	++++++++\n
-		-- .. "........\n,,,,,,,,\n;;;;;;;;\n"							--	
-		-- .. "。。。。。。。。\n，，，，，，，，\n；；；；；；；；\n"		--	
-		-- .. "————\n一一一一\n"										--	
-		-- .. "、、、、、、、、\n"										--	
-	;
-	__default.chatfilter.NameSet = "#加基森\n#冬泉谷\n#玛拉顿\n#斯坦索姆\n#航空\n#航班\n#飞机\n#专机\n#直达\n#直飞\n";
+if L.Locale == 'zhCN' and WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
+	__default.chatfilter.StrSet = L.SETTING.chatfilter.DEFAULT_STRSET;
+	__default.chatfilter.NameSet = L.SETTING.chatfilter.DEFAULT_NAMESET;
+end
 end
 if __private.__is_163 then
 	for _, v in next, __default do
@@ -484,10 +504,7 @@ end
 						local defStr = { strsplit("\n", defStrSet) };
 						local defName = { strsplit("\n", defNameSet) };
 						--
-						local oldDefSet = GetLocale() == "zhCN" and ("HclubTicket:\n航空\n航班\n飞机\n专机\n直达\n直飞\n安全便捷\n拉人\n收米\n出米\n托管\n包团\n实惠\n公众号\nG团\n老板\n大米\n"
-							.. "++++++\n————\n一一一一\n~~~~~~\n------\n======\n``````\n"
-							.. "!!!!!!!!!!\n??????????\n！！！！！！！！！！\n？？？？？？？？？？\n。。。。。。。。。。\n，，，，，，，，，，\n··········\n；；；；；；；；；；\n、、、、、、、、、、\n"
-							.. "#加基森\n#冬泉谷\n#玛拉顿\n#斯坦索姆\n#航空\n#飞机\n#专机\n#直达\n#直飞\n") or "HclubTicket:\n\n++++++\n——————\n~~~~~~\n------\n======\n``````\n";
+						local oldDefSet = L.SETTING.chatfilter.DEFAULT_STRSET or "";
 						oldDefSet = gsub(gsub(gsub(oldDefSet, "^[\t\n ]+", ""), "[\t\n ]+$", ""), "\n\n", "\n");
 						local oldDef = { strsplit("\n", oldDefSet) };
 						OldFilteredSet = gsub(gsub(gsub(OldFilteredSet, "^[\t\n ]+", ""), "[\t\n ]+$", ""), "\n\n", "\n");

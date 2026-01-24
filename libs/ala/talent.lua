@@ -54,13 +54,19 @@ end
 	local GetNumTalentTabs, GetNumTalents, GetTalentInfo = GetNumTalentTabs, GetNumTalents, GetTalentInfo;
 	local GetNumGlyphSockets, GetGlyphSocketInfo = GetNumGlyphSockets, GetGlyphSocketInfo;
 	local GetInventoryItemLink = GetInventoryItemLink;
-	local GetItemInfo = GetItemInfo;
-	local GetSpellInfo = GetSpellInfo;
+	local GetItemInfo = C_Item.GetItemInfo;
+	local GetSpellInfo = function(id)
+		if not id then return nil; end
+		local info = C_Spell.GetSpellInfo(id);
+		if info then
+			return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIconID;
+		end
+	end
 	local GetAddOnInfo, IsAddOnLoaded, GetAddOnEnableState;
 	local C_AddOns = C_AddOns;
 	local _GetAddOnEnableState = _G.GetAddOnEnableState;
 	if C_AddOns ~= nil then
-		GetAddOnInfo, IsAddOnLoaded, GetAddOnEnableState = C_AddOns.GetAddOnInfo or _G.GetAddOnInfo, C_AddOns.IsAddOnLoaded or _G.IsAddOnLoaded, C_AddOns.GetAddOnEnableState or function(addon, name) return _GetAddOnEnableState(name, addon) end;
+		GetAddOnInfo, IsAddOnLoaded, GetAddOnEnableState = C_AddOns.GetAddOnInfo, C_AddOns.IsAddOnLoaded, C_AddOns.GetAddOnEnableState or function(addon, name) return _GetAddOnEnableState(name, addon) end;
 	else
 		GetAddOnInfo, IsAddOnLoaded, GetAddOnEnableState = _G.GetAddOnInfo, _G.IsAddOnLoaded, function(addon, name) return _GetAddOnEnableState(name, addon) end;
 	end

@@ -134,70 +134,28 @@ end
 				LOOK_FOR_GROUP = LOOK_FOR_GROUP,
 			};
 			local list = { EnumerateServerChannels() };
-			local LevenshteinDistance;
-			if CalculateStringEditDistance ~= nil then
-				LevenshteinDistance = CalculateStringEditDistance;
-			else
-				--	credit https://gist.github.com/Badgerati/3261142
-				local strbyte, min = strbyte, math.min;
-				function LevenshteinDistance(str1, str2)
-					-- quick cut-offs to save time
-					if str1 == "" then
-						return #str2;
-					elseif str2 == "" then
-						return #str1;
-					elseif str1 == str2 then
-						return 0;
-					end
-
-					local len1 = #str1;
-					local len2 = #str2;
-					local matrix = {  };
-
-					-- initialise the base matrix values
-					for i = 0, len1 do
-						matrix[i] = {  };
-						matrix[i][0] = i;
-					end
-					for j = 0, len2 do
-						matrix[0][j] = j;
-					end
-
-					-- actual Levenshtein algorithm
-					for i = 1, len1 do
-						for j = 1, len2 do
-							if strbyte(str1, i) == strbyte(str2, j) then
-								matrix[i][j] = min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1]);
-							else
-								matrix[i][j] = min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + 1)
-							end
-						end
-					end
-
-					-- return the last value - this is the Levenshtein distance
-					return matrix[len1][len2];
-				end
-			end
 			if list[1] ~= nil then
 				for which, fuzzy in next, FuzzyName do
-					local best = 1;
-					if list[1] ~= fuzzy then
-						local co = LevenshteinDistance(list[1], fuzzy);
-						for index = 2, #list do
-							local c = list[index];
-							if c == fuzzy then
+					--	Try exact match first
+					local best = nil;
+					for index = 1, #list do
+						if list[index] == fuzzy then
+							best = index;
+							break;
+						end
+					end
+					if best == nil then
+						--	Try substring match
+						for index = 1, #list do
+							if strfind(list[index], fuzzy) then
 								best = index;
 								break;
-							else
-								local co2 = LevenshteinDistance(list[index], fuzzy);
-								if co2 < co then
-									co = co2;
-									best = index;
-								end
 							end
 						end
 					end
-					CHANNELLIST[which] = list[best];
+					if best ~= nil then
+						CHANNELLIST[which] = list[best];
+					end
 				end
 			end
 		end

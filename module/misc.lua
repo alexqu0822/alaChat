@@ -68,11 +68,18 @@ end
 -->		SendFilter
 	local function SendFilterReplacer(pat, color, Type, body, text)
 		if Type == "item" then
-			body = gsub(body, ":[0:]+$", "");
-			if strmatch(body, "^:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d$") then
-				body = gsub(strsub(body, 1, -2), ":[0:]+$", "");
-			end
-			local _, _, quality = GetItemInfo(pat);
+			-- body = gsub(body, ":[0:]+$", "");
+			-- if strmatch(body, "^:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d$") then
+			-- 	body = gsub(strsub(body, 1, -2), ":[0:]+$", "");
+			-- end
+			-- local base, extra = strmatch(body, "^(:%d+)(.*)");
+			-- if base then
+			-- 	body = base .. (extra and gsub(extra, ":[0:]+$", "") or "");
+			-- else
+			-- 	body = gsub(body, ":[0:]+$", "");
+			-- end
+			body = __private.CleanItemString(body);
+			local _, _, quality = __private.GetItemInfo(pat);
 			return text .. "#" .. (quality or ColorTable[color] or "-1") .. "i" .. body .. "#";
 		elseif Type == "spell" then
 			return text .. "#0s" .. body .. "#";

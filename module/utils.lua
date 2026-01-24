@@ -25,7 +25,18 @@ if __private.__is_dev then
 	__private:BuildEnv("utils");
 end
 
--->		Method
+local strmatch, gsub = string.match, string.gsub;
+
+-->		Util
+	function __private.CleanItemString(itemString)
+		local base, extra = strmatch(itemString, "^(:%d+)(.*)");
+		if base then
+			return base .. (extra and gsub(extra, ":[0:]+$", "") or "");
+		else
+			return gsub(itemString, ":[0:]+$", "");
+		end
+	end
+-->
 	--	StatReprot
 	local DruidShapeFormID = {
 		[1] = 768,		--	CAT
@@ -52,7 +63,12 @@ end
 			local slot = slots[index];
 			local item = GetInventoryItemLink('player', slot);
 			if item ~= nil and item ~= "" then
-				local _, _, _, level, _, _, _, _, loc = GetItemInfo(item);
+				local _, _, _, level, _, _, _, _, loc = __private.GetItemInfo(item);
+				-- if level == nil then
+				-- 	if C_Item and C_Item.GetItemInfo then	--	Retail
+				-- 		_, _, _, level, _, _, _, _, loc = C_Item.GetItemInfo(item);
+				-- 	end
+				-- end
 				if level ~= nil then
 					total = total + level;
 				end
@@ -86,7 +102,7 @@ end
 			if class == "DRUID" then
 				local id = GetShapeshiftFormID();
 				if id ~= nil and DruidShapeFormID[id] ~= nil then
-					local shape = GetSpellInfo(DruidShapeFormID[id]);
+					local shape = __private.GetSpellName(DruidShapeFormID[id]);
 					if shape ~= nil then
 						spec = "(" .. shape .. ")" .. spec;
 					end
@@ -460,7 +476,7 @@ end
 			if method[which] ~= nil then
 				if PLAYER_CLASS == "DRUID" then
 					local id = GetShapeshiftFormID();
-					local shape = id and DruidShapeFormID[id] and GetSpellInfo(DruidShapeFormID[id]);
+					local shape = id and DruidShapeFormID[id] and __private.GetSpellName(DruidShapeFormID[id]);
 					return method[which](shape and ("[" .. shape .. "]"));
 				else
 					return method[which]();
@@ -494,7 +510,7 @@ end
 				return method.spell();
 			elseif PLAYER_CLASS == "DRUID" then
 				local id = GetShapeshiftFormID();
-				local shape = id and DruidShapeFormID[id] and GetSpellInfo(DruidShapeFormID[id]);
+				local shape = id and DruidShapeFormID[id] and __private.GetSpellName(DruidShapeFormID[id]);
 				local _, _, _, _, p1 = GetTalentTabInfo(1);
 				local _, _, _, _, p2 = GetTalentTabInfo(2);
 				local _, _, _, _, p3 = GetTalentTabInfo(3);
