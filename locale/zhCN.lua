@@ -58,35 +58,6 @@ L.EMOTE["zhCN"] = {
     Wronged = "委屈",
 };
 
-if GetLocale() ~= "zhCN" then
-	return;
-end
-L.Locale = "zhCN";
-L.ExactLocale = true;
-
-L.TABSHORT = {
-	SAY = "说",
-	PARTY = "队",
-	RAID = "团",
-	RAID_WARNING = "通",
-	INSTANCE_CHAT = "副",
-	GUILD = "会",
-	YELL = "喊",
-	WHISPER = "密",
-	OFFICER = "官",
-	GENERAL = "综",
-	TRADE = "交",
-	LOCAL_DEFENSE = "本",
-	LOOK_FOR_GROUP = "组",
-	BF_WORLD = "世",
-};
-L.LocalizedChannelName = {
-	GENERAL = GENERAL,
-	TRADE = TRADE,
-	LOCAL_DEFENSE = "本地防务",
-	LOOK_FOR_GROUP = LOOK_FOR_GROUP,
-	BF_WORLD = "大脚世界频道",
-};
 L.SHORTNAME_NORMALGLOBALFORMAT = {
 	CHAT_WHISPER_GET = "[密]%s说: ",
 	CHAT_WHISPER_INFORM_GET = "[密]对%s说: ",
@@ -136,6 +107,37 @@ L.SHORTNAME_CHANNELHASH = {
 	["大脚世界频道9"] = "世",
 	["大脚世界频道10"] = "世",
 };
+
+if GetLocale() ~= "zhCN" then
+	return;
+end
+L.Locale = "zhCN";
+L.ExactLocale = true;
+
+L.TABSHORT = {
+	SAY = "说",
+	PARTY = "队",
+	RAID = "团",
+	RAID_WARNING = "通",
+	INSTANCE_CHAT = "副",
+	GUILD = "会",
+	YELL = "喊",
+	WHISPER = "密",
+	OFFICER = "官",
+	GENERAL = "综",
+	TRADE = "交",
+	LOCAL_DEFENSE = "本",
+	LOOK_FOR_GROUP = "组",
+	BF_WORLD = "世",
+};
+L.LocalizedChannelName = {
+	GENERAL = GENERAL,
+	TRADE = TRADE,
+	LOCAL_DEFENSE = "本地防务",
+	LOOK_FOR_GROUP = LOOK_FOR_GROUP,
+	BF_WORLD = "大脚世界频道",
+};
+
 
 
 L.SETTINGCATEGORY = {

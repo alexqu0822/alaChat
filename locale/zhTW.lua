@@ -58,35 +58,6 @@ L.EMOTE["zhTW"] = {
     Wronged = "委屈",
 };
 
-if GetLocale() ~= "zhTW" then
-	return;
-end
-L.Locale = "zhTW";
-L.ExactLocale = true;
-
-L.TABSHORT = {
-	SAY = "說",
-	PARTY = "隊",
-	RAID = "團",
-	RAID_WARNING = "通",
-	INSTANCE_CHAT = "副",
-	GUILD = "會",
-	YELL = "喊",
-	WHISPER = "密",
-	OFFICER = "官",
-	GENERAL = "綜",
-	TRADE = "交",
-	LOCAL_DEFENSE = "本",
-	LOOK_FOR_GROUP = "組",
-	BF_WORLD = "世",
-};
-L.LocalizedChannelName = {
-	GENERAL = GENERAL,
-	TRADE = TRADE,
-	LOCAL_DEFENSE = "本地防務",
-	LOOK_FOR_GROUP = LOOK_FOR_GROUP,
-	BF_WORLD = "大脚世界频道",
-};
 L.SHORTNAME_NORMALGLOBALFORMAT = {
 	CHAT_WHISPER_GET = "[密]%s説: ",
 	CHAT_WHISPER_INFORM_GET = "[密]对%s説: ",
@@ -124,19 +95,48 @@ L.SHORTNAME_CHANNELHASH = {
 	["交易"] = "交",
 	["本地防務"] = "本",
 	["尋求組隊"] = "尋",
-	["大脚世界频道"] = "世",
-	["大脚世界频道1"] = "世",
-	["大脚世界频道2"] = "世",
-	["大脚世界频道3"] = "世",
-	["大脚世界频道4"] = "世",
-	["大脚世界频道5"] = "世",
-	["大脚世界频道6"] = "世",
-	["大脚世界频道7"] = "世",
-	["大脚世界频道8"] = "世",
-	["大脚世界频道9"] = "世",
-	["大脚世界频道10"] = "世",
+	["大腳世界頻道"] = "世",
+	["大腳世界頻道1"] = "世",
+	["大腳世界頻道2"] = "世",
+	["大腳世界頻道3"] = "世",
+	["大腳世界頻道4"] = "世",
+	["大腳世界頻道5"] = "世",
+	["大腳世界頻道6"] = "世",
+	["大腳世界頻道7"] = "世",
+	["大腳世界頻道8"] = "世",
+	["大腳世界頻道9"] = "世",
+	["大腳世界頻道10"] = "世",
 };
 
+if GetLocale() ~= "zhTW" then
+	return;
+end
+L.Locale = "zhTW";
+L.ExactLocale = true;
+
+L.TABSHORT = {
+	SAY = "說",
+	PARTY = "隊",
+	RAID = "團",
+	RAID_WARNING = "通",
+	INSTANCE_CHAT = "副",
+	GUILD = "會",
+	YELL = "喊",
+	WHISPER = "密",
+	OFFICER = "官",
+	GENERAL = "綜",
+	TRADE = "交",
+	LOCAL_DEFENSE = "本",
+	LOOK_FOR_GROUP = "組",
+	BF_WORLD = "世",
+};
+L.LocalizedChannelName = {
+	GENERAL = GENERAL,
+	TRADE = TRADE,
+	LOCAL_DEFENSE = "本地防務",
+	LOOK_FOR_GROUP = LOOK_FOR_GROUP,
+	BF_WORLD = "大脚世界频道",
+};
 
 L.SETTINGCATEGORY = {
 	GENERAL = "外觀設置",
