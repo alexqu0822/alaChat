@@ -877,7 +877,7 @@ end
 							local F = ChatFrames[id];
 							if F:IsShown() or F.isDocked then
 								if _bfworldcf[id] then
-									ChatFrame_AddChannel(F, channel);
+									(F.AddChannel or ChatFrame_AddChannel)(F, channel);
 									hasOne = true;
 								else
 									local channelList = F.channelList;
@@ -894,14 +894,14 @@ end
 						end
 					end
 					if not hasOne then
-						ChatFrame_AddChannel(ChatFrames[1], channel);
+						(ChatFrames[1].AddChannel or ChatFrame_AddChannel)(ChatFrames[1], channel);
 						-- if __private.__is_dev then
 						-- 	print("|cffff0000>|r|cff00ff00AddChannel|r 1#1");
 						-- end
 					end
 				end
 				if _db.AutoAddChannelToDefaultChatFrame then
-					ChatFrame_AddChannel(ChatFrames[1], channel);
+					(ChatFrames[1].AddChannel or ChatFrame_AddChannel)(ChatFrames[1], channel);
 					-- if __private.__is_dev then
 					-- 	print("|cffff0000>|r|cff00ff00AddChannel|r 2#1");
 					-- end

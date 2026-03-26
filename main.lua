@@ -32,6 +32,8 @@ local _G = _G;
 		_comptb.GetMouseFocus = function()
 		end
 	end
+	_comptb.issecretvalue = issecretvalue;
+
 -->
 
 __private.__toc = select(4, GetBuildInfo());
