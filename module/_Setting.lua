@@ -230,11 +230,13 @@ end
 				local key = self.key;
 				local orig = __db[module][key];
 				ColorPickerFrame.func = nil;
+				ColorPickerFrame.swatchFunc = nil;
 				ColorPickerFrame.cancelFunc = nil;
 				ColorPickerFrame:SetColorRGB(unpack(__db[module][key]));
 				ColorPickerFrame.func = function()
 					SetDB(module, key, { ColorPickerFrame:GetColorRGB() }, false);
 				end
+				ColorPickerFrame.swatchFunc = ColorPickerFrame.func;
 				ColorPickerFrame.cancelFunc = function()
 					SetDB(module, key, orig, false);
 				end
